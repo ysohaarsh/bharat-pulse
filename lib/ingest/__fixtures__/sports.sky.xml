@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet title="XSL_formatting" type="text/xsl" href="/rss/rssRender.xsl"?>
+    <rss version='2.0'>
+    <channel>
+       <title>SkySports | News</title>
+       <link>http://www.skysports.com</link>
+       <description>Sports News</description>
+       <language>en-gb</language>
+       <lastBuildDate>Sun, 04 Oct 2026 17:14:15 BST</lastBuildDate>
+       <copyright>Copyright 2026, BSKYB. All Rights Reserved.</copyright>
+       <category></category>
+       <image>
+            <title>Sky Sports</title>
+            <url>https://www.skysports.com/images/site/ss-logo-07.gif</url>
+            <link>https://www.skysports.com</link>
+       </image>
+       <ttl>120</ttl>
+       	<item>
+           <title><![CDATA['He's a real champion!' | Graffard hails Arc hero Daryz]]></title>
+           <description><![CDATA[Francis-Henri Graffard lauded the achievements of Daryz after he retained his Prix de l'Arc de Triomphe crown at ParisLongchamp.]]></description>
+           <link>https://www.skysports.com/watch/video/13595065/hes-a-real-champion-graffard-hails-arc-hero-daryz</link>
+           <pubDate>Sun, 04 Oct 2026 16:24:00 BST</pubDate>
+           <category>Video</category>
+           <enclosure type="image/jpg" url="https://e1.365dm.com/26/10/1920x1080/image_7368081.jpg?20261004162445" length="123456" />
+      </item>
+    <item>
+           <title><![CDATA[Djokovic creates more history with epic Zverev win at China Open]]></title>
+           <description><![CDATA[Novak Djokovic rolled back the years to defeat French Open and US Open champion Alexander Zverev 4-6 6-4 6-4 to reach the semi-finals of the China Open on Sunday.]]></description>
+           <link>https://www.skysports.com/tennis/news/12040/13594880/china-open-novak-djokovic-keeps-unblemished-record-in-beijing-by-handing-alexander-zverev-a-rare-defeat</link>
+           <pubDate>Sun, 04 Oct 2026 15:18:00 BST</pubDate>
+           <category>News Story</category>
+           <enclosure type="image/jpg" url="https://e2.365dm.com/26/10/1920x1080/skysports-novak-djokovic-tennis_7368018.jpg?20261004145734" length="123456" />
+      </item>
+    <item>
+           <title><![CDATA[Daryz retains Arc crown with dazzling display]]></title>
+           <description><![CDATA[Daryz became the first colt for almost 50 years to win Europe&#8217;s most prestigious race, the Qatar Prix de l&#8217;Arc de Triomphe, in successive seasons with a brilliant victory at ParisLongchamp.]]></description>
+           <link>https://www.skysports.com/racing/news/12040/13594944/prix-de-larc-de-triomphe-daryz-becomes-first-colt-since-1978-to-retain-group-1-crown</link>
+           <pubDate>Sun, 04 Oct 2026 10:23:00 BST</pubDate>
+           <category>News Story</category>
+           <enclosure type="image/jpg" url="https://e2.365dm.com/26/10/1920x1080/skysports-daryz-racing_7368058.jpg?20261004154359" length="123456" />
+      </item>
+    <item>
+           <title><![CDATA[Russell 'beyond disappointment' as Wolff 'massively annoyed' by engine failure ]]></title>
+           <description><![CDATA[Mercedes boss Toto Wolff said he was "massively annoyed" after the late unreliability that delivered a potentially knock-out blow to George Russell's title hopes in the Bahrain Grand Prix.]]></description>
+           <link>https://www.skysports.com/f1/news/12040/13594862/george-russell-mercedes-boss-toto-wolff-massively-annoyed-by-bahrain-gp-unreliability-with-driver-now-beyond-disappointment</link>
+           <pubDate>Sun, 04 Oct 2026 11:50:00 BST</pubDate>
+           <category>News Story</category>
+           <enclosure type="image/jpg" url="https://e0.365dm.com/26/10/1920x1080/skysports-f1-george-russell_7367102.jpg?20261004144736" length="123456" />
+      </item>
+    <item>
+           <title><![CDATA[Chelsea latest: 'Blues at front of queue for Bournemouth midfielder']]></title>
+           <description><![CDATA[]]></description>
+           <link>https://www.skysports.com/football/live-blog/12040/13025497/chelsea-transfer-news-rumours-and-gossip-live-updates-and-latest-on-deals-signings-loans-and-contracts</link>
+           <pubDate>Sun, 04 Oct 2026 14:23:00 BST</pubDate>
+           <category>Liveblog</category>
+           <enclosure type="image/jpg" url="https://e2.365dm.com/26/06/1920x1080/skysports-chelsea-premier-league_7281528.jpg?20260624101452" length="123456" />
+      </item>
+            </channel>
+      </rss>
+ 

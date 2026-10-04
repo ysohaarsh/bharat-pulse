@@ -1,0 +1,359 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "bbox": [
+    -113.8,
+    20.2,
+    -113.8,
+    20.2
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -113.8,
+     20.2
+    ]
+   },
+   "properties": {
+    "eventtype": "TC",
+    "eventid": 1001329,
+    "episodeid": 30,
+    "eventname": "RACHEL-26",
+    "glide": "",
+    "name": "Tropical Cyclone RACHEL-26",
+    "description": "Tropical Cyclone RACHEL-26",
+    "htmldescription": "Green Tropical Cyclone RACHEL-26 in Mexico from: 27 Sep 2026  to: 04 Oct 2026 .",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/TC.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=TC&eventid=1001329&episodeid=30",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1001329&episodeid=30&eventtype=TC",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=TC&eventid=1001329"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 1,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "Mexico",
+    "fromdate": "2026-09-27T09:00:00",
+    "todate": "2026-10-04T15:00:00",
+    "datemodified": "2026-10-04T14:45:23",
+    "iso3": "MEX",
+    "source": "NOAA",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "countryonland": "",
+    "affectedcountries": [
+     {
+      "iso2": "MX",
+      "iso3": "MEX",
+      "countryname": "Mexico"
+     }
+    ],
+    "severitydata": {
+     "severity": 194.4432,
+     "severitytext": "Hurricane/Typhoon > 74 mph (maximum wind speed of 194 km/h)",
+     "severityunit": "km/h"
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    -82.7171,
+    5.3695,
+    -82.7171,
+    5.3695
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -82.7171,
+     5.3695
+    ]
+   },
+   "properties": {
+    "eventtype": "EQ",
+    "eventid": 1569463,
+    "episodeid": 1737693,
+    "eventname": "",
+    "glide": "",
+    "name": "Earthquake in South Of Panama",
+    "description": "Earthquake in South Of Panama",
+    "htmldescription": "Green M 5 Earthquake in South Of Panama at: 04 Oct 2026 14:06:10.",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/EQ.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/EQ.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=EQ&eventid=1569463&episodeid=1737693",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1569463&episodeid=1737693&eventtype=EQ",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=EQ&eventid=1569463"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 0,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "South Of Panama",
+    "fromdate": "2026-10-04T14:06:10",
+    "todate": "2026-10-04T14:06:10",
+    "datemodified": "2026-10-04T14:31:24",
+    "iso3": "",
+    "source": "NEIC",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "affectedcountries": [],
+    "severitydata": {
+     "severity": 5,
+     "severitytext": "Magnitude 5M, Depth:10km",
+     "severityunit": "M"
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    130.3564,
+    -18.3861,
+    130.3564,
+    -18.3861
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     130.3564,
+     -18.3861
+    ]
+   },
+   "properties": {
+    "eventtype": "WF",
+    "eventid": 1032561,
+    "episodeid": 1,
+    "eventname": "",
+    "glide": "",
+    "name": "Forest fires in Australia",
+    "description": "Forest fires in Australia",
+    "htmldescription": "Green Forest fires in Australia from: 24 Sep 2026 to: 04 Oct 2026.",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/WF.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/WF.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=WF&eventid=1032561&episodeid=1",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1032561&episodeid=1&eventtype=WF",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=WF&eventid=1032561"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 0.5,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "Australia",
+    "fromdate": "2026-09-24T00:00:00",
+    "todate": "2026-10-04T00:00:00",
+    "datemodified": "2026-10-04T15:08:40",
+    "iso3": "AUS",
+    "source": "GWIS",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "affectedcountries": [
+     {
+      "iso2": "AU",
+      "iso3": "AUS",
+      "countryname": "Australia"
+     }
+    ],
+    "severitydata": {
+     "severity": 5055,
+     "severitytext": "Green impact for forestfire in 5055 ha",
+     "severityunit": "ha"
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    -100,
+    17.6667,
+    -100,
+    17.6667
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -100,
+     17.6667
+    ]
+   },
+   "properties": {
+    "eventtype": "FL",
+    "eventid": 1104191,
+    "episodeid": 1,
+    "eventname": "",
+    "glide": "",
+    "name": "Flood in Mexico",
+    "description": "Flood in Mexico",
+    "htmldescription": "Green Flood in Mexico from: 05 Oct 2026 01 to: 07 Oct 2026 01.",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/FL.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/FL.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=FL&eventid=1104191&episodeid=1",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1104191&episodeid=1&eventtype=FL",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=FL&eventid=1104191"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 0.5,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "Mexico",
+    "fromdate": "2026-10-05T01:00:00",
+    "todate": "2026-10-07T01:00:00",
+    "datemodified": "2026-09-26T06:33:31",
+    "iso3": "MEX",
+    "source": "GLOFAS",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "affectedcountries": [
+     {
+      "iso2": "MX",
+      "iso3": "MEX",
+      "countryname": "Mexico"
+     }
+    ],
+    "severitydata": {
+     "severity": 0,
+     "severitytext": "Magnitude 0 ",
+     "severityunit": ""
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    140.971,
+    -6.522,
+    140.971,
+    -6.522
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     140.971,
+     -6.522
+    ]
+   },
+   "properties": {
+    "eventtype": "WF",
+    "eventid": 1032527,
+    "episodeid": 5,
+    "eventname": "",
+    "glide": "",
+    "name": "Forest fires in Papua New Guinea, Indonesia",
+    "description": "Forest fires in Papua New Guinea, Indonesia",
+    "htmldescription": "Green Forest fires in Papua New Guinea, Indonesia from: 23 Sep 2026 to: 04 Oct 2026.",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/WF.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/WF.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=WF&eventid=1032527&episodeid=5",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1032527&episodeid=5&eventtype=WF",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=WF&eventid=1032527"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 0.5,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "Papua New Guinea, Indonesia",
+    "fromdate": "2026-09-23T00:00:00",
+    "todate": "2026-10-04T00:00:00",
+    "datemodified": "2026-10-04T15:09:44",
+    "iso3": "PNG",
+    "source": "GWIS",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "affectedcountries": [
+     {
+      "iso2": "PG",
+      "iso3": "PNG",
+      "countryname": "Papua New Guinea"
+     },
+     {
+      "iso2": "ID",
+      "iso3": "IDN",
+      "countryname": "Indonesia"
+     }
+    ],
+    "severitydata": {
+     "severity": 6530,
+     "severitytext": "Green impact for forestfire in 6530 ha",
+     "severityunit": "ha"
+    }
+   }
+  },
+  {
+   "type": "Feature",
+   "bbox": [
+    30.0753,
+    -7.2494,
+    30.0753,
+    -7.2494
+   ],
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     30.0753,
+     -7.2494
+    ]
+   },
+   "properties": {
+    "eventtype": "WF",
+    "eventid": 1032552,
+    "episodeid": 1,
+    "eventname": "",
+    "glide": "",
+    "name": "Forest fires in The Democratic Republic of Congo",
+    "description": "Forest fires in The Democratic Republic of Congo",
+    "htmldescription": "Green Forest fires in The Democratic Republic of Congo from: 01 Oct 2026 to: 03 Oct 2026.",
+    "icon": "https://www.gdacs.org/images/gdacs_icons/maps/Green/WF.png",
+    "iconoverall": "https://www.gdacs.org/images/gdacs_icons/maps/Green/WF.png",
+    "url": {
+     "geometry": "https://www.gdacs.org/gdacsapi/api/polygons/getgeometry?eventtype=WF&eventid=1032552&episodeid=1",
+     "report": "https://www.gdacs.org/report.aspx?eventid=1032552&episodeid=1&eventtype=WF",
+     "details": "https://www.gdacs.org/gdacsapi/api/events/geteventdata?eventtype=WF&eventid=1032552"
+    },
+    "alertlevel": "Green",
+    "alertscore": 1,
+    "episodealertlevel": "Green",
+    "episodealertscore": 0.5,
+    "istemporary": "false",
+    "iscurrent": "true",
+    "country": "The Democratic Republic of Congo",
+    "fromdate": "2026-10-01T00:00:00",
+    "todate": "2026-10-03T00:00:00",
+    "datemodified": "2026-10-04T15:00:57",
+    "iso3": "COD",
+    "source": "GWIS",
+    "sourceid": "",
+    "polygonlabel": "Centroid",
+    "Class": "Point_Centroid",
+    "affectedcountries": [],
+    "severitydata": {
+     "severity": 10102,
+     "severitytext": "Green impact for forestfire in 10102 ha",
+     "severityunit": "ha"
+    }
+   }
+  }
+ ]
+}

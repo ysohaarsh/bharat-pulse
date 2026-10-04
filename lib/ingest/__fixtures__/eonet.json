@@ -1,0 +1,328 @@
+{
+  "title": "EONET Events",
+  "description": "Natural events from EONET.",
+  "link": "https://eonet.gsfc.nasa.gov/api/v3/events",
+  "events": [
+    {
+      "id": "EONET_24962",
+      "title": "Typhoon Choi-wan",
+      "description": null,
+      "link": "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_24962",
+      "closed": null,
+      "categories": [
+        {
+          "id": "severeStorms",
+          "title": "Severe Storms"
+        }
+      ],
+      "sources": [
+        {
+          "id": "JTWC",
+          "url": "https://www.metoc.navy.mil/jtwc/products/wp2626.tcw"
+        }
+      ],
+      "geometry": [
+        {
+          "magnitudeValue": 95,
+          "magnitudeUnit": "kts",
+          "date": "2026-10-03T18:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            146.7,
+            20.8
+          ]
+        },
+        {
+          "magnitudeValue": 110,
+          "magnitudeUnit": "kts",
+          "date": "2026-10-04T00:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            147.1,
+            22.1
+          ]
+        },
+        {
+          "magnitudeValue": 125,
+          "magnitudeUnit": "kts",
+          "date": "2026-10-04T06:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            147,
+            22.9
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EONET_24875",
+      "title": "Hurricane Rachel",
+      "description": null,
+      "link": "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_24875",
+      "closed": null,
+      "categories": [
+        {
+          "id": "severeStorms",
+          "title": "Severe Storms"
+        }
+      ],
+      "sources": [
+        {
+          "id": "JTWC",
+          "url": "https://www.metoc.navy.mil/jtwc/products/ep1826.tcw"
+        },
+        {
+          "id": "NOAA_NHC",
+          "url": "https://www.nhc.noaa.gov/archive/2026/RACHEL.shtml"
+        }
+      ],
+      "geometry": [
+        {
+          "magnitudeValue": 70,
+          "magnitudeUnit": "kts",
+          "date": "2026-10-03T18:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -112.3,
+            19.7
+          ]
+        },
+        {
+          "magnitudeValue": 75,
+          "magnitudeUnit": "kts",
+          "date": "2026-10-04T00:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -112.6,
+            19.9
+          ]
+        },
+        {
+          "magnitudeValue": 80,
+          "magnitudeUnit": "kts",
+          "date": "2026-10-04T06:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -113,
+            20.1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EONET_24909",
+      "title": "Tropical Storm Hanna",
+      "description": null,
+      "link": "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_24909",
+      "closed": null,
+      "categories": [
+        {
+          "id": "severeStorms",
+          "title": "Severe Storms"
+        }
+      ],
+      "sources": [
+        {
+          "id": "NOAA_NHC",
+          "url": "https://www.nhc.noaa.gov/archive/2026/HANNA.shtml"
+        }
+      ],
+      "geometry": [
+        {
+          "magnitudeValue": 35,
+          "magnitudeUnit": "kts",
+          "date": "2026-09-30T03:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -43.6,
+            33.7
+          ]
+        },
+        {
+          "magnitudeValue": 35,
+          "magnitudeUnit": "kts",
+          "date": "2026-09-30T09:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -43.9,
+            33.5
+          ]
+        },
+        {
+          "magnitudeValue": 30,
+          "magnitudeUnit": "kts",
+          "date": "2026-09-30T15:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -43.6,
+            33.4
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EONET_24964",
+      "title": "Wildfire SAN FRANCISCO 2, Starr, Texas",
+      "description": "2 Miles S from LA CASITA, TX",
+      "link": "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_24964",
+      "closed": null,
+      "categories": [
+        {
+          "id": "wildfires",
+          "title": "Wildfires"
+        }
+      ],
+      "sources": [
+        {
+          "id": "IRWIN",
+          "url": "https://irwin.doi.gov/observer/incidents/2026-TXRGR-000402"
+        }
+      ],
+      "geometry": [
+        {
+          "magnitudeValue": 510,
+          "magnitudeUnit": "acres",
+          "date": "2026-09-30T08:56:00Z",
+          "type": "Point",
+          "coordinates": [
+            -98.692222,
+            26.286667
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EONET_24963",
+      "title": "Wildfire Hatch Grade, Walla Walla, Washington",
+      "description": null,
+      "link": "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_24963",
+      "closed": null,
+      "categories": [
+        {
+          "id": "wildfires",
+          "title": "Wildfires"
+        }
+      ],
+      "sources": [
+        {
+          "id": "IRWIN",
+          "url": "https://irwin.doi.gov/observer/incidents/2026-WAWFS-000664"
+        }
+      ],
+      "geometry": [
+        {
+          "magnitudeValue": 5000,
+          "magnitudeUnit": "acres",
+          "date": "2026-09-29T19:50:00Z",
+          "type": "Point",
+          "coordinates": [
+            -118.8588,
+            46.0322
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EONET_24965",
+      "title": "Wildfire 3 ALPHA SIERRA, Broward, Florida",
+      "description": "5 Miles W from WESTON, FL",
+      "link": "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_24965",
+      "closed": null,
+      "categories": [
+        {
+          "id": "wildfires",
+          "title": "Wildfires"
+        }
+      ],
+      "sources": [
+        {
+          "id": "IRWIN",
+          "url": "https://irwin.doi.gov/observer/incidents/2026-FLFLS-1800153"
+        }
+      ],
+      "geometry": [
+        {
+          "magnitudeValue": 774,
+          "magnitudeUnit": "acres",
+          "date": "2026-09-28T21:53:00Z",
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                -80.6952778,
+                26.0341667
+              ],
+              [
+                -80.49527780000001,
+                26.0341667
+              ],
+              [
+                -80.49527780000001,
+                26.234166700000003
+              ],
+              [
+                -80.6952778,
+                26.234166700000003
+              ],
+              [
+                -80.6952778,
+                26.0341667
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EONET_5359",
+      "title": "Iceberg A76C",
+      "description": null,
+      "link": "https://eonet.gsfc.nasa.gov/api/v3/events/EONET_5359",
+      "closed": null,
+      "categories": [
+        {
+          "id": "seaLakeIce",
+          "title": "Sea and Lake Ice"
+        }
+      ],
+      "sources": [
+        {
+          "id": "NATICE",
+          "url": "https://usicecenter.gov/Products/AntarcIcebergs"
+        }
+      ],
+      "geometry": [
+        {
+          "magnitudeValue": 112,
+          "magnitudeUnit": "NM^2",
+          "date": "2026-09-10T00:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -26.43,
+            -53.94
+          ]
+        },
+        {
+          "magnitudeValue": 112,
+          "magnitudeUnit": "NM^2",
+          "date": "2026-09-18T00:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -26.55,
+            -54.48
+          ]
+        },
+        {
+          "magnitudeValue": 112,
+          "magnitudeUnit": "NM^2",
+          "date": "2026-10-01T00:00:00Z",
+          "type": "Point",
+          "coordinates": [
+            -25.27,
+            -55.41
+          ]
+        }
+      ]
+    }
+  ]
+}

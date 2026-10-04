@@ -1,0 +1,115 @@
+/* MapLibre globe in the green-on-black control-room theme. Scoped to .pulse-map. */
+
+/* Deep space behind the globe, with a phosphor-green halo where the atmosphere would be. */
+.pulse-map {
+  background:
+    radial-gradient(circle at 50% 50%, rgb(0 255 136 / 0.16) 0%, rgb(0 255 136 / 0.05) 28%, transparent 46%),
+    radial-gradient(ellipse at center, #02100a 0%, #010503 70%);
+  font-family: var(--font-mono);
+}
+
+/* Sparse star field. */
+.pulse-map::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgb(0 255 136 / 0.5), transparent),
+    radial-gradient(1px 1px at 83% 12%, rgb(0 255 136 / 0.35), transparent),
+    radial-gradient(1px 1px at 67% 82%, rgb(0 255 136 / 0.45), transparent),
+    radial-gradient(1px 1px at 22% 74%, rgb(0 255 136 / 0.3), transparent),
+    radial-gradient(1px 1px at 91% 58%, rgb(0 255 136 / 0.4), transparent),
+    radial-gradient(1px 1px at 41% 9%, rgb(0 255 136 / 0.3), transparent),
+    radial-gradient(1px 1px at 6% 46%, rgb(0 255 136 / 0.35), transparent);
+}
+
+/* Center crosshair, above the canvas but below the controls. */
+.pulse-map::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(rgb(0 255 136 / 0.1), rgb(0 255 136 / 0.1)) center / 1px 100% no-repeat,
+    linear-gradient(rgb(0 255 136 / 0.1), rgb(0 255 136 / 0.1)) center / 100% 1px no-repeat;
+}
+
+.pulse-map .maplibregl-map {
+  font-family: var(--font-mono);
+}
+.pulse-map .maplibregl-canvas-container,
+.pulse-map .maplibregl-canvas {
+  z-index: 1;
+}
+.pulse-map .maplibregl-canvas:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* Zoom / compass controls. */
+.pulse-map .maplibregl-ctrl-group {
+  background: var(--background);
+  border: 1px solid var(--border-strong);
+  border-radius: 0;
+  box-shadow: 0 0 10px rgb(0 255 136 / 0.12);
+}
+.pulse-map .maplibregl-ctrl-group button + button {
+  border-top-color: var(--border);
+}
+.pulse-map .maplibregl-ctrl-group button:hover {
+  background: var(--surface-2);
+}
+.pulse-map .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  /* Recolor the built-in dark SVG icons to phosphor green. */
+  filter: invert(1) sepia(1) hue-rotate(90deg) saturate(6) brightness(1.1);
+}
+
+/* Attribution (required by OpenFreeMap / OpenMapTiles / OSM). */
+.pulse-map .maplibregl-ctrl-attrib {
+  background: rgb(1 5 3 / 0.8);
+  color: var(--muted);
+  font-size: 9px;
+}
+.pulse-map .maplibregl-ctrl-attrib a {
+  color: var(--accent-dim);
+}
+.pulse-map .maplibregl-ctrl-attrib-button {
+  filter: invert(1) sepia(1) hue-rotate(90deg) saturate(4);
+  background-color: transparent;
+}
+.pulse-map .maplibregl-ctrl-attrib.maplibregl-compact {
+  background: rgb(1 5 3 / 0.85);
+}
+
+/* Hover tooltip. */
+.pulse-tip .maplibregl-popup-content {
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--border-strong);
+  border-radius: 0;
+  box-shadow: 0 0 12px rgb(0 255 136 / 0.18);
+  padding: 6px 8px;
+  max-width: 280px;
+  font-family: var(--font-geist-sans);
+  font-size: 12px;
+  line-height: 1.35;
+}
+.pulse-tip.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.pulse-tip.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.pulse-tip.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+  border-top-color: var(--border-strong);
+}
+.pulse-tip.maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.pulse-tip.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.pulse-tip.maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+  border-bottom-color: var(--border-strong);
+}
+.pulse-tip.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--border-strong);
+}
+.pulse-tip.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--border-strong);
+}

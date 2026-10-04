@@ -1,0 +1,3 @@
+53532 1a44203d77c89f904fc3b57a4d1d7f2d http://data.gdeltproject.org/gdeltv2/20261004161500.export.CSV.zip
+69548 1a05d91865707935234b317849c7fe82 http://data.gdeltproject.org/gdeltv2/20261004161500.mentions.CSV.zip
+2588156 3051aad38bb6f648865bd20bb35b7fa3 http://data.gdeltproject.org/gdeltv2/20261004161500.gkg.csv.zip

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:npr="https://www.npr.org/rss/" xmlns:nprml="https://api.npr.org/nprml" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+  <channel>
+    <title>NPR Topics: World</title>
+    <link>https://www.npr.org/templates/story/story.php?storyId=1004</link>
+    <description>NPR world news, international art and culture, world business and financial markets, world economy, and global trends in health, science and technology. Subscribe to the World Story of the Day podcast and RSS feed.</description>
+    <language>en</language>
+    <copyright>Copyright 2024 NPR - For Personal Use Only</copyright>
+    <generator>Story API Shim 1.2.24</generator>
+    <lastBuildDate>Sun, 04 Oct 2026 08:00:17 -0400</lastBuildDate>
+    <image>
+      <url>https://media.npr.org/images/podcasts/primary/npr_generic_image_300.jpg?s=200</url>
+      <title>NPR Topics: World</title>
+      <link>https://www.npr.org/sections/world/</link>
+    </image>
+    <item>
+      <title>She died covering war for Fox News. Her parents blame the network — and a star reporter</title>
+      <description>The family members of two Fox News journalists killed while covering the war in Ukraine are suing the network, saying it put getting the story ahead of its people.</description>
+      <pubDate>Sun, 04 Oct 2026 06:00:00 -0400</pubDate>
+      <link>https://www.npr.org/2026/10/04/nx-s1-5737621/fox-news-ukraine-deaths</link>
+      <guid>https://www.npr.org/2026/10/04/nx-s1-5737621/fox-news-ukraine-deaths</guid>
+      
+      <dc:creator>David Folkenflik</dc:creator>
+    </item>
+    <item>
+      <title>For some Brazilians, this election is a vote on Trump</title>
+      <description>President Trump says he&apos;s been having success winning races in Latin America. As Brazilian voters go to the polls, they&apos;re also deciding how much influence Trump should have in their country.</description>
+      <pubDate>Sat, 03 Oct 2026 17:57:36 -0400</pubDate>
+      <link>https://www.npr.org/2026/10/03/nx-s1-5989699/for-some-brazilians-this-election-is-a-vote-on-trump</link>
+      <guid>https://www.npr.org/2026/10/03/nx-s1-5989699/for-some-brazilians-this-election-is-a-vote-on-trump</guid>
+      
+      <dc:creator>Tara Neill</dc:creator>
+    </item>
+  </channel>
+</rss>

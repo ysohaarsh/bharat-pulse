@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+/*
+ * Pulse — "control room" theme: phosphor green on black.
+ * Use these tokens (bg-surface, border-border, text-accent…) instead of raw colors.
+ */
+:root {
+  --background: #010503;
+  --surface: #040c07;
+  --surface-2: #08170e;
+  --border: #113a24;
+  --border-strong: #1e6a42;
+  --foreground: #d3fbe4;
+  --muted: #5f9e7b;
+  --accent: #00ff88;
+  --accent-dim: #00a85a;
+  --warn: #ffb020;
+  --danger: #ff3355;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-jetbrains-mono);
+
+  /* Hard-edged consoles: near-square corners everywhere except true circles. */
+  --radius-sm: 1px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 4px;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse at 50% -20%, rgb(0 255 136 / 0.07), transparent 60%),
+    linear-gradient(rgb(0 255 136 / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(0 255 136 / 0.025) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
+  color: var(--foreground);
+}
+
+/* CRT scanlines over the whole UI. Purely decorative. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0 2px, rgb(0 0 0 / 0.18) 2px 3px);
+  mix-blend-mode: multiply;
+}
+
+::selection {
+  background: rgb(0 255 136 / 0.3);
+  color: #fff;
+}
+
+/* Thin green scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+@layer components {
+  /* Glowing phosphor text. */
+  .glow {
+    text-shadow: 0 0 6px rgb(0 255 136 / 0.55), 0 0 18px rgb(0 255 136 / 0.25);
+  }
+
+  /* A console panel: thin border, faint inner light, bracketed corners. */
+  .hud-panel {
+    position: relative;
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgb(0 255 136 / 0.035), transparent 120px), var(--surface);
+  }
+  .hud-panel::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    --c: var(--accent);
+    --l: 10px;
+    background:
+      linear-gradient(var(--c), var(--c)) top left / var(--l) 1px,
+      linear-gradient(var(--c), var(--c)) top left / 1px var(--l),
+      linear-gradient(var(--c), var(--c)) top right / var(--l) 1px,
+      linear-gradient(var(--c), var(--c)) top right / 1px var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) 1px,
+      linear-gradient(var(--c), var(--c)) bottom left / 1px var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) 1px,
+      linear-gradient(var(--c), var(--c)) bottom right / 1px var(--l);
+    background-repeat: no-repeat;
+    opacity: 0.7;
+    z-index: 1;
+  }
+
+  /* Angled tab label used in panel headers. */
+  .hud-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 1.1rem 0.2rem 0.6rem;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
+    background: var(--accent);
+    color: #001a0c;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* Header strip a .hud-tab sits on. */
+  .hud-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border-strong);
+    background: linear-gradient(90deg, rgb(0 255 136 / 0.08), transparent 70%);
+    padding-right: 0.5rem;
+    min-height: 1.75rem;
+  }
+
+  /* Small uppercase section label. */
+  .hud-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.blink {
+  animation: blink 1.2s steps(2, start) infinite;
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  animation: ticker var(--ticker-duration, 90s) linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blink,
+  .ticker-track {
+    animation: none;
+  }
+}

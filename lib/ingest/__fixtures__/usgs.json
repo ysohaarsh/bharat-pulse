@@ -1,0 +1,301 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": 1791115414000,
+    "url": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson",
+    "title": "USGS Magnitude 2.5+ Earthquakes, Past Day",
+    "status": 200,
+    "api": "2.7.0",
+    "count": 7
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "mag": 5.9,
+        "place": "39 km WSW of Tambolaka, Indonesia",
+        "time": 1791068155358,
+        "updated": 1791084486947,
+        "tz": null,
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tzer",
+        "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000tzer.geojson",
+        "felt": 5,
+        "cdi": 4.5,
+        "mmi": 5.147,
+        "alert": "green",
+        "status": "reviewed",
+        "tsunami": 1,
+        "sig": 538,
+        "net": "us",
+        "code": "6000tzer",
+        "ids": ",us6000tzer,",
+        "sources": ",us,",
+        "types": ",dyfi,ground-failure,losspager,origin,phase-data,shakemap,",
+        "nst": 82,
+        "dmin": 4.6,
+        "rms": 1.29,
+        "gap": 63,
+        "magType": "mww",
+        "type": "earthquake",
+        "title": "M 5.9 - 39 km WSW of Tambolaka, Indonesia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          118.9078,
+          -9.5672,
+          45.951
+        ]
+      },
+      "id": "us6000tzer"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "mag": 5.6,
+        "place": "80 km S of Banda Aceh, Indonesia",
+        "time": 1791070655621,
+        "updated": 1791078207399,
+        "tz": null,
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tzfg",
+        "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000tzfg.geojson",
+        "felt": null,
+        "cdi": null,
+        "mmi": 4.244,
+        "alert": "green",
+        "status": "reviewed",
+        "tsunami": 0,
+        "sig": 482,
+        "net": "us",
+        "code": "6000tzfg",
+        "ids": ",us6000tzfg,",
+        "sources": ",us,",
+        "types": ",losspager,origin,phase-data,shakemap,",
+        "nst": 82,
+        "dmin": 5.405,
+        "rms": 0.88,
+        "gap": 65,
+        "magType": "mb",
+        "type": "earthquake",
+        "title": "M 5.6 - 80 km S of Banda Aceh, Indonesia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          95.2428,
+          4.8223,
+          69.726
+        ]
+      },
+      "id": "us6000tzfg"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "mag": 5.2,
+        "place": "19 km ESE of Feke, Turkey",
+        "time": 1791114203185,
+        "updated": 1791115382053,
+        "tz": null,
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tzip",
+        "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000tzip.geojson",
+        "felt": 1,
+        "cdi": 2.2,
+        "mmi": null,
+        "alert": null,
+        "status": "reviewed",
+        "tsunami": 0,
+        "sig": 416,
+        "net": "us",
+        "code": "6000tzip",
+        "ids": ",us6000tzip,",
+        "sources": ",us,",
+        "types": ",dyfi,origin,phase-data,",
+        "nst": 114,
+        "dmin": 0.248,
+        "rms": 0.92,
+        "gap": 46,
+        "magType": "mb",
+        "type": "earthquake",
+        "title": "M 5.2 - 19 km ESE of Feke, Turkey"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.1075,
+          37.7409,
+          10
+        ]
+      },
+      "id": "us6000tzip"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "mag": 4.7,
+        "place": "21 km SSE of Saimbeyli, Turkey",
+        "time": 1791112766314,
+        "updated": 1791115069741,
+        "tz": null,
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tzif",
+        "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000tzif.geojson",
+        "felt": 1,
+        "cdi": 2.2,
+        "mmi": null,
+        "alert": null,
+        "status": "reviewed",
+        "tsunami": 0,
+        "sig": 340,
+        "net": "us",
+        "code": "6000tzif",
+        "ids": ",us6000tzif,",
+        "sources": ",us,",
+        "types": ",dyfi,moment-tensor,origin,phase-data,",
+        "nst": 77,
+        "dmin": 0.26,
+        "rms": 0.58,
+        "gap": 45,
+        "magType": "mww",
+        "type": "earthquake",
+        "title": "M 4.7 - 21 km SSE of Saimbeyli, Turkey"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.1749,
+          37.8028,
+          10
+        ]
+      },
+      "id": "us6000tzif"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "mag": 3.99,
+        "place": "3 km SW of Punta Cana, Dominican Republic",
+        "time": 1791104366420,
+        "updated": 1791113895685,
+        "tz": null,
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/pr2026277001",
+        "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/pr2026277001.geojson",
+        "felt": null,
+        "cdi": null,
+        "mmi": null,
+        "alert": null,
+        "status": "reviewed",
+        "tsunami": 0,
+        "sig": 245,
+        "net": "pr",
+        "code": "2026277001",
+        "ids": ",pr2026277001,",
+        "sources": ",pr,",
+        "types": ",origin,phase-data,",
+        "nst": 28,
+        "dmin": 0.0659,
+        "rms": 0.49,
+        "gap": 136,
+        "magType": "md",
+        "type": "earthquake",
+        "title": "M 4.0 - 3 km SW of Punta Cana, Dominican Republic"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -68.4311,
+          18.5571,
+          141
+        ]
+      },
+      "id": "pr2026277001"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "mag": 2.5,
+        "place": "42 km SSE of Chignik, Alaska",
+        "time": 1791061605650,
+        "updated": 1791061724925,
+        "tz": null,
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/aka2026tpogqq",
+        "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/aka2026tpogqq.geojson",
+        "felt": null,
+        "cdi": null,
+        "mmi": null,
+        "alert": null,
+        "status": "automatic",
+        "tsunami": 0,
+        "sig": 96,
+        "net": "ak",
+        "code": "a2026tpogqq",
+        "ids": ",aka2026tpogqq,",
+        "sources": ",ak,",
+        "types": ",origin,phase-data,",
+        "nst": 26,
+        "dmin": 0.4,
+        "rms": 0.6,
+        "gap": 223,
+        "magType": "ml",
+        "type": "earthquake",
+        "title": "M 2.5 - 42 km SSE of Chignik, Alaska"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -158.022,
+          55.976,
+          49.8
+        ]
+      },
+      "id": "aka2026tpogqq"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "mag": null,
+        "place": "Volcano Islands, Japan region",
+        "time": 1791112368270,
+        "updated": 1791113906415,
+        "tz": null,
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000tzid",
+        "detail": "https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/us6000tzid.geojson",
+        "felt": null,
+        "cdi": null,
+        "mmi": 0,
+        "alert": "green",
+        "status": "reviewed",
+        "tsunami": 0,
+        "sig": 465,
+        "net": "us",
+        "code": "6000tzid",
+        "ids": ",us6000tzid,",
+        "sources": ",us,",
+        "types": ",losspager,origin,phase-data,shakemap,",
+        "nst": 101,
+        "dmin": 12.618,
+        "rms": 0.68,
+        "gap": 80,
+        "magType": "mb",
+        "type": "earthquake",
+        "title": "M ? - Volcano Islands, Japan region"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          144.6734,
+          22.8286,
+          10
+        ]
+      },
+      "id": "us6000tzid"
+    }
+  ],
+  "bbox": [
+    -179.4827,
+    -58.1594,
+    0.0718,
+    159.9887,
+    67.4,
+    575.042
+  ]
+}
