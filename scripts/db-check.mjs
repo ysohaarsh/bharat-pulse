@@ -16,6 +16,7 @@ const fail = (msg) => {
   console.log("✗", msg);
   process.exitCode = 1;
 };
+const check = (cond, good, bad) => (cond ? ok(good) : fail(bad));
 const q = async (sql, params) => (await db.query(sql, params)).rows;
 
 // ---------- Supabase stubs ----------
@@ -105,15 +106,13 @@ await db.exec(`insert into events (source, external_id, title, category, severit
          ('sachet', 'a2', 'Flood alert Patna', 'flood', 4, 25.6, 85.1, now()),
          ('ncs', 'q1', 'M3 Afghanistan', 'earthquake', 1, 35.9, 70.6, now())`);
 const evs = await q("select external_id, state, district from events order by external_id");
-evs[0].state === "IN-KA" && evs[1].state === "IN-BR" && evs[2].state === null
-  ? ok(`event location trigger: ${JSON.stringify(evs)}`)
-  : fail(`event location trigger: ${JSON.stringify(evs)}`);
+check(evs[0].state === "IN-KA" && evs[1].state === "IN-BR" && evs[2].state === null, `event location trigger: ${JSON.stringify(evs)}`, `event location trigger: ${JSON.stringify(evs)}`);
 const alerts = await q("select count(*)::int as n from alerts");
-alerts[0].n === 1 ? ok("watchlist alert created for the Karnataka flood only") : fail(`alerts: ${alerts[0].n}`);
+check(alerts[0].n === 1, "watchlist alert created for the Karnataka flood only", `alerts: ${alerts[0].n}`);
 await db.exec(`update events set title = 'changed', title_en = 'x' where external_id = 'a1'`);
 await db.exec(`update events set title_en = 'Flood (en)' where external_id = 'a2'`);
 const tr = await q("select external_id, title_en from events where external_id in ('a1','a2') order by 1");
-tr[0].title_en === null && tr[1].title_en === "Flood (en)" ? ok("title change resets translations; translation-only update keeps them") : fail(JSON.stringify(tr));
+check(tr[0].title_en === null && tr[1].title_en === "Flood (en)", "title change resets translations; translation-only update keeps them", JSON.stringify(tr));
 
 // ---------- reports: RLS, column grants, trigger, daily cap, votes ----------
 const asUser = async (uid, sql, params) => {
@@ -128,9 +127,7 @@ const U1 = "11111111-1111-1111-1111-111111111111";
 const U2 = "22222222-2222-2222-2222-222222222222";
 await asUser(U1, "insert into reports (kind, description, lat, lng) values ('pothole', 'Huge pothole', 12.9756, 77.6066)");
 const r = (await q("select * from reports"))[0];
-r.state === "IN-KA" && r.pc_code === "PC:S10_25" && r.ac_code && r.user_id === U1
-  ? ok(`report trigger filled state=${r.state} pc=${r.pc_code} ac=${r.ac_code} district=${r.district}`)
-  : fail(`report: ${JSON.stringify(r)}`);
+check(r.state === "IN-KA" && r.pc_code === "PC:S10_25" && r.ac_code && r.user_id === U1, `report trigger filled state=${r.state} pc=${r.pc_code} ac=${r.ac_code} district=${r.district}`, `report: ${JSON.stringify(r)}`);
 for (const [label, sql] of [
   ["spoofed user_id", `insert into reports (user_id, kind, description, lat, lng) values ('${U2}', 'garbage', 'xxx', 12.9, 77.6)`],
   ["setting upvotes", `insert into reports (kind, description, lat, lng, upvotes) values ('garbage', 'xxx', 12.9, 77.6, 99)`],
@@ -147,7 +144,7 @@ for (const [label, sql] of [
 try {
   await asUser(U2, `update reports set status = 'resolved' where id = ${r.id}`);
   const s = (await q(`select status from reports where id = ${r.id}`))[0].status;
-  s === "open" ? ok("another user cannot resolve my report (RLS)") : fail("another user resolved my report");
+  check(s === "open", "another user cannot resolve my report (RLS)", "another user resolved my report");
 } catch {
   ok("another user cannot resolve my report");
 }
@@ -159,10 +156,10 @@ try {
 }
 await asUser(U1, `update reports set status = 'resolved' where id = ${r.id}`);
 const res = (await q(`select status, resolved_at from reports where id = ${r.id}`))[0];
-res.status === "resolved" && res.resolved_at ? ok("reporter resolved own report; resolved_at stamped") : fail(JSON.stringify(res));
+check(res.status === "resolved" && res.resolved_at, "reporter resolved own report; resolved_at stamped", JSON.stringify(res));
 await asUser(U2, `insert into report_votes (report_id) values (${r.id})`);
 const up = (await q(`select upvotes from reports where id = ${r.id}`))[0].upvotes;
-up === 1 ? ok("vote counted via trigger") : fail(`upvotes ${up}`);
+check(up === 1, "vote counted via trigger", `upvotes ${up}`);
 let capped = false;
 for (let i = 0; i < 10; i++) {
   try {
@@ -172,7 +169,7 @@ for (let i = 0; i < 10; i++) {
     break;
   }
 }
-capped ? ok("daily cap of 10 reports enforced") : fail("daily cap not enforced");
+check(capped, "daily cap of 10 reports enforced", "daily cap not enforced");
 
 // ---------- anon cannot write ----------
 await db.exec("set role anon");
@@ -183,7 +180,7 @@ try {
   ok("anon cannot write events");
 }
 const pub = await q("select count(*)::int as n from boundaries");
-pub[0].n > 4000 ? ok("anon can read boundaries") : fail("anon can't read boundaries");
+check(pub[0].n > 4000, "anon can read boundaries", "anon can't read boundaries");
 try {
   await q("select public.load_boundaries('[]'::jsonb)");
   fail("anon can call load_boundaries");
