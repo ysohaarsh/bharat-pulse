@@ -13,7 +13,8 @@
     "prebuild": "node ./scripts/copy-maplibre-worker.mjs",
     "predev": "node ./scripts/copy-maplibre-worker.mjs",
     "geo:build": "node scripts/build-geo.mjs",
-    "geo:load": "node --env-file=.env.local scripts/load-boundaries.mjs"
+    "geo:load": "node --env-file=.env.local scripts/load-boundaries.mjs",
+    "db:check": "node scripts/db-check.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -28,6 +29,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@electric-sql/pglite-postgis": "^0.2.8",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.19.1",

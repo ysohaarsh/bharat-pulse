@@ -5,10 +5,18 @@
 India situation monitor (fork of Pulse). Next.js 16 App Router + Supabase (PostGIS) + MapLibre, deployed on Vercel.
 Note: Next 16 renamed `middleware.ts` → `proxy.ts`, and `cookies()`/`params` are async.
 
+## Session protocol (one task per session — the user's usage limits depend on it)
+1. **Start:** read `docs/ROADMAP.md`, pick the first `todo` task (or the one the user names). Read only the files that task lists; don't re-explore the codebase or re-research data sources (see `docs/INDIA_DATA_SOURCES.md`).
+2. **Work:** stay inside the task. If you discover follow-up work, add it to the roadmap instead of doing it.
+3. **Finish:** `npm run lint && npm run typecheck && npm test` (+ `npm run db:check` if SQL changed) → update the task's Status/Notes and "Gotchas learned" in `docs/ROADMAP.md` → commit → tell the user: **"✅ <task> done and committed — safe to `/clear` now; next up: <next task>."**
+4. If context gets large mid-task, tell the user to run `/compact` (state is in files). Never leave a task half-done across a `/clear` without writing its progress into the roadmap first.
+5. Don't put notes in `AGENTS.md` — `next dev` regenerates it.
+
 ## Commands
 - `npm run dev` / `npm run build`
 - `npm run lint && npm run typecheck && npm test` — must pass before any commit
 - `npm run geo:build` (download + simplify boundaries) → `npm run geo:load` (into PostGIS)
+- `npm run db:check` — migrations + whois/RLS/trigger checks on in-memory PostGIS (no Docker needed)
 
 ## Architecture
 - `lib/types.ts` — **shared contract** (`NormalizedEvent`, `Category`, `Source`, `Job`, `MetricRow`). Don't change it without coordinating.
