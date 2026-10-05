@@ -9,9 +9,10 @@ export function ev(overrides: Partial<BriefEvent> = {}): BriefEvent {
     title: `Event ${id}`,
     category: "other",
     severity: 2,
-    country: null,
+    state: null,
+    title_en: null,
     occurred_at: "2026-10-03T12:00:00.000Z",
-    source: "rss",
+    source: "news",
     ...overrides,
   };
 }

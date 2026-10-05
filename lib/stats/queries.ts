@@ -18,7 +18,7 @@ export async function fetchStatsEvents(window: StatsWindow, now: Date = new Date
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("events")
-      .select("category, severity, country, source, occurred_at")
+      .select("category, severity, state, source, occurred_at")
       .gte("occurred_at", start.toISOString())
       // Sports is an opt-in side feed and never counts toward stats (summarize() drops it too).
       .neq("category", "sports")

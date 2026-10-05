@@ -6,7 +6,7 @@ import { FOCUS } from "@/components/auth/styles";
 import { resetErrorMessage } from "@/app/auth/errors";
 import { safeNext } from "../auth/safe-next";
 
-export const metadata: Metadata = { title: "Reset password — Pulse" };
+export const metadata: Metadata = { title: "Reset password — Bharat Pulse" };
 
 function first(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;

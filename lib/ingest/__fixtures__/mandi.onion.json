@@ -1,0 +1,8 @@
+{"records":[
+ {"state":"Maharashtra","district":"Nashik","market":"Lasalgaon","commodity":"Onion","variety":"Red","grade":"FAQ","arrival_date":"04/10/2026","min_price":"1800","max_price":"2600","modal_price":"2300"},
+ {"state":"Maharashtra","district":"Pune","market":"Pune","commodity":"Onion","variety":"Local","grade":"FAQ","arrival_date":"04/10/2026","min_price":"1500","max_price":"2700","modal_price":"2100"},
+ {"state":"Karnataka","district":"Bangalore","market":"Bangalore","commodity":"Onion","variety":"Bellary","grade":"FAQ","arrival_date":"04/10/2026","min_price":"2000","max_price":"3200","modal_price":"2800"},
+ {"state":"NCT of Delhi","district":"Delhi","market":"Azadpur","commodity":"Onion","variety":"Onion","grade":"FAQ","arrival_date":"04/10/2026","min_price":"2200","max_price":"3400","modal_price":"3000"},
+ {"state":"Karnataka","district":"Bangalore","market":"Bangalore","commodity":"Onion","variety":"Bellary","grade":"FAQ","arrival_date":"03/10/2026","min_price":"2000","max_price":"3100","modal_price":"9999"},
+ {"state":"Gujarat","district":"Rajkot","market":"Rajkot","commodity":"Onion","variety":"Red","grade":"FAQ","arrival_date":"04/10/2026","min_price":"","max_price":"","modal_price":""}
+]}

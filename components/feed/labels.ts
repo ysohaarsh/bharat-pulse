@@ -2,12 +2,12 @@ import type { Source } from "@/lib/types";
 import type { TimeWindow } from "@/lib/events/filters";
 
 export const SOURCE_LABEL: Record<Source, string> = {
-  usgs: "USGS",
-  eonet: "NASA EONET",
-  gdelt: "GDELT",
-  rss: "RSS",
-  gdacs: "GDACS",
-  who: "WHO",
+  sachet: "NDMA",
+  ncs: "NCS",
+  firms: "FIRMS",
+  aqi: "AQI",
+  pib: "PIB",
+  news: "NEWS",
   sports: "SPORTS",
 };
 

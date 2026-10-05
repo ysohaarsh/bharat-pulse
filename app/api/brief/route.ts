@@ -1,12 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { isCronAuthorized } from "@/lib/cron-auth";
-import { generateWorldBrief } from "@/lib/brief/generate";
+import { generateIndiaBrief } from "@/lib/brief/generate";
 
 // LLM call has a 60s timeout; leave headroom for DB work.
 export const maxDuration = 90;
 
 // Triggered daily by Supabase pg_cron (via pg_net) with `Authorization: Bearer $CRON_SECRET`.
-// POST /api/brief                    -> world brief for the 24h ending at the last full UTC hour
+// POST /api/brief                    -> India brief for the 24h ending at the last full UTC hour
 // POST /api/brief?force=1            -> regenerate even if that period already has a brief
 // POST /api/brief?end=<ISO 8601>     -> 24h ending at a specific time (testing/backfill)
 export async function POST(request: NextRequest) {
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    return NextResponse.json(await generateWorldBrief({ force, periodEnd }));
+    return NextResponse.json(await generateIndiaBrief({ force, periodEnd }));
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("[brief] generation failed:", message);

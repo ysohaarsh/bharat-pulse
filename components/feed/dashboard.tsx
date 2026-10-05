@@ -5,9 +5,11 @@ import { usePathname, useRouter } from "next/navigation";
 import type { EventRow } from "@/lib/types";
 import { DEFAULT_FILTERS, type EventFilters, filtersKey, matchesFilters, serializeFilters } from "@/lib/events/filters";
 import { useLiveEvents } from "@/lib/events/use-live-events";
+import type { Vitals } from "@/lib/metrics/vitals";
 import { summarizeSitrep } from "@/lib/events/sitrep";
 import type { Category } from "@/lib/types";
 import { HudPanel } from "@/components/hud/hud-panel";
+import { useLang } from "@/components/i18n/lang-provider";
 import { MapView } from "@/components/map/map-view";
 import type { FlyTarget } from "@/components/map/event-map";
 import { EventDrawer } from "./event-drawer";
@@ -34,17 +36,26 @@ type Selection = { id: number; origin: "map" | "feed" };
 
 export function Dashboard({
   initialEvents,
+  vitals,
   filters,
   serverNow,
   error,
 }: {
   initialEvents: EventRow[];
+  vitals: Vitals;
   filters: EventFilters;
   serverNow: number;
   error: string | null;
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { t } = useLang();
+
+  // Vitals (power, AQI, mandi) are server-rendered; refresh them with the page data every 5 min.
+  useEffect(() => {
+    const id = setInterval(() => router.refresh(), 5 * 60_000);
+    return () => clearInterval(id);
+  }, [router]);
   const [isPending, startTransition] = useTransition();
   // Filters apply locally right away; the server refetch lands when the transition completes.
   const [activeFilters, setActiveFilters] = useOptimistic(filters);
@@ -103,7 +114,7 @@ export function Dashboard({
       <HudPanel
         as="aside"
         aria-label="Live event feed"
-        title="Live feed"
+        title={t("panelFeed")}
         code="03"
         headingLevel={1}
         right={<LiveIndicator status={status} count={visible.length} pending={isPending} />}
@@ -132,6 +143,7 @@ export function Dashboard({
       <div className="shrink-0 lg:col-start-1 lg:row-start-1 lg:min-h-0">
         <SitrepPanel
           sitrep={sitrep}
+          vitals={vitals}
           now={now}
           windowLabel={WINDOW_LABEL[activeFilters.window]}
           onSelect={selectFromFeed}

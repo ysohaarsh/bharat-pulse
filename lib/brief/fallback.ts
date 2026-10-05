@@ -1,6 +1,6 @@
 import { CATEGORY_META } from "@/lib/categories";
 import { compareImportance } from "./select";
-import { countryName, type BriefEvent } from "./types";
+import { englishTitle, stateLabel, type BriefEvent } from "./types";
 
 export const EXTRACTIVE_MODEL = "extractive";
 
@@ -50,8 +50,8 @@ export function buildExtractiveBrief(
     const label = CATEGORY_META[category as keyof typeof CATEGORY_META]?.label ?? category;
     lines.push("", `## ${label}`, "");
     for (const e of events.slice(0, perSection)) {
-      const country = countryName(e.country);
-      lines.push(`- ${cleanTitle(e.title)}${country ? ` — ${country}` : ""}`);
+      const state = stateLabel(e.state);
+      lines.push(`- ${cleanTitle(englishTitle(e))}${state ? ` — ${state}` : ""}`);
     }
   }
   return lines.join("\n");

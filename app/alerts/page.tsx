@@ -9,7 +9,7 @@ import type { Category } from "@/lib/types";
 import { safeHttpUrl } from "@/lib/url";
 import { markAlertRead, markAllAlertsRead } from "./actions";
 
-export const metadata: Metadata = { title: "Alerts — Pulse" };
+export const metadata: Metadata = { title: "Alerts — Bharat Pulse" };
 
 const LIMIT = 200;
 
@@ -37,7 +37,7 @@ export default async function AlertsPage() {
   const { data, error } = await supabase
     .from("alerts")
     .select(
-      "id, read_at, created_at, events(id, title, category, severity, occurred_at, url, country), watchlists(id, name)",
+      "id, read_at, created_at, events(id, title, category, severity, occurred_at, url, state), watchlists(id, name)",
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
@@ -130,7 +130,7 @@ export default async function AlertsPage() {
                           {relative(ev.occurred_at, now)}
                         </time>
                       )}
-                      {ev?.country && <span className="font-mono">{ev.country}</span>}
+                      {ev?.state && <span className="font-mono">{ev.state}</span>}
                       {a.watchlists && <span>· {a.watchlists.name}</span>}
                     </p>
                   </div>

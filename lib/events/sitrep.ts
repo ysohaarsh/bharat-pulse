@@ -21,7 +21,7 @@ export interface Sitrep {
   highSeverity: number;
   byCategory: { category: Category; count: number }[];
   bySource: { source: Source; count: number; latest: string | null }[];
-  hotspots: { country: string; count: number; maxSeverity: number }[];
+  hotspots: { state: string; count: number; maxSeverity: number }[];
   priority: EventRow[];
 }
 
@@ -48,7 +48,7 @@ export function summarizeSitrep(visible: readonly EventRow[], { hotspots = 6, pr
   const sources = new Map<Source, { count: number; latest: string | null }>(
     CORE_SOURCES.map((s) => [s, { count: 0, latest: null }]),
   );
-  const countries = new Map<string, { count: number; maxSeverity: number }>();
+  const states = new Map<string, { count: number; maxSeverity: number }>();
 
   for (const e of events) {
     if (categoryCounts.has(e.category)) categoryCounts.set(e.category, categoryCounts.get(e.category)! + 1);
@@ -59,11 +59,11 @@ export function summarizeSitrep(visible: readonly EventRow[], { hotspots = 6, pr
       if (!src.latest || Date.parse(e.occurred_at) > Date.parse(src.latest)) src.latest = e.occurred_at;
     }
 
-    if (e.country) {
-      const c = countries.get(e.country) ?? { count: 0, maxSeverity: 0 };
+    if (e.state) {
+      const c = states.get(e.state) ?? { count: 0, maxSeverity: 0 };
       c.count++;
       c.maxSeverity = Math.max(c.maxSeverity, e.severity);
-      countries.set(e.country, c);
+      states.set(e.state, c);
     }
   }
 
@@ -76,9 +76,9 @@ export function summarizeSitrep(visible: readonly EventRow[], { hotspots = 6, pr
       .map(([category, count]) => ({ category, count }))
       .sort((a, b) => b.count - a.count || CORE_CATEGORIES.indexOf(a.category) - CORE_CATEGORIES.indexOf(b.category)),
     bySource: CORE_SOURCES.map((s) => ({ source: s, ...sources.get(s)! })),
-    hotspots: [...countries]
-      .map(([country, v]) => ({ country, ...v }))
-      .sort((a, b) => b.count - a.count || b.maxSeverity - a.maxSeverity || a.country.localeCompare(b.country))
+    hotspots: [...states]
+      .map(([state, v]) => ({ state, ...v }))
+      .sort((a, b) => b.count - a.count || b.maxSeverity - a.maxSeverity || a.state.localeCompare(b.state))
       .slice(0, hotspots),
     priority: ranked.filter((e) => e.severity >= 3).slice(0, priority),
   };

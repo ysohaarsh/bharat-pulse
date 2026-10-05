@@ -4,15 +4,16 @@ import { ev } from "./test-utils";
 
 const events = [
   ev({
-    title: "Shelling reported near Kharkiv",
-    category: "conflict",
-    severity: 5,
-    country: "UA",
-    source: "gdelt",
+    title: "River Kosi at Kursela continues to flow in severe flood situation",
+    category: "flood",
+    severity: 4,
+    state: "IN-BR",
+    source: "sachet",
     occurred_at: "2026-10-03T08:00:00.000Z",
   }),
-  ev({ title: "M 6.1 - 30 km S of Hualien", category: "earthquake", severity: 4, country: "TW", source: "usgs" }),
-  ev({ title: "Central bank raises rates", category: "economy", severity: 2, country: null, source: "rss" }),
+  ev({ title: "M4.6 earthquake — Assam", category: "earthquake", severity: 2, state: "IN-AS", source: "ncs" }),
+  // A Hindi PIB release: the prompt must use the English machine translation.
+  ev({ title: "प्रधानमंत्री ने एशियाई खेल में भारतीय दल की सराहना की", title_en: "PM lauds Indian contingent at Asian Games", category: "politics", severity: 2, state: null, source: "pib" }),
 ];
 const messages = buildBriefPrompt({
   events,
@@ -31,35 +32,40 @@ describe("buildBriefPrompt", () => {
     expect(system.content).toMatch(/speculat/i);
     expect(system.content).toMatch(/ONLY the events provided/);
     expect(system.content).toMatch(/250-400 words/);
+    expect(system.content).toMatch(/India Brief/);
   });
 
-  it("specifies the markdown format and sections", () => {
+  it("specifies the markdown format and India sections", () => {
     expect(system.content).toContain("# Overview");
-    expect(system.content).toContain("## Conflict & Security");
-    expect(system.content).toContain("## Natural Hazards");
-    expect(system.content).toContain("## Politics & Economy");
+    expect(system.content).toContain("## Disasters & Weather");
+    expect(system.content).toContain("## Governance & Politics");
+    expect(system.content).toContain("## Economy & Development");
     expect(system.content).toContain("`- ` bullets");
     expect(system.content).toMatch(/Omit any section/);
-    expect(system.content).toMatch(/country names/i);
+    expect(system.content).toMatch(/state names/i);
   });
 
   it("includes the period and every event with its fields", () => {
     expect(user.content).toContain("2026-10-02T12:00:00.000Z to 2026-10-03T12:00:00.000Z");
     expect(user.content).toContain("3 most important events");
-    expect(user.content).toContain("Shelling reported near Kharkiv");
-    expect(user.content).toContain("Central bank raises rates");
-    expect(user.content).toContain("Ukraine");
-    expect(user.content).toContain("Taiwan");
-    expect(user.content).toContain("[Conflict]");
-    expect(user.content).toContain("severity 5/5");
-    expect(user.content).toContain("gdelt");
+    expect(user.content).toContain("River Kosi at Kursela");
+    expect(user.content).toContain("Bihar");
+    expect(user.content).toContain("Assam");
+    expect(user.content).toContain("[Flood & landslide]");
+    expect(user.content).toContain("severity 4/5");
+    expect(user.content).toContain("sachet");
     expect(user.content).toContain("2026-10-03T08:00:00.000Z");
+  });
+
+  it("uses English translations for non-English headlines", () => {
+    expect(user.content).toContain("PM lauds Indian contingent at Asian Games");
+    expect(user.content).not.toContain("प्रधानमंत्री");
   });
 });
 
 describe("formatEventLine", () => {
-  it("numbers lines, uses 'unknown' for missing country and collapses whitespace", () => {
-    const e = ev({ title: "A \n  b", country: null, category: "health", severity: 3, source: "rss", occurred_at: "T" });
-    expect(formatEventLine(e, 0)).toBe("1. [Health] severity 3/5 | unknown | T | rss | A b");
+  it("numbers lines, uses 'unknown' for missing state and collapses whitespace", () => {
+    const e = ev({ title: "A \n  b", state: null, category: "health", severity: 3, source: "news", occurred_at: "T" });
+    expect(formatEventLine(e, 0)).toBe("1. [Health] severity 3/5 | unknown | T | news | A b");
   });
 });

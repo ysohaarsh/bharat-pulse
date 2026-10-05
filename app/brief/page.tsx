@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BriefContent } from "@/components/brief/brief-content";
 import { TopEvents } from "@/components/brief/top-events";
-import { formatUtc, formatUtcDate } from "@/lib/stats/format";
-import { fetchTopEvents, fetchWorldBriefs } from "./queries";
+import { getLang } from "@/lib/i18n/server";
+import { formatIst, formatIstDate } from "@/lib/stats/format";
+import { fetchTopEvents, fetchIndiaBriefs } from "./queries";
 
-export const metadata: Metadata = { title: "World Brief — Pulse" };
+export const metadata: Metadata = { title: "India Brief — Bharat Pulse" };
 
 function parseId(value: string | string[] | undefined): number | null {
   const v = Array.isArray(value) ? value[0] : value;
@@ -20,7 +21,9 @@ export default async function BriefPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const selectedId = parseId((await searchParams).id);
-  const { brief, archive, error } = await fetchWorldBriefs(selectedId);
+  const [{ brief, archive, error }, lang] = await Promise.all([fetchIndiaBriefs(selectedId), getLang()]);
+  // Hindi edition when the UI is in Hindi and a translation exists.
+  const hindi = lang === "hi" && Boolean(brief?.content_hi);
 
   const now = new Date();
   const periodStart = brief?.period_start ?? new Date(now.getTime() - 24 * 3_600_000).toISOString();
@@ -33,8 +36,12 @@ export default async function BriefPage({
       <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[1fr_16rem]">
         <div className="flex min-w-0 flex-col gap-6">
           <header>
-            <h1 className="glow text-lg font-bold uppercase tracking-[0.25em] text-accent">World Brief</h1>
-            <p className="text-sm text-muted">A daily summary of what happened around the world.</p>
+            <h1 className="glow text-lg font-bold uppercase tracking-[0.25em] text-accent">India Brief</h1>
+            <p className="text-sm text-muted">
+              {lang === "hi"
+                ? "भारत में पिछले 24 घंटों की प्रमुख घटनाओं का दैनिक सारांश।"
+                : "A daily summary of the last 24 hours across India: disasters, security, governance, economy."}
+            </p>
           </header>
 
           {error && (
@@ -57,10 +64,10 @@ export default async function BriefPage({
             <article className="hud-panel p-5" aria-labelledby="brief-title">
               <header className="mb-4 border-b border-border pb-3">
                 <h2 id="brief-title" className="font-semibold">
-                  {formatUtc(brief.period_start)} – {formatUtc(brief.period_end)}
+                  {formatIst(brief.period_start)} – {formatIst(brief.period_end)}
                 </h2>
                 <p className="mt-1 text-xs text-muted">
-                  Generated <time dateTime={brief.created_at}>{formatUtc(brief.created_at)}</time>
+                  Generated <time dateTime={brief.created_at}>{formatIst(brief.created_at)}</time>
                   {brief.model && (
                     <>
                       {" "}
@@ -77,7 +84,10 @@ export default async function BriefPage({
                   )}
                 </p>
               </header>
-              <BriefContent content={brief.content} />
+              <div lang={hindi ? "hi" : "en"}>
+                <BriefContent content={hindi ? brief.content_hi! : brief.content} />
+              </div>
+              {hindi && <p className="mt-3 text-[10px] text-muted">मशीन अनुवाद (Bhashini / Sarvam) · मूल अंग्रेज़ी में</p>}
             </article>
           ) : (
             !error &&
@@ -85,7 +95,7 @@ export default async function BriefPage({
               <section className="rounded-lg border border-dashed border-border bg-surface p-5">
                 <h2 className="font-semibold">No brief yet</h2>
                 <p className="mt-2 text-sm text-muted">
-                  A World Brief is generated once a day from the latest events — written by an AI model when one is
+                  A India Brief is generated once a day from the latest events — written by an AI model when one is
                   configured, otherwise as an automatic digest of the top stories. The first brief will appear here
                   after the daily job runs.
                 </p>
@@ -101,14 +111,14 @@ export default async function BriefPage({
               Top events in this period
             </h2>
             <p className="mb-2 text-xs text-muted">
-              10 highest-severity events, {formatUtc(periodStart)} – {formatUtc(periodEnd)}
+              10 highest-severity events, {formatIst(periodStart)} – {formatIst(periodEnd)}
             </p>
             {top.error ? (
               <p role="alert" className="text-sm text-danger">
                 Couldn&apos;t load events: {top.error}
               </p>
             ) : (
-              <TopEvents events={top.events} />
+              <TopEvents events={top.events} lang={lang} />
             )}
           </section>
         </div>
@@ -127,9 +137,9 @@ export default async function BriefPage({
                     href={`/brief?id=${a.id}`}
                     className="block rounded-md border border-transparent px-3 py-2 text-muted hover:border-border hover:bg-surface hover:text-foreground"
                   >
-                    <time dateTime={a.period_end}>{formatUtcDate(a.period_end)}</time>
+                    <time dateTime={a.period_end}>{formatIstDate(a.period_end)}</time>
                     <span className="block text-xs">
-                      {formatUtcDate(a.period_start)} – {formatUtcDate(a.period_end)}
+                      {formatIstDate(a.period_start)} – {formatIstDate(a.period_end)}
                     </span>
                   </Link>
                 </li>

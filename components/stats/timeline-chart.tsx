@@ -47,7 +47,7 @@ export function TimelineChart({
           contentStyle={TOOLTIP_CONTENT}
           labelStyle={TOOLTIP_LABEL}
           itemStyle={TOOLTIP_ITEM}
-          labelFormatter={(l) => `${String(l)} UTC`}
+          labelFormatter={(l) => `${String(l)} IST`}
         />
         <Legend wrapperStyle={{ fontSize: 12, color: "var(--muted)", paddingTop: 8 }} iconType="circle" iconSize={8} />
         {categories.map((c, i) => (

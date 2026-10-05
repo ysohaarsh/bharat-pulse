@@ -8,7 +8,7 @@ export function KpiRow({ kpis }: { kpis: Kpis }) {
   const items = [
     { label: "Total events", value: nf.format(kpis.total), danger: false },
     { label: `High severity (≥${HIGH_SEVERITY})`, value: nf.format(kpis.highSeverity), danger: kpis.highSeverity > 0 },
-    { label: "Countries affected", value: nf.format(kpis.countries), danger: false },
+    { label: "States affected", value: nf.format(kpis.states), danger: false },
   ];
   return (
     <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">

@@ -40,8 +40,8 @@ export function EventList({
         <span aria-hidden className="h-2 w-2 animate-pulse rounded-full bg-accent" />
         <p className="text-sm uppercase tracking-widest text-accent">No events {filtered ? "match these filters" : "yet"}.</p>
         <p className="text-xs leading-relaxed text-muted">
-          Pulse ingests earthquakes (USGS), natural hazards (NASA EONET) and world news (GDELT, RSS)
-          every few minutes. New events will appear here automatically — no need to refresh.
+          Bharat Pulse ingests NDMA SACHET disaster alerts, NCS earthquakes, satellite fire detections, air quality,
+          PIB releases and Indian news every few minutes. New events appear here automatically — no need to refresh.
         </p>
         {filtered && (
           <button

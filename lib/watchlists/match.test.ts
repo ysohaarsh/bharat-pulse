@@ -3,13 +3,13 @@ import { eventMatchesWatchlist, type MatchableEvent, type WatchlistCriteria } fr
 
 const event: MatchableEvent = {
   severity: 3,
-  country: "JP",
+  state: "IN-MH",
   category: "earthquake",
   title: "M6.1 earthquake near Honshu",
   summary: "Tsunami advisory issued for the coast",
 };
 
-const any: WatchlistCriteria = { min_severity: 1, countries: [], categories: [], keywords: [] };
+const any: WatchlistCriteria = { min_severity: 1, states: [], categories: [], keywords: [] };
 
 describe("eventMatchesWatchlist", () => {
   it("matches everything when all criteria are empty", () => {
@@ -21,16 +21,16 @@ describe("eventMatchesWatchlist", () => {
     expect(eventMatchesWatchlist(event, { ...any, min_severity: 4 })).toBe(false);
   });
 
-  it("filters by country; null country never matches a non-empty list", () => {
-    expect(eventMatchesWatchlist(event, { ...any, countries: ["US", "JP"] })).toBe(true);
-    expect(eventMatchesWatchlist(event, { ...any, countries: ["US"] })).toBe(false);
-    expect(eventMatchesWatchlist({ ...event, country: null }, { ...any, countries: ["JP"] })).toBe(false);
-    expect(eventMatchesWatchlist({ ...event, country: null }, any)).toBe(true);
+  it("filters by state; null state never matches a non-empty list", () => {
+    expect(eventMatchesWatchlist(event, { ...any, states: ["IN-DL", "IN-MH"] })).toBe(true);
+    expect(eventMatchesWatchlist(event, { ...any, states: ["IN-DL"] })).toBe(false);
+    expect(eventMatchesWatchlist({ ...event, state: null }, { ...any, states: ["IN-MH"] })).toBe(false);
+    expect(eventMatchesWatchlist({ ...event, state: null }, any)).toBe(true);
   });
 
   it("filters by category", () => {
     expect(eventMatchesWatchlist(event, { ...any, categories: ["earthquake"] })).toBe(true);
-    expect(eventMatchesWatchlist(event, { ...any, categories: ["storm", "flood"] })).toBe(false);
+    expect(eventMatchesWatchlist(event, { ...any, categories: ["cyclone", "flood"] })).toBe(false);
   });
 
   it("matches keywords case-insensitively in title or summary", () => {
@@ -47,8 +47,8 @@ describe("eventMatchesWatchlist", () => {
   });
 
   it("requires every criterion to hold", () => {
-    const w: WatchlistCriteria = { min_severity: 2, countries: ["JP"], categories: ["earthquake"], keywords: ["tsunami"] };
+    const w: WatchlistCriteria = { min_severity: 2, states: ["IN-MH"], categories: ["earthquake"], keywords: ["tsunami"] };
     expect(eventMatchesWatchlist(event, w)).toBe(true);
-    expect(eventMatchesWatchlist({ ...event, category: "storm" }, w)).toBe(false);
+    expect(eventMatchesWatchlist({ ...event, category: "cyclone" }, w)).toBe(false);
   });
 });

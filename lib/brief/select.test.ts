@@ -29,16 +29,16 @@ describe("isNearDuplicate", () => {
 describe("selectEvents", () => {
   it("orders by severity desc then recency", () => {
     const a = ev({ severity: 3, occurred_at: "2026-10-03T10:00:00Z", category: "flood" });
-    const b = ev({ severity: 5, occurred_at: "2026-10-03T01:00:00Z", category: "conflict" });
-    const c = ev({ severity: 3, occurred_at: "2026-10-03T11:00:00Z", category: "storm" });
+    const b = ev({ severity: 5, occurred_at: "2026-10-03T01:00:00Z", category: "security" });
+    const c = ev({ severity: 3, occurred_at: "2026-10-03T11:00:00Z", category: "cyclone" });
     expect(selectEvents([a, b, c]).map((e) => e.id)).toEqual([b.id, c.id, a.id]);
   });
 
   it("never picks sports items", () => {
-    const quake = ev({ severity: 2, category: "earthquake", source: "usgs" });
+    const quake = ev({ severity: 2, category: "earthquake", source: "ncs" });
     const events = [
       ev({ title: "Cup final shock", category: "sports", source: "sports", severity: 1 }),
-      ev({ title: "Mislabelled sports item", category: "sports", source: "rss", severity: 5 }),
+      ev({ title: "Mislabelled sports item", category: "sports", source: "news", severity: 5 }),
       ev({ title: "Sports feed item", category: "other", source: "sports", severity: 5 }),
       quake,
     ];
@@ -46,8 +46,8 @@ describe("selectEvents", () => {
   });
 
   it("caps the total", () => {
-    const cats = ["flood", "storm", "conflict", "politics", "economy"] as const;
-    const sources = ["rss", "gdelt", "usgs", "eonet"] as const;
+    const cats = ["flood", "cyclone", "security", "politics", "economy"] as const;
+    const sources = ["news", "sachet", "ncs", "firms"] as const;
     const events = Array.from({ length: 100 }, (_, i) =>
       ev({ title: `Unique story number ${i}`, category: cats[i % 5], source: sources[i % 4] }),
     );
@@ -58,7 +58,7 @@ describe("selectEvents", () => {
   it("caps per category so one category can't dominate", () => {
     const events = [
       ...Array.from({ length: 30 }, (_, i) =>
-        ev({ title: `Quake ${i} somewhere`, category: "earthquake", severity: 5, source: "usgs" }),
+        ev({ title: `Quake ${i} somewhere`, category: "earthquake", severity: 5, source: "ncs" }),
       ),
       ev({ title: "Minor protest", category: "politics", severity: 1 }),
     ];
@@ -68,9 +68,9 @@ describe("selectEvents", () => {
   });
 
   it("caps per source", () => {
-    const cats = ["conflict", "politics", "economy", "health"] as const;
+    const cats = ["security", "politics", "economy", "health"] as const;
     const events = Array.from({ length: 30 }, (_, i) =>
-      ev({ title: `Gdelt item ${i}`, category: cats[i % 4], source: "gdelt" }),
+      ev({ title: `Gdelt item ${i}`, category: cats[i % 4], source: "sachet" }),
     );
     expect(selectEvents(events, { perSource: 5 })).toHaveLength(5);
   });

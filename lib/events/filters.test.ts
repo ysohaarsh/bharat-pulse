@@ -21,7 +21,7 @@ const NOW = Date.parse("2026-10-04T12:00:00Z");
 function ev(over: Partial<EventRow> = {}): EventRow {
   return {
     id: 1,
-    source: "usgs",
+    source: "ncs",
     external_id: "x1",
     title: "M5.1 - somewhere",
     summary: null,
@@ -29,7 +29,11 @@ function ev(over: Partial<EventRow> = {}): EventRow {
     severity: 3,
     lat: 10,
     lng: 20,
-    country: "JP",
+    state: "IN-MH",
+    district: null,
+    lang: "en",
+    title_en: null,
+    title_hi: null,
     url: "https://example.com",
     occurred_at: "2026-10-04T11:30:00Z",
     created_at: "2026-10-04T11:31:00Z",
@@ -45,9 +49,9 @@ describe("parseFilters", () => {
   });
 
   it("parses a Next searchParams record", () => {
-    expect(parseFilters({ cat: "wildfire,earthquake", src: "usgs", sev: "3", win: "6h" })).toEqual({
+    expect(parseFilters({ cat: "wildfire,earthquake", src: "ncs", sev: "3", win: "6h" })).toEqual({
       categories: ["earthquake", "wildfire"], // canonical order
-      sources: ["usgs"],
+      sources: ["ncs"],
       minSeverity: 3,
       window: "6h",
     });
@@ -80,19 +84,19 @@ describe("serializeFilters", () => {
 
   it("round-trips through parseFilters", () => {
     const f: EventFilters = {
-      categories: ["storm", "conflict"],
-      sources: ["gdelt", "rss"],
+      categories: ["cyclone", "security"],
+      sources: ["sachet", "news"],
       minSeverity: 4,
       window: "1h",
     };
     const qs = serializeFilters(f).toString();
-    expect(qs).toBe("cat=storm%2Cconflict&src=gdelt%2Crss&sev=4&win=1h");
+    expect(qs).toBe("cat=cyclone%2Csecurity&src=sachet%2Cnews&sev=4&win=1h");
     expect(parseFilters(new URLSearchParams(qs))).toEqual(f);
   });
 
   it("filtersKey is order-insensitive", () => {
-    const a = { ...DEFAULT_FILTERS, categories: ["flood", "storm"] } as EventFilters;
-    const b = { ...DEFAULT_FILTERS, categories: ["storm", "flood"] } as EventFilters;
+    const a = { ...DEFAULT_FILTERS, categories: ["flood", "cyclone"] } as EventFilters;
+    const b = { ...DEFAULT_FILTERS, categories: ["cyclone", "flood"] } as EventFilters;
     expect(filtersKey(a)).toBe(filtersKey(b));
   });
 });
@@ -107,7 +111,7 @@ describe("matchesFilters", () => {
     const f: EventFilters = { ...DEFAULT_FILTERS, categories: ["flood"] };
     expect(matchesFilters(ev(), f, NOW)).toBe(false);
     expect(matchesFilters(ev({ category: "flood" }), f, NOW)).toBe(true);
-    expect(matchesFilters(ev(), { ...DEFAULT_FILTERS, sources: ["rss"] }, NOW)).toBe(false);
+    expect(matchesFilters(ev(), { ...DEFAULT_FILTERS, sources: ["news"] }, NOW)).toBe(false);
     expect(matchesFilters(ev({ severity: 2 }), { ...DEFAULT_FILTERS, minSeverity: 3 }, NOW)).toBe(false);
     expect(matchesFilters(ev({ severity: 3 }), { ...DEFAULT_FILTERS, minSeverity: 3 }, NOW)).toBe(true);
   });
@@ -121,7 +125,7 @@ describe("matchesFilters", () => {
 });
 
 describe("sports opt-in", () => {
-  const sportsEv = ev({ source: "sports", category: "sports", severity: 1, country: null, lat: null, lng: null });
+  const sportsEv = ev({ source: "sports", category: "sports", severity: 1, state: null, lat: null, lng: null });
 
   it("is hidden by default: defaults exclude the sports category and source", () => {
     expect(DEFAULT_FILTERS.categories).not.toContain("sports");
@@ -137,8 +141,8 @@ describe("sports opt-in", () => {
 
   it("keeps old links meaning exactly what they did", () => {
     expect(parseFilters({}).categories).not.toContain("sports");
-    expect(parseFilters({ cat: "flood,storm" }).categories).toEqual(["storm", "flood"]);
-    expect(parseFilters({ src: "rss" }).sources).toEqual(["rss"]);
+    expect(parseFilters({ cat: "flood,cyclone" }).categories).toEqual(["flood", "cyclone"]);
+    expect(parseFilters({ src: "news" }).sources).toEqual(["news"]);
   });
 
   it("shows sports alongside everything else when opted in", () => {
@@ -149,7 +153,7 @@ describe("sports opt-in", () => {
     expect(matchesFilters(sportsEv, f, NOW)).toBe(true);
     expect(matchesFilters(ev(), f, NOW)).toBe(true);
     // Source chips don't hide sports; severity and window still apply.
-    expect(matchesFilters(sportsEv, { ...f, sources: ["usgs"] }, NOW)).toBe(true);
+    expect(matchesFilters(sportsEv, { ...f, sources: ["ncs"] }, NOW)).toBe(true);
     expect(matchesFilters(sportsEv, { ...f, minSeverity: 2 }, NOW)).toBe(false);
     expect(matchesFilters({ ...sportsEv, occurred_at: "2026-10-01T00:00:00Z" }, f, NOW)).toBe(false);
   });
@@ -182,7 +186,7 @@ describe("sports opt-in", () => {
     const core = [...CORE_CATEGORIES];
     expect(toggleCategory(core, "sports")).toEqual([...CATEGORIES]);
     expect(toggleCategory([...CATEGORIES], "sports")).toEqual(core);
-    expect(toggleCategory(["flood", "sports"], "storm")).toEqual(["storm", "flood", "sports"]);
+    expect(toggleCategory(["flood", "sports"], "cyclone")).toEqual(["flood", "cyclone", "sports"]);
     expect(toggleCategory(["flood", "sports"], "flood")).toEqual(["sports"]); // sports-only view
     expect(toggleCategory(["sports"], "sports")).toEqual(core); // never empty
     expect(toggleCategory(["flood"], "flood")).toEqual(core); // reset to all core, not to sports
@@ -193,11 +197,11 @@ describe("sports opt-in", () => {
 
 describe("toggleValue", () => {
   it("adds and removes in canonical order", () => {
-    expect(toggleValue(["storm"], "earthquake", CATEGORIES)).toEqual(["earthquake", "storm"]);
-    expect(toggleValue(["earthquake", "storm"], "storm", CATEGORIES)).toEqual(["earthquake"]);
+    expect(toggleValue(["cyclone"], "earthquake", CATEGORIES)).toEqual(["cyclone", "earthquake"]);
+    expect(toggleValue(["earthquake", "cyclone"], "cyclone", CATEGORIES)).toEqual(["earthquake"]);
   });
   it("resets to all when the last value is removed", () => {
-    expect(toggleValue(["storm"], "storm", CATEGORIES)).toEqual([...CATEGORIES]);
+    expect(toggleValue(["cyclone"], "cyclone", CATEGORIES)).toEqual([...CATEGORIES]);
   });
 });
 

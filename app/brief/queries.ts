@@ -5,31 +5,31 @@ import type { EventRow } from "@/lib/types";
 
 export type BriefRow = Pick<
   Tables<"briefs">,
-  "id" | "period_start" | "period_end" | "content" | "model" | "created_at"
+  "id" | "period_start" | "period_end" | "content" | "content_hi" | "model" | "created_at"
 >;
 export type BriefArchiveItem = Pick<BriefRow, "id" | "period_start" | "period_end" | "created_at">;
 export type TopEvent = Pick<
   EventRow,
-  "id" | "title" | "category" | "severity" | "occurred_at" | "url" | "country" | "source"
+  "id" | "title" | "title_en" | "title_hi" | "lang" | "category" | "severity" | "occurred_at" | "url" | "state" | "source"
 >;
 
 const ARCHIVE_SIZE = 7;
 
 export interface BriefPageData {
   brief: BriefRow | null;
-  /** Up to 7 world briefs other than the one shown, newest first. */
+  /** Up to 7 India briefs other than the one shown, newest first. */
   archive: BriefArchiveItem[];
   error: string | null;
 }
 
-/** Load the selected (or latest) world brief plus the archive of previous ones. */
-export async function fetchWorldBriefs(selectedId: number | null): Promise<BriefPageData> {
+/** Load the selected (or latest) India brief plus the archive of previous ones. */
+export async function fetchIndiaBriefs(selectedId: number | null): Promise<BriefPageData> {
   try {
     const supabase = await createClient();
     const { data: list, error } = await supabase
       .from("briefs")
       .select("id, period_start, period_end, created_at")
-      .eq("scope", "world")
+      .eq("scope", "india")
       .order("period_start", { ascending: false })
       .limit(ARCHIVE_SIZE + 1);
     if (error) {
@@ -42,8 +42,8 @@ export async function fetchWorldBriefs(selectedId: number | null): Promise<Brief
 
     const { data: brief, error: briefError } = await supabase
       .from("briefs")
-      .select("id, period_start, period_end, content, model, created_at")
-      .eq("scope", "world")
+      .select("id, period_start, period_end, content, content_hi, model, created_at")
+      .eq("scope", "india")
       .eq("id", targetId)
       .maybeSingle();
     if (briefError) return { brief: null, archive: rows, error: briefError.message };
@@ -66,10 +66,10 @@ export async function fetchTopEvents(
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("events")
-      .select("id, title, category, severity, occurred_at, url, country, source")
+      .select("id, title, title_en, title_hi, lang, category, severity, occurred_at, url, state, source")
       .gte("occurred_at", start)
       .lte("occurred_at", end)
-      // Sports is an opt-in side feed and never a "top event" of a World Brief.
+      // Sports is an opt-in side feed and never a "top event" of a India Brief.
       .neq("category", "sports")
       .neq("source", "sports")
       .order("severity", { ascending: false })

@@ -1,0 +1,3818 @@
+{
+"metaDatasDto": {
+"currentPageNumber": 1,
+"perPageSize": 600,
+"totalElements": 544,
+"totalPages": 1
+},
+"membersDtoList": [
+{
+"mpsno": 5814,
+"mpFirstLastName": "MP 5814",
+"stateName": "Tamil Nadu",
+"constName": "Dharmapuri",
+"status": "Sitting"
+},
+{
+"mpsno": 344,
+"mpFirstLastName": "MP 344",
+"stateName": "Tamil Nadu",
+"constName": "Nilgiris",
+"status": "Sitting"
+},
+{
+"mpsno": 5677,
+"mpFirstLastName": "MP 5677",
+"stateName": "Chhattisgarh",
+"constName": "Raipur",
+"status": "Sitting"
+},
+{
+"mpsno": 5620,
+"mpFirstLastName": "MP 5620",
+"stateName": "Rajasthan",
+"constName": "Bhilwara",
+"status": "Sitting"
+},
+{
+"mpsno": 5782,
+"mpFirstLastName": "MP 5782",
+"stateName": "Uttar Pradesh",
+"constName": "Jalaun",
+"status": "Sitting"
+},
+{
+"mpsno": 5781,
+"mpFirstLastName": "MP 5781",
+"stateName": "Jammu and Kashmir",
+"constName": "Anantnag-Rajouri",
+"status": "Sitting"
+},
+{
+"mpsno": 4944,
+"mpFirstLastName": "MP 4944",
+"stateName": "West Bengal",
+"constName": "Uluberia",
+"status": "Sitting"
+},
+{
+"mpsno": 5788,
+"mpFirstLastName": "MP 5788",
+"stateName": "Manipur",
+"constName": "Inner Manipur",
+"status": "Sitting"
+},
+{
+"mpsno": 3464,
+"mpFirstLastName": "MP 3464",
+"stateName": "Bihar",
+"constName": "Sheohar",
+"status": "Sitting"
+},
+{
+"mpsno": 5528,
+"mpFirstLastName": "MP 5528",
+"stateName": "Tamil Nadu",
+"constName": "Vellore",
+"status": "Sitting"
+},
+{
+"mpsno": 4969,
+"mpFirstLastName": "MP 4969",
+"stateName": "Tamil Nadu",
+"constName": "Tiruvannamalai",
+"status": "Sitting"
+},
+{
+"mpsno": 4170,
+"mpFirstLastName": "MP 4170",
+"stateName": "Uttar Pradesh",
+"constName": "Ghazipur",
+"status": "Sitting"
+},
+{
+"mpsno": 4571,
+"mpFirstLastName": "MP 4571",
+"stateName": "Kerala",
+"constName": "Pathanamthitta",
+"status": "Sitting"
+},
+{
+"mpsno": 2664,
+"mpFirstLastName": "MP 2664",
+"stateName": "Bihar",
+"constName": "Katihar",
+"status": "Sitting"
+},
+{
+"mpsno": 5582,
+"mpFirstLastName": "MP 5582",
+"stateName": "Manipur",
+"constName": "Outer Manipur",
+"status": "Sitting"
+},
+{
+"mpsno": 5703,
+"mpFirstLastName": "MP 5703",
+"stateName": "Telangana",
+"constName": "Mahbubnagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5684,
+"mpFirstLastName": "MP 5684",
+"stateName": "Maharashtra",
+"constName": "Aurangabad",
+"status": "Sitting"
+},
+{
+"mpsno": 4940,
+"mpFirstLastName": "MP 4940",
+"stateName": "Punjab",
+"constName": "Amritsar",
+"status": "Sitting"
+},
+{
+"mpsno": 5608,
+"mpFirstLastName": "MP 5608",
+"stateName": "Uttar Pradesh",
+"constName": "Kanpur",
+"status": "Sitting"
+},
+{
+"mpsno": 4552,
+"mpFirstLastName": "MP 4552",
+"stateName": "Tamil Nadu",
+"constName": "Virudhunagar",
+"status": "Sitting"
+},
+{
+"mpsno": 26,
+"mpFirstLastName": "MP 26",
+"stateName": "Tamil Nadu",
+"constName": "Sriperumbudur",
+"status": "Sitting"
+},
+{
+"mpsno": 5655,
+"mpFirstLastName": "MP 5655",
+"stateName": "Karnataka",
+"constName": "Kolar",
+"status": "Sitting"
+},
+{
+"mpsno": 5714,
+"mpFirstLastName": "MP 5714",
+"stateName": "Dadra and Nagar Haveli and Daman and Diu",
+"constName": "Daman and Diu",
+"status": "Sitting"
+},
+{
+"mpsno": 4433,
+"mpFirstLastName": "MP 4433",
+"stateName": "Punjab",
+"constName": "Bathinda",
+"status": "Sitting"
+},
+{
+"mpsno": 31,
+"mpFirstLastName": "MP 31",
+"stateName": "Uttar Pradesh",
+"constName": "Agra",
+"status": "Sitting"
+},
+{
+"mpsno": 5007,
+"mpFirstLastName": "MP 5007",
+"stateName": "Chhattisgarh",
+"constName": "Durg",
+"status": "Sitting"
+},
+{
+"mpsno": 5722,
+"mpFirstLastName": "MP 5722",
+"stateName": "Andhra Pradesh",
+"constName": "Amalapuram",
+"status": "Sitting"
+},
+{
+"mpsno": 5557,
+"mpFirstLastName": "MP 5557",
+"stateName": "Uttarakhand",
+"constName": "Garhwal",
+"status": "Sitting"
+},
+{
+"mpsno": 5739,
+"mpFirstLastName": "MP 5739",
+"stateName": "Maharashtra",
+"constName": "Nanded",
+"status": "Died"
+},
+{
+"mpsno": 5614,
+"mpFirstLastName": "MP 5614",
+"stateName": "Gujarat",
+"constName": "Bhavnagar",
+"status": "Sitting"
+},
+{
+"mpsno": 38,
+"mpFirstLastName": "MP 38",
+"stateName": "West Bengal",
+"constName": "Kolkata Uttar",
+"status": "Sitting"
+},
+{
+"mpsno": 4843,
+"mpFirstLastName": "MP 4843",
+"stateName": "West Bengal",
+"constName": "Diamond Harbour",
+"status": "Sitting"
+},
+{
+"mpsno": 4498,
+"mpFirstLastName": "MP 4498",
+"stateName": "West Bengal",
+"constName": "Sreerampur",
+"status": "Sitting"
+},
+{
+"mpsno": 4583,
+"mpFirstLastName": "MP 4583",
+"stateName": "West Bengal",
+"constName": "Howrah",
+"status": "Sitting"
+},
+{
+"mpsno": 5638,
+"mpFirstLastName": "MP 5638",
+"stateName": "West Bengal",
+"constName": "Hooghly",
+"status": "Sitting"
+},
+{
+"mpsno": 5640,
+"mpFirstLastName": "MP 5640",
+"stateName": "Maharashtra",
+"constName": "Hingoli",
+"status": "Sitting"
+},
+{
+"mpsno": 5611,
+"mpFirstLastName": "MP 5611",
+"stateName": "Gujarat",
+"constName": "Sabarkantha",
+"status": "Sitting"
+},
+{
+"mpsno": 4781,
+"mpFirstLastName": "MP 4781",
+"stateName": "Maharashtra",
+"constName": "Maval",
+"status": "Sitting"
+},
+{
+"mpsno": 4937,
+"mpFirstLastName": "MP 4937",
+"stateName": "Assam",
+"constName": "Lakhimpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5736,
+"mpFirstLastName": "MP 5736",
+"stateName": "Maharashtra",
+"constName": "Ramtek",
+"status": "Sitting"
+},
+{
+"mpsno": 4561,
+"mpFirstLastName": "MP 4561",
+"stateName": "Kerala",
+"constName": "Malappuram",
+"status": "Sitting"
+},
+{
+"mpsno": 5548,
+"mpFirstLastName": "MP 5548",
+"stateName": "Assam",
+"constName": "Kokrajhar",
+"status": "Sitting"
+},
+{
+"mpsno": 5833,
+"mpFirstLastName": "MP 5833",
+"stateName": "West Bengal",
+"constName": "Coochbehar",
+"status": "Sitting"
+},
+{
+"mpsno": 5124,
+"mpFirstLastName": "MP 5124",
+"stateName": "Kerala",
+"constName": "Chalakudy",
+"status": "Sitting"
+},
+{
+"mpsno": 5595,
+"mpFirstLastName": "MP 5595",
+"stateName": "Odisha",
+"constName": "Jajpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5205,
+"mpFirstLastName": "MP 5205",
+"stateName": "Rajasthan",
+"constName": "Nagaur",
+"status": "Sitting"
+},
+{
+"mpsno": 5762,
+"mpFirstLastName": "MP 5762",
+"stateName": "Rajasthan",
+"constName": "Barmer",
+"status": "Sitting"
+},
+{
+"mpsno": 4857,
+"mpFirstLastName": "MP 4857",
+"stateName": "Gujarat",
+"constName": "Dahod",
+"status": "Sitting"
+},
+{
+"mpsno": 5815,
+"mpFirstLastName": "MP 5815",
+"stateName": "Uttar Pradesh",
+"constName": "Dhaurahra",
+"status": "Sitting"
+},
+{
+"mpsno": 5741,
+"mpFirstLastName": "MP 5741",
+"stateName": "Maharashtra",
+"constName": "Dindori",
+"status": "Sitting"
+},
+{
+"mpsno": 5742,
+"mpFirstLastName": "MP 5742",
+"stateName": "Jharkhand",
+"constName": "Lohardaga",
+"status": "Sitting"
+},
+{
+"mpsno": 5695,
+"mpFirstLastName": "MP 5695",
+"stateName": "Himachal Pradesh",
+"constName": "Kangra",
+"status": "Sitting"
+},
+{
+"mpsno": 5740,
+"mpFirstLastName": "MP 5740",
+"stateName": "Bihar",
+"constName": "Jamui",
+"status": "Sitting"
+},
+{
+"mpsno": 5824,
+"mpFirstLastName": "MP 5824",
+"stateName": "Bihar",
+"constName": "Pataliputra",
+"status": "Sitting"
+},
+{
+"mpsno": 5003,
+"mpFirstLastName": "MP 5003",
+"stateName": "Uttarakhand",
+"constName": "Nainital-Udhamsingh Nagar",
+"status": "Sitting"
+},
+{
+"mpsno": 4389,
+"mpFirstLastName": "MP 4389",
+"stateName": "Maharashtra",
+"constName": "Satara",
+"status": "Sitting"
+},
+{
+"mpsno": 5660,
+"mpFirstLastName": "MP 5660",
+"stateName": "West Bengal",
+"constName": "Barrackpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5745,
+"mpFirstLastName": "MP 5745",
+"stateName": "Andhra Pradesh",
+"constName": "Narsapuram",
+"status": "Sitting"
+},
+{
+"mpsno": 5543,
+"mpFirstLastName": "MP 5543",
+"stateName": "NCT of Delhi",
+"constName": "South Delhi",
+"status": "Sitting"
+},
+{
+"mpsno": 5607,
+"mpFirstLastName": "MP 5607",
+"stateName": "Uttar Pradesh",
+"constName": "Bhadohi",
+"status": "Sitting"
+},
+{
+"mpsno": 4716,
+"mpFirstLastName": "MP 4716",
+"stateName": "Rajasthan",
+"constName": "Kota",
+"status": "Sitting"
+},
+{
+"mpsno": 5042,
+"mpFirstLastName": "MP 5042",
+"stateName": "West Bengal",
+"constName": "Darjeeling",
+"status": "Sitting"
+},
+{
+"mpsno": 5561,
+"mpFirstLastName": "MP 5561",
+"stateName": "Karnataka",
+"constName": "Haveri",
+"status": "Sitting"
+},
+{
+"mpsno": 5108,
+"mpFirstLastName": "MP 5108",
+"stateName": "Assam",
+"constName": "Nagaon",
+"status": "Resigned"
+},
+{
+"mpsno": 5758,
+"mpFirstLastName": "MP 5758",
+"stateName": "Karnataka",
+"constName": "Chamarajanagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5585,
+"mpFirstLastName": "MP 5585",
+"stateName": "Haryana",
+"constName": "Sonipat",
+"status": "Sitting"
+},
+{
+"mpsno": 5629,
+"mpFirstLastName": "MP 5629",
+"stateName": "Tamil Nadu",
+"constName": "Tirunelveli",
+"status": "Sitting"
+},
+{
+"mpsno": 5779,
+"mpFirstLastName": "MP 5779",
+"stateName": "Punjab",
+"constName": "Hoshiarpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5142,
+"mpFirstLastName": "MP 5142",
+"stateName": "Uttar Pradesh",
+"constName": "Fatehpur Sikri",
+"status": "Sitting"
+},
+{
+"mpsno": 5778,
+"mpFirstLastName": "MP 5778",
+"stateName": "West Bengal",
+"constName": "Bankura",
+"status": "Sitting"
+},
+{
+"mpsno": 3984,
+"mpFirstLastName": "MP 3984",
+"stateName": "Karnataka",
+"constName": "Bagalkot",
+"status": "Sitting"
+},
+{
+"mpsno": 5587,
+"mpFirstLastName": "MP 5587",
+"stateName": "NCT of Delhi",
+"constName": "North West Delhi",
+"status": "Sitting"
+},
+{
+"mpsno": 5750,
+"mpFirstLastName": "MP 5750",
+"stateName": "Punjab",
+"constName": "Jalandhar",
+"status": "Sitting"
+},
+{
+"mpsno": 4597,
+"mpFirstLastName": "MP 4597",
+"stateName": "Rajasthan",
+"constName": "Pali",
+"status": "Sitting"
+},
+{
+"mpsno": 5803,
+"mpFirstLastName": "MP 5803",
+"stateName": "Uttar Pradesh",
+"constName": "Mohanlalganj",
+"status": "Sitting"
+},
+{
+"mpsno": 3261,
+"mpFirstLastName": "MP 3261",
+"stateName": "Uttar Pradesh",
+"constName": "Basti",
+"status": "Sitting"
+},
+{
+"mpsno": 5545,
+"mpFirstLastName": "MP 5545",
+"stateName": "Haryana",
+"constName": "Ambala",
+"status": "Sitting"
+},
+{
+"mpsno": 5547,
+"mpFirstLastName": "MP 5547",
+"stateName": "Uttar Pradesh",
+"constName": "Bijnor",
+"status": "Sitting"
+},
+{
+"mpsno": 4858,
+"mpFirstLastName": "MP 4858",
+"stateName": "Gujarat",
+"constName": "Kheda",
+"status": "Sitting"
+},
+{
+"mpsno": 5766,
+"mpFirstLastName": "MP 5766",
+"stateName": "Maharashtra",
+"constName": "Kolhapur",
+"status": "Sitting"
+},
+{
+"mpsno": 4859,
+"mpFirstLastName": "MP 4859",
+"stateName": "Uttar Pradesh",
+"constName": "Robertsganj",
+"status": "Sitting"
+},
+{
+"mpsno": 4967,
+"mpFirstLastName": "MP 4967",
+"stateName": "Tamil Nadu",
+"constName": "Sivaganga",
+"status": "Sitting"
+},
+{
+"mpsno": 5568,
+"mpFirstLastName": "MP 5568",
+"stateName": "Bihar",
+"constName": "Muzaffarpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5795,
+"mpFirstLastName": "MP 5795",
+"stateName": "Uttar Pradesh",
+"constName": "Kairana",
+"status": "Sitting"
+},
+{
+"mpsno": 5203,
+"mpFirstLastName": "MP 5203",
+"stateName": "Rajasthan",
+"constName": "Ajmer",
+"status": "Sitting"
+},
+{
+"mpsno": 5115,
+"mpFirstLastName": "MP 5115",
+"stateName": "Jharkhand",
+"constName": "Giridih",
+"status": "Sitting"
+},
+{
+"mpsno": 5613,
+"mpFirstLastName": "MP 5613",
+"stateName": "Madhya Pradesh",
+"constName": "Hoshangabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5621,
+"mpFirstLastName": "MP 5621",
+"stateName": "Rajasthan",
+"constName": "Jalore",
+"status": "Sitting"
+},
+{
+"mpsno": 3479,
+"mpFirstLastName": "MP 3479",
+"stateName": "Uttar Pradesh",
+"constName": "Maharajganj",
+"status": "Sitting"
+},
+{
+"mpsno": 5707,
+"mpFirstLastName": "MP 5707",
+"stateName": "Chhattisgarh",
+"constName": "Mahasamund",
+"status": "Sitting"
+},
+{
+"mpsno": 5834,
+"mpFirstLastName": "MP 5834",
+"stateName": "West Bengal",
+"constName": "Maldaha Dakshin",
+"status": "Sitting"
+},
+{
+"mpsno": 5569,
+"mpFirstLastName": "MP 5569",
+"stateName": "Assam",
+"constName": "Barpeta",
+"status": "Sitting"
+},
+{
+"mpsno": 96,
+"mpFirstLastName": "MP 96",
+"stateName": "Madhya Pradesh",
+"constName": "Vidisha",
+"status": "Sitting"
+},
+{
+"mpsno": 5663,
+"mpFirstLastName": "MP 5663",
+"stateName": "Madhya Pradesh",
+"constName": "Ratlam",
+"status": "Sitting"
+},
+{
+"mpsno": 5627,
+"mpFirstLastName": "MP 5627",
+"stateName": "Karnataka",
+"constName": "Dakshina Kannada",
+"status": "Sitting"
+},
+{
+"mpsno": 4865,
+"mpFirstLastName": "MP 4865",
+"stateName": "Gujarat",
+"constName": "Junagadh",
+"status": "Sitting"
+},
+{
+"mpsno": 5817,
+"mpFirstLastName": "MP 5817",
+"stateName": "Tamil Nadu",
+"constName": "Kallakurichi",
+"status": "Sitting"
+},
+{
+"mpsno": 5024,
+"mpFirstLastName": "MP 5024",
+"stateName": "Gujarat",
+"constName": "Patan",
+"status": "Sitting"
+},
+{
+"mpsno": 5574,
+"mpFirstLastName": "MP 5574",
+"stateName": "Gujarat",
+"constName": "Surat",
+"status": "Sitting"
+},
+{
+"mpsno": 4489,
+"mpFirstLastName": "MP 4489",
+"stateName": "West Bengal",
+"constName": "Barasat",
+"status": "Sitting"
+},
+{
+"mpsno": 5199,
+"mpFirstLastName": "MP 5199",
+"stateName": "Maharashtra",
+"constName": "Raigad",
+"status": "Sitting"
+},
+{
+"mpsno": 5671,
+"mpFirstLastName": "MP 5671",
+"stateName": "Tripura",
+"constName": "Tripura West",
+"status": "Sitting"
+},
+{
+"mpsno": 5575,
+"mpFirstLastName": "MP 5575",
+"stateName": "Tripura",
+"constName": "Tripura East",
+"status": "Sitting"
+},
+{
+"mpsno": 426,
+"mpFirstLastName": "MP 426",
+"stateName": "Odisha",
+"constName": "Bolangir",
+"status": "Sitting"
+},
+{
+"mpsno": 5648,
+"mpFirstLastName": "MP 5648",
+"stateName": "Maharashtra",
+"constName": "Mumbai South Central",
+"status": "Sitting"
+},
+{
+"mpsno": 5725,
+"mpFirstLastName": "MP 5725",
+"stateName": "Maharashtra",
+"constName": "Yavatmal-Washim",
+"status": "Sitting"
+},
+{
+"mpsno": 4847,
+"mpFirstLastName": "MP 4847",
+"stateName": "West Bengal",
+"constName": "Ghatal",
+"status": "Sitting"
+},
+{
+"mpsno": 5096,
+"mpFirstLastName": "MP 5096",
+"stateName": "Andhra Pradesh",
+"constName": "Narasaraopet",
+"status": "Sitting"
+},
+{
+"mpsno": 5116,
+"mpFirstLastName": "MP 5116",
+"stateName": "Jharkhand",
+"constName": "Kodarma",
+"status": "Sitting"
+},
+{
+"mpsno": 5624,
+"mpFirstLastName": "MP 5624",
+"stateName": "Odisha",
+"constName": "Kalahandi",
+"status": "Sitting"
+},
+{
+"mpsno": 5223,
+"mpFirstLastName": "MP 5223",
+"stateName": "Bihar",
+"constName": "Vaishali",
+"status": "Sitting"
+},
+{
+"mpsno": 5577,
+"mpFirstLastName": "MP 5577",
+"stateName": "Bihar",
+"constName": "Siwan",
+"status": "Sitting"
+},
+{
+"mpsno": 5082,
+"mpFirstLastName": "MP 5082",
+"stateName": "Telangana",
+"constName": "Nizamabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5562,
+"mpFirstLastName": "MP 5562",
+"stateName": "Maharashtra",
+"constName": "Akola",
+"status": "Sitting"
+},
+{
+"mpsno": 5773,
+"mpFirstLastName": "MP 5773",
+"stateName": "Maharashtra",
+"constName": "Dhule",
+"status": "Sitting"
+},
+{
+"mpsno": 5657,
+"mpFirstLastName": "MP 5657",
+"stateName": "Uttar Pradesh",
+"constName": "Etawah",
+"status": "Sitting"
+},
+{
+"mpsno": 4324,
+"mpFirstLastName": "MP 4324",
+"stateName": "Jharkhand",
+"constName": "Godda",
+"status": "Sitting"
+},
+{
+"mpsno": 5699,
+"mpFirstLastName": "MP 5699",
+"stateName": "Madhya Pradesh",
+"constName": "Jabalpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5151,
+"mpFirstLastName": "MP 5151",
+"stateName": "Uttar Pradesh",
+"constName": "Kushi Nagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5606,
+"mpFirstLastName": "MP 5606",
+"stateName": "Assam",
+"constName": "Sonitpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5125,
+"mpFirstLastName": "MP 5125",
+"stateName": "Kerala",
+"constName": "Ernakulam",
+"status": "Sitting"
+},
+{
+"mpsno": 5710,
+"mpFirstLastName": "MP 5710",
+"stateName": "Goa",
+"constName": "South Goa",
+"status": "Sitting"
+},
+{
+"mpsno": 5071,
+"mpFirstLastName": "MP 5071",
+"stateName": "Madhya Pradesh",
+"constName": "Ujjain",
+"status": "Sitting"
+},
+{
+"mpsno": 4963,
+"mpFirstLastName": "MP 4963",
+"stateName": "Tamil Nadu",
+"constName": "Kancheepuram",
+"status": "Sitting"
+},
+{
+"mpsno": 5771,
+"mpFirstLastName": "MP 5771",
+"stateName": "Telangana",
+"constName": "Peddapalle",
+"status": "Sitting"
+},
+{
+"mpsno": 4923,
+"mpFirstLastName": "MP 4923",
+"stateName": "Maharashtra",
+"constName": "Nagpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5754,
+"mpFirstLastName": "MP 5754",
+"stateName": "Maharashtra",
+"constName": "Mumbai North Central",
+"status": "Sitting"
+},
+{
+"mpsno": 4676,
+"mpFirstLastName": "MP 4676",
+"stateName": "Punjab",
+"constName": "Patiala",
+"status": "Sitting"
+},
+{
+"mpsno": 4074,
+"mpFirstLastName": "MP 4074",
+"stateName": "Uttar Pradesh",
+"constName": "Rae Bareli",
+"status": "Sitting"
+},
+{
+"mpsno": 5591,
+"mpFirstLastName": "MP 5591",
+"stateName": "West Bengal",
+"constName": "Tamluk",
+"status": "Sitting"
+},
+{
+"mpsno": 5566,
+"mpFirstLastName": "MP 5566",
+"stateName": "Uttar Pradesh",
+"constName": "Bareilly",
+"status": "Sitting"
+},
+{
+"mpsno": 3973,
+"mpFirstLastName": "MP 3973",
+"stateName": "Arunachal Pradesh",
+"constName": "Arunachal East",
+"status": "Sitting"
+},
+{
+"mpsno": 5549,
+"mpFirstLastName": "MP 5549",
+"stateName": "Uttar Pradesh",
+"constName": "Ghaziabad",
+"status": "Sitting"
+},
+{
+"mpsno": 4603,
+"mpFirstLastName": "MP 4603",
+"stateName": "Uttar Pradesh",
+"constName": "Aligarh",
+"status": "Sitting"
+},
+{
+"mpsno": 138,
+"mpFirstLastName": "MP 138",
+"stateName": "Kerala",
+"constName": "Kottayam",
+"status": "Sitting"
+},
+{
+"mpsno": 5785,
+"mpFirstLastName": "MP 5785",
+"stateName": "West Bengal",
+"constName": "Jadavpur",
+"status": "Sitting"
+},
+{
+"mpsno": 4432,
+"mpFirstLastName": "MP 4432",
+"stateName": "Punjab",
+"constName": "Firozpur",
+"status": "Sitting"
+},
+{
+"mpsno": 4788,
+"mpFirstLastName": "MP 4788",
+"stateName": "Assam",
+"constName": "Jorhat",
+"status": "Sitting"
+},
+{
+"mpsno": 5552,
+"mpFirstLastName": "MP 5552",
+"stateName": "Kerala",
+"constName": "Thrissur",
+"status": "Sitting"
+},
+{
+"mpsno": 5718,
+"mpFirstLastName": "MP 5718",
+"stateName": "Tamil Nadu",
+"constName": "Krishnagiri",
+"status": "Sitting"
+},
+{
+"mpsno": 5564,
+"mpFirstLastName": "MP 5564",
+"stateName": "Uttar Pradesh",
+"constName": "Meerut",
+"status": "Sitting"
+},
+{
+"mpsno": 5551,
+"mpFirstLastName": "MP 5551",
+"stateName": "Maharashtra",
+"constName": "Mumbai North",
+"status": "Sitting"
+},
+{
+"mpsno": 4615,
+"mpFirstLastName": "MP 4615",
+"stateName": "Madhya Pradesh",
+"constName": "Mandsour",
+"status": "Sitting"
+},
+{
+"mpsno": 4629,
+"mpFirstLastName": "MP 4629",
+"stateName": "Haryana",
+"constName": "Faridabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5534,
+"mpFirstLastName": "MP 5534",
+"stateName": "Andhra Pradesh",
+"constName": "Tirupati",
+"status": "Sitting"
+},
+{
+"mpsno": 5774,
+"mpFirstLastName": "MP 5774",
+"stateName": "West Bengal",
+"constName": "Mathurapur",
+"status": "Sitting"
+},
+{
+"mpsno": 5808,
+"mpFirstLastName": "MP 5808",
+"stateName": "Ladakh",
+"constName": "Ladakh",
+"status": "Sitting"
+},
+{
+"mpsno": 4866,
+"mpFirstLastName": "MP 4866",
+"stateName": "Jharkhand",
+"constName": "Rajmahal",
+"status": "Sitting"
+},
+{
+"mpsno": 5829,
+"mpFirstLastName": "MP 5829",
+"stateName": "Punjab",
+"constName": "Sangrur",
+"status": "Sitting"
+},
+{
+"mpsno": 5719,
+"mpFirstLastName": "MP 5719",
+"stateName": "Karnataka",
+"constName": "Koppal",
+"status": "Sitting"
+},
+{
+"mpsno": 4207,
+"mpFirstLastName": "MP 4207",
+"stateName": "Haryana",
+"constName": "Rohtak",
+"status": "Sitting"
+},
+{
+"mpsno": 5724,
+"mpFirstLastName": "MP 5724",
+"stateName": "Assam",
+"constName": "Dhubri",
+"status": "Sitting"
+},
+{
+"mpsno": 5730,
+"mpFirstLastName": "MP 5730",
+"stateName": "Rajasthan",
+"constName": "Ganganagar",
+"status": "Sitting"
+},
+{
+"mpsno": 4490,
+"mpFirstLastName": "MP 4490",
+"stateName": "West Bengal",
+"constName": "Basirhat",
+"status": "Died"
+},
+{
+"mpsno": 5571,
+"mpFirstLastName": "MP 5571",
+"stateName": "Gujarat",
+"constName": "Panchmahal",
+"status": "Sitting"
+},
+{
+"mpsno": 4373,
+"mpFirstLastName": "MP 4373",
+"stateName": "Maharashtra",
+"constName": "Buldhana",
+"status": "Sitting"
+},
+{
+"mpsno": 4735,
+"mpFirstLastName": "MP 4735",
+"stateName": "Maharashtra",
+"constName": "Parbhani",
+"status": "Sitting"
+},
+{
+"mpsno": 157,
+"mpFirstLastName": "MP 157",
+"stateName": "Tamil Nadu",
+"constName": "Arakkonam",
+"status": "Sitting"
+},
+{
+"mpsno": 4455,
+"mpFirstLastName": "MP 4455",
+"stateName": "Bihar",
+"constName": "Paschim Champaran",
+"status": "Sitting"
+},
+{
+"mpsno": 5673,
+"mpFirstLastName": "MP 5673",
+"stateName": "Jharkhand",
+"constName": "Hazaribagh",
+"status": "Sitting"
+},
+{
+"mpsno": 5567,
+"mpFirstLastName": "MP 5567",
+"stateName": "Nagaland",
+"constName": "Nagaland",
+"status": "Sitting"
+},
+{
+"mpsno": 5709,
+"mpFirstLastName": "MP 5709",
+"stateName": "Chhattisgarh",
+"constName": "Janjgir-Champa",
+"status": "Sitting"
+},
+{
+"mpsno": 5831,
+"mpFirstLastName": "MP 5831",
+"stateName": "Karnataka",
+"constName": "Chikkodi",
+"status": "Sitting"
+},
+{
+"mpsno": 5734,
+"mpFirstLastName": "MP 5734",
+"stateName": "Rajasthan",
+"constName": "Karauli-Dholpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5690,
+"mpFirstLastName": "MP 5690",
+"stateName": "Rajasthan",
+"constName": "Bharatpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5216,
+"mpFirstLastName": "MP 5216",
+"stateName": "Bihar",
+"constName": "Kishanganj",
+"status": "Sitting"
+},
+{
+"mpsno": 25,
+"mpFirstLastName": "MP 25",
+"stateName": "West Bengal",
+"constName": "Bardhaman-Durgapur",
+"status": "Sitting"
+},
+{
+"mpsno": 170,
+"mpFirstLastName": "MP 170",
+"stateName": "Karnataka",
+"constName": "Bijapur",
+"status": "Sitting"
+},
+{
+"mpsno": 4041,
+"mpFirstLastName": "MP 4041",
+"stateName": "Haryana",
+"constName": "Kurukshetra",
+"status": "Sitting"
+},
+{
+"mpsno": 5570,
+"mpFirstLastName": "MP 5570",
+"stateName": "Gujarat",
+"constName": "Vadodara",
+"status": "Sitting"
+},
+{
+"mpsno": 4671,
+"mpFirstLastName": "MP 4671",
+"stateName": "Rajasthan",
+"constName": "Chittorgarh",
+"status": "Sitting"
+},
+{
+"mpsno": 3982,
+"mpFirstLastName": "MP 3982",
+"stateName": "Karnataka",
+"constName": "Dharwad",
+"status": "Sitting"
+},
+{
+"mpsno": 4981,
+"mpFirstLastName": "MP 4981",
+"stateName": "Tamil Nadu",
+"constName": "Karur",
+"status": "Sitting"
+},
+{
+"mpsno": 5806,
+"mpFirstLastName": "MP 5806",
+"stateName": "Tamil Nadu",
+"constName": "Pollachi",
+"status": "Sitting"
+},
+{
+"mpsno": 4962,
+"mpFirstLastName": "MP 4962",
+"stateName": "Tamil Nadu",
+"constName": "Ramanathapuram",
+"status": "Sitting"
+},
+{
+"mpsno": 4086,
+"mpFirstLastName": "MP 4086",
+"stateName": "Tamil Nadu",
+"constName": "Tiruppur",
+"status": "Sitting"
+},
+{
+"mpsno": 5554,
+"mpFirstLastName": "MP 5554",
+"stateName": "Karnataka",
+"constName": "Uttara Kannada",
+"status": "Sitting"
+},
+{
+"mpsno": 5767,
+"mpFirstLastName": "MP 5767",
+"stateName": "Maharashtra",
+"constName": "Jalna",
+"status": "Sitting"
+},
+{
+"mpsno": 5820,
+"mpFirstLastName": "MP 5820",
+"stateName": "Maharashtra",
+"constName": "Wardha",
+"status": "Sitting"
+},
+{
+"mpsno": 5746,
+"mpFirstLastName": "MP 5746",
+"stateName": "Maharashtra",
+"constName": "Latur",
+"status": "Sitting"
+},
+{
+"mpsno": 5697,
+"mpFirstLastName": "MP 5697",
+"stateName": "Andhra Pradesh",
+"constName": "Vizianagaram",
+"status": "Sitting"
+},
+{
+"mpsno": 5222,
+"mpFirstLastName": "MP 5222",
+"stateName": "Bihar",
+"constName": "Supaul",
+"status": "Sitting"
+},
+{
+"mpsno": 5721,
+"mpFirstLastName": "MP 5721",
+"stateName": "Punjab",
+"constName": "Anandpur Sahib",
+"status": "Sitting"
+},
+{
+"mpsno": 4616,
+"mpFirstLastName": "MP 4616",
+"stateName": "Karnataka",
+"constName": "Bangalore North",
+"status": "Sitting"
+},
+{
+"mpsno": 5559,
+"mpFirstLastName": "MP 5559",
+"stateName": "Karnataka",
+"constName": "Chitradurga",
+"status": "Sitting"
+},
+{
+"mpsno": 5626,
+"mpFirstLastName": "MP 5626",
+"stateName": "Chhattisgarh",
+"constName": "Bastar",
+"status": "Sitting"
+},
+{
+"mpsno": 5113,
+"mpFirstLastName": "MP 5113",
+"stateName": "Himachal Pradesh",
+"constName": "Shimla",
+"status": "Sitting"
+},
+{
+"mpsno": 4654,
+"mpFirstLastName": "MP 4654",
+"stateName": "Rajasthan",
+"constName": "Churu",
+"status": "Sitting"
+},
+{
+"mpsno": 5783,
+"mpFirstLastName": "MP 5783",
+"stateName": "Telangana",
+"constName": "Warangal",
+"status": "Sitting"
+},
+{
+"mpsno": 4722,
+"mpFirstLastName": "MP 4722",
+"stateName": "Maharashtra",
+"constName": "Raver",
+"status": "Sitting"
+},
+{
+"mpsno": 5738,
+"mpFirstLastName": "MP 5738",
+"stateName": "Punjab",
+"constName": "Faridkot",
+"status": "Sitting"
+},
+{
+"mpsno": 5052,
+"mpFirstLastName": "MP 5052",
+"stateName": "West Bengal",
+"constName": "Murshidabad",
+"status": "Sitting"
+},
+{
+"mpsno": 4875,
+"mpFirstLastName": "MP 4875",
+"stateName": "West Bengal",
+"constName": "Bishnupur",
+"status": "Sitting"
+},
+{
+"mpsno": 5661,
+"mpFirstLastName": "MP 5661",
+"stateName": "NCT of Delhi",
+"constName": "Chandni Chowk",
+"status": "Sitting"
+},
+{
+"mpsno": 5791,
+"mpFirstLastName": "MP 5791",
+"stateName": "Karnataka",
+"constName": "Bidar",
+"status": "Sitting"
+},
+{
+"mpsno": 5825,
+"mpFirstLastName": "MP 5825",
+"stateName": "West Bengal",
+"constName": "Jhargram",
+"status": "Sitting"
+},
+{
+"mpsno": 5144,
+"mpFirstLastName": "MP 5144",
+"stateName": "Uttar Pradesh",
+"constName": "Gorakhpur",
+"status": "Sitting"
+},
+{
+"mpsno": 4720,
+"mpFirstLastName": "MP 4720",
+"stateName": "Jammu and Kashmir",
+"constName": "Jammu",
+"status": "Sitting"
+},
+{
+"mpsno": 5185,
+"mpFirstLastName": "MP 5185",
+"stateName": "Maharashtra",
+"constName": "Shirur",
+"status": "Sitting"
+},
+{
+"mpsno": 207,
+"mpFirstLastName": "MP 207",
+"stateName": "Madhya Pradesh",
+"constName": "Mandla",
+"status": "Sitting"
+},
+{
+"mpsno": 5612,
+"mpFirstLastName": "MP 5612",
+"stateName": "Uttar Pradesh",
+"constName": "Bahraich",
+"status": "Sitting"
+},
+{
+"mpsno": 4972,
+"mpFirstLastName": "MP 4972",
+"stateName": "Tamil Nadu",
+"constName": "Viluppuram",
+"status": "Sitting"
+},
+{
+"mpsno": 515,
+"mpFirstLastName": "MP 515",
+"stateName": "Madhya Pradesh",
+"constName": "Tikamgarh",
+"status": "Sitting"
+},
+{
+"mpsno": 5076,
+"mpFirstLastName": "MP 5076",
+"stateName": "Telangana",
+"constName": "Karimnagar",
+"status": "Sitting"
+},
+{
+"mpsno": 4467,
+"mpFirstLastName": "MP 4467",
+"stateName": "Bihar",
+"constName": "Nalanda",
+"status": "Sitting"
+},
+{
+"mpsno": 5578,
+"mpFirstLastName": "MP 5578",
+"stateName": "Bihar",
+"constName": "Sasaram",
+"status": "Sitting"
+},
+{
+"mpsno": 5726,
+"mpFirstLastName": "MP 5726",
+"stateName": "Andhra Pradesh",
+"constName": "Eluru",
+"status": "Sitting"
+},
+{
+"mpsno": 5530,
+"mpFirstLastName": "MP 5530",
+"stateName": "Bihar",
+"constName": "Valmiki Nagar",
+"status": "Sitting"
+},
+{
+"mpsno": 3711,
+"mpFirstLastName": "MP 3711",
+"stateName": "Karnataka",
+"constName": "Mandya",
+"status": "Sitting"
+},
+{
+"mpsno": 3589,
+"mpFirstLastName": "MP 3589",
+"stateName": "Haryana",
+"constName": "Sirsa",
+"status": "Sitting"
+},
+{
+"mpsno": 5126,
+"mpFirstLastName": "MP 5126",
+"stateName": "Kerala",
+"constName": "Idukki",
+"status": "Sitting"
+},
+{
+"mpsno": 5609,
+"mpFirstLastName": "MP 5609",
+"stateName": "Madhya Pradesh",
+"constName": "Gwalior",
+"status": "Sitting"
+},
+{
+"mpsno": 5635,
+"mpFirstLastName": "MP 5635",
+"stateName": "Uttar Pradesh",
+"constName": "Jaunpur",
+"status": "Sitting"
+},
+{
+"mpsno": 4741,
+"mpFirstLastName": "MP 4741",
+"stateName": "Gujarat",
+"constName": "Kachchh",
+"status": "Sitting"
+},
+{
+"mpsno": 5584,
+"mpFirstLastName": "MP 5584",
+"stateName": "Andhra Pradesh",
+"constName": "Anantapur",
+"status": "Sitting"
+},
+{
+"mpsno": 5546,
+"mpFirstLastName": "MP 5546",
+"stateName": "Uttar Pradesh",
+"constName": "Amethi",
+"status": "Sitting"
+},
+{
+"mpsno": 5792,
+"mpFirstLastName": "MP 5792",
+"stateName": "Haryana",
+"constName": "Karnal",
+"status": "Sitting"
+},
+{
+"mpsno": 5065,
+"mpFirstLastName": "MP 5065",
+"stateName": "Madhya Pradesh",
+"constName": "Indore",
+"status": "Sitting"
+},
+{
+"mpsno": 5821,
+"mpFirstLastName": "MP 5821",
+"stateName": "Maharashtra",
+"constName": "Ahmednagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5784,
+"mpFirstLastName": "MP 5784",
+"stateName": "Uttar Pradesh",
+"constName": "Hamirpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5689,
+"mpFirstLastName": "MP 5689",
+"stateName": "Madhya Pradesh",
+"constName": "Damoh",
+"status": "Sitting"
+},
+{
+"mpsno": 5819,
+"mpFirstLastName": "MP 5819",
+"stateName": "Tamil Nadu",
+"constName": "Arani",
+"status": "Sitting"
+},
+{
+"mpsno": 4751,
+"mpFirstLastName": "MP 4751",
+"stateName": "Gujarat",
+"constName": "Jamnagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5809,
+"mpFirstLastName": "MP 5809",
+"stateName": "Uttar Pradesh",
+"constName": "Kheri",
+"status": "Sitting"
+},
+{
+"mpsno": 5011,
+"mpFirstLastName": "MP 5011",
+"stateName": "Chhattisgarh",
+"constName": "Korba",
+"status": "Sitting"
+},
+{
+"mpsno": 5702,
+"mpFirstLastName": "MP 5702",
+"stateName": "Chhattisgarh",
+"constName": "Surguja",
+"status": "Sitting"
+},
+{
+"mpsno": 4705,
+"mpFirstLastName": "MP 4705",
+"stateName": "Jharkhand",
+"constName": "Jamshedpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5664,
+"mpFirstLastName": "MP 5664",
+"stateName": "Jharkhand",
+"constName": "Dhanbad",
+"status": "Sitting"
+},
+{
+"mpsno": 5053,
+"mpFirstLastName": "MP 5053",
+"stateName": "West Bengal",
+"constName": "Purulia",
+"status": "Sitting"
+},
+{
+"mpsno": 225,
+"mpFirstLastName": "MP 225",
+"stateName": "Odisha",
+"constName": "Cuttack",
+"status": "Sitting"
+},
+{
+"mpsno": 4796,
+"mpFirstLastName": "MP 4796",
+"stateName": "Odisha",
+"constName": "Nabarangpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5672,
+"mpFirstLastName": "MP 5672",
+"stateName": "Odisha",
+"constName": "Mayurbhanj",
+"status": "Sitting"
+},
+{
+"mpsno": 5827,
+"mpFirstLastName": "MP 5827",
+"stateName": "Jharkhand",
+"constName": "Singhbhum",
+"status": "Sitting"
+},
+{
+"mpsno": 5035,
+"mpFirstLastName": "MP 5035",
+"stateName": "West Bengal",
+"constName": "Balurghat",
+"status": "Sitting"
+},
+{
+"mpsno": 5694,
+"mpFirstLastName": "MP 5694",
+"stateName": "Gujarat",
+"constName": "Ahmedabad West",
+"status": "Sitting"
+},
+{
+"mpsno": 5040,
+"mpFirstLastName": "MP 5040",
+"stateName": "West Bengal",
+"constName": "Bolpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5563,
+"mpFirstLastName": "MP 5563",
+"stateName": "NCT of Delhi",
+"constName": "East Delhi",
+"status": "Sitting"
+},
+{
+"mpsno": 5816,
+"mpFirstLastName": "MP 5816",
+"stateName": "West Bengal",
+"constName": "Medinipur",
+"status": "Sitting"
+},
+{
+"mpsno": 5631,
+"mpFirstLastName": "MP 5631",
+"stateName": "Uttar Pradesh",
+"constName": "Muzaffarnagar",
+"status": "Sitting"
+},
+{
+"mpsno": 4619,
+"mpFirstLastName": "MP 4619",
+"stateName": "Uttar Pradesh",
+"constName": "Mathura",
+"status": "Sitting"
+},
+{
+"mpsno": 5106,
+"mpFirstLastName": "MP 5106",
+"stateName": "Assam",
+"constName": "Karimganj",
+"status": "Sitting"
+},
+{
+"mpsno": 5753,
+"mpFirstLastName": "MP 5753",
+"stateName": "Karnataka",
+"constName": "Davanagere",
+"status": "Sitting"
+},
+{
+"mpsno": 5170,
+"mpFirstLastName": "MP 5170",
+"stateName": "Bihar",
+"constName": "Bhagalpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5214,
+"mpFirstLastName": "MP 5214",
+"stateName": "Bihar",
+"constName": "Jhanjharpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5555,
+"mpFirstLastName": "MP 5555",
+"stateName": "Gujarat",
+"constName": "Porbandar",
+"status": "Sitting"
+},
+{
+"mpsno": 5187,
+"mpFirstLastName": "MP 5187",
+"stateName": "Maharashtra",
+"constName": "Hatkanangle",
+"status": "Sitting"
+},
+{
+"mpsno": 5688,
+"mpFirstLastName": "MP 5688",
+"stateName": "Uttar Pradesh",
+"constName": "Deoria",
+"status": "Sitting"
+},
+{
+"mpsno": 5558,
+"mpFirstLastName": "MP 5558",
+"stateName": "Bihar",
+"constName": "Gaya",
+"status": "Sitting"
+},
+{
+"mpsno": 5590,
+"mpFirstLastName": "MP 5590",
+"stateName": "Karnataka",
+"constName": "Bangalore Rural",
+"status": "Sitting"
+},
+{
+"mpsno": 4144,
+"mpFirstLastName": "MP 4144",
+"stateName": "Tamil Nadu",
+"constName": "Chennai Central",
+"status": "Sitting"
+},
+{
+"mpsno": 5589,
+"mpFirstLastName": "MP 5589",
+"stateName": "Uttar Pradesh",
+"constName": "Saharanpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5623,
+"mpFirstLastName": "MP 5623",
+"stateName": "Andhra Pradesh",
+"constName": "Visakhapatnam",
+"status": "Sitting"
+},
+{
+"mpsno": 5637,
+"mpFirstLastName": "MP 5637",
+"stateName": "Uttar Pradesh",
+"constName": "Aonla",
+"status": "Sitting"
+},
+{
+"mpsno": 5603,
+"mpFirstLastName": "MP 5603",
+"stateName": "Assam",
+"constName": "Guwahati",
+"status": "Sitting"
+},
+{
+"mpsno": 4640,
+"mpFirstLastName": "MP 4640",
+"stateName": "Rajasthan",
+"constName": "Tonk-Sawai Madhopur",
+"status": "Sitting"
+},
+{
+"mpsno": 5717,
+"mpFirstLastName": "MP 5717",
+"stateName": "Rajasthan",
+"constName": "Dausa",
+"status": "Sitting"
+},
+{
+"mpsno": 4399,
+"mpFirstLastName": "MP 4399",
+"stateName": "Rajasthan",
+"constName": "Bikaner",
+"status": "Sitting"
+},
+{
+"mpsno": 5761,
+"mpFirstLastName": "MP 5761",
+"stateName": "Jammu and Kashmir",
+"constName": "Srinagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5683,
+"mpFirstLastName": "MP 5683",
+"stateName": "Rajasthan",
+"constName": "Rajsamand",
+"status": "Sitting"
+},
+{
+"mpsno": 5693,
+"mpFirstLastName": "MP 5693",
+"stateName": "Maharashtra",
+"constName": "Thane",
+"status": "Sitting"
+},
+{
+"mpsno": 5644,
+"mpFirstLastName": "MP 5644",
+"stateName": "Maharashtra",
+"constName": "Bhiwandi",
+"status": "Sitting"
+},
+{
+"mpsno": 5579,
+"mpFirstLastName": "MP 5579",
+"stateName": "Madhya Pradesh",
+"constName": "Sidhi",
+"status": "Sitting"
+},
+{
+"mpsno": 4728,
+"mpFirstLastName": "MP 4728",
+"stateName": "Madhya Pradesh",
+"constName": "Rewa",
+"status": "Sitting"
+},
+{
+"mpsno": 5777,
+"mpFirstLastName": "MP 5777",
+"stateName": "West Bengal",
+"constName": "Arambag",
+"status": "Sitting"
+},
+{
+"mpsno": 4589,
+"mpFirstLastName": "MP 4589",
+"stateName": "Uttar Pradesh",
+"constName": "Varanasi",
+"status": "Sitting"
+},
+{
+"mpsno": 4321,
+"mpFirstLastName": "MP 4321",
+"stateName": "Karnataka",
+"constName": "Bangalore Central",
+"status": "Sitting"
+},
+{
+"mpsno": 5536,
+"mpFirstLastName": "MP 5536",
+"stateName": "Dadra and Nagar Haveli and Daman and Diu",
+"constName": "Dadra and Nagar Haveli",
+"status": "Sitting"
+},
+{
+"mpsno": 5705,
+"mpFirstLastName": "MP 5705",
+"stateName": "Maharashtra",
+"constName": "Pune",
+"status": "Sitting"
+},
+{
+"mpsno": 5049,
+"mpFirstLastName": "MP 5049",
+"stateName": "West Bengal",
+"constName": "Krishnanagar",
+"status": "Sitting"
+},
+{
+"mpsno": 4871,
+"mpFirstLastName": "MP 4871",
+"stateName": "West Bengal",
+"constName": "Jaynagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5810,
+"mpFirstLastName": "MP 5810",
+"stateName": "Jharkhand",
+"constName": "Khunti",
+"status": "Sitting"
+},
+{
+"mpsno": 5050,
+"mpFirstLastName": "MP 5050",
+"stateName": "West Bengal",
+"constName": "Maldaha Uttar",
+"status": "Sitting"
+},
+{
+"mpsno": 5732,
+"mpFirstLastName": "MP 5732",
+"stateName": "Chhattisgarh",
+"constName": "Kanker",
+"status": "Sitting"
+},
+{
+"mpsno": 4702,
+"mpFirstLastName": "MP 4702",
+"stateName": "Madhya Pradesh",
+"constName": "Rajgarh",
+"status": "Sitting"
+},
+{
+"mpsno": 5601,
+"mpFirstLastName": "MP 5601",
+"stateName": "Andhra Pradesh",
+"constName": "Kurnool",
+"status": "Sitting"
+},
+{
+"mpsno": 4804,
+"mpFirstLastName": "MP 4804",
+"stateName": "Telangana",
+"constName": "Adilabad",
+"status": "Sitting"
+},
+{
+"mpsno": 4771,
+"mpFirstLastName": "MP 4771",
+"stateName": "Andhra Pradesh",
+"constName": "Srikakulam",
+"status": "Sitting"
+},
+{
+"mpsno": 5737,
+"mpFirstLastName": "MP 5737",
+"stateName": "Karnataka",
+"constName": "Raichur",
+"status": "Sitting"
+},
+{
+"mpsno": 273,
+"mpFirstLastName": "MP 273",
+"stateName": "Goa",
+"constName": "North Goa",
+"status": "Sitting"
+},
+{
+"mpsno": 5727,
+"mpFirstLastName": "MP 5727",
+"stateName": "Maharashtra",
+"constName": "Gadchiroli-Chimur",
+"status": "Sitting"
+},
+{
+"mpsno": 275,
+"mpFirstLastName": "MP 275",
+"stateName": "Odisha",
+"constName": "Keonjhar",
+"status": "Sitting"
+},
+{
+"mpsno": 5797,
+"mpFirstLastName": "MP 5797",
+"stateName": "Tamil Nadu",
+"constName": "Perambalur",
+"status": "Sitting"
+},
+{
+"mpsno": 5813,
+"mpFirstLastName": "MP 5813",
+"stateName": "Uttar Pradesh",
+"constName": "Sant Kabir Nagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5786,
+"mpFirstLastName": "MP 5786",
+"stateName": "Uttar Pradesh",
+"constName": "Sultanpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5720,
+"mpFirstLastName": "MP 5720",
+"stateName": "Rajasthan",
+"constName": "Jhunjhunu",
+"status": "Sitting"
+},
+{
+"mpsno": 279,
+"mpFirstLastName": "MP 279",
+"stateName": "Odisha",
+"constName": "Sundargarh",
+"status": "Sitting"
+},
+{
+"mpsno": 4091,
+"mpFirstLastName": "MP 4091",
+"stateName": "Telangana",
+"constName": "Hyderabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5807,
+"mpFirstLastName": "MP 5807",
+"stateName": "Tamil Nadu",
+"constName": "Coimbatore",
+"status": "Sitting"
+},
+{
+"mpsno": 5760,
+"mpFirstLastName": "MP 5760",
+"stateName": "Maharashtra",
+"constName": "Nandurbar",
+"status": "Sitting"
+},
+{
+"mpsno": 5729,
+"mpFirstLastName": "MP 5729",
+"stateName": "Maharashtra",
+"constName": "Bhandara-Gondiya",
+"status": "Sitting"
+},
+{
+"mpsno": 4295,
+"mpFirstLastName": "MP 4295",
+"stateName": "Uttar Pradesh",
+"constName": "Domariyaganj",
+"status": "Sitting"
+},
+{
+"mpsno": 4422,
+"mpFirstLastName": "MP 4422",
+"stateName": "Odisha",
+"constName": "Kendrapara",
+"status": "Sitting"
+},
+{
+"mpsno": 5580,
+"mpFirstLastName": "MP 5580",
+"stateName": "Uttar Pradesh",
+"constName": "Ballia",
+"status": "Sitting"
+},
+{
+"mpsno": 5015,
+"mpFirstLastName": "MP 5015",
+"stateName": "Chhattisgarh",
+"constName": "Rajnandgaon",
+"status": "Sitting"
+},
+{
+"mpsno": 5615,
+"mpFirstLastName": "MP 5615",
+"stateName": "Odisha",
+"constName": "Kandhamal",
+"status": "Sitting"
+},
+{
+"mpsno": 5708,
+"mpFirstLastName": "MP 5708",
+"stateName": "Odisha",
+"constName": "Berhampur",
+"status": "Sitting"
+},
+{
+"mpsno": 5805,
+"mpFirstLastName": "MP 5805",
+"stateName": "Odisha",
+"constName": "Dhenkanal",
+"status": "Sitting"
+},
+{
+"mpsno": 5698,
+"mpFirstLastName": "MP 5698",
+"stateName": "Kerala",
+"constName": "Vadakara",
+"status": "Sitting"
+},
+{
+"mpsno": 5696,
+"mpFirstLastName": "MP 5696",
+"stateName": "Madhya Pradesh",
+"constName": "Balaghat",
+"status": "Sitting"
+},
+{
+"mpsno": 3289,
+"mpFirstLastName": "MP 3289",
+"stateName": "Haryana",
+"constName": "Hisar",
+"status": "Sitting"
+},
+{
+"mpsno": 292,
+"mpFirstLastName": "MP 292",
+"stateName": "Andhra Pradesh",
+"constName": "Hindupur",
+"status": "Sitting"
+},
+{
+"mpsno": 4777,
+"mpFirstLastName": "MP 4777",
+"stateName": "Bihar",
+"constName": "Hajipur",
+"status": "Sitting"
+},
+{
+"mpsno": 4303,
+"mpFirstLastName": "MP 4303",
+"stateName": "Uttar Pradesh",
+"constName": "Bansgaon",
+"status": "Sitting"
+},
+{
+"mpsno": 5643,
+"mpFirstLastName": "MP 5643",
+"stateName": "Uttar Pradesh",
+"constName": "Pratapgarh",
+"status": "Sitting"
+},
+{
+"mpsno": 5665,
+"mpFirstLastName": "MP 5665",
+"stateName": "Gujarat",
+"constName": "Valsad",
+"status": "Sitting"
+},
+{
+"mpsno": 5067,
+"mpFirstLastName": "MP 5067",
+"stateName": "Madhya Pradesh",
+"constName": "Khargone",
+"status": "Sitting"
+},
+{
+"mpsno": 5560,
+"mpFirstLastName": "MP 5560",
+"stateName": "Gujarat",
+"constName": "Mahesana",
+"status": "Sitting"
+},
+{
+"mpsno": 5017,
+"mpFirstLastName": "MP 5017",
+"stateName": "Gujarat",
+"constName": "Ahmedabad East",
+"status": "Sitting"
+},
+{
+"mpsno": 5018,
+"mpFirstLastName": "MP 5018",
+"stateName": "Gujarat",
+"constName": "Anand",
+"status": "Sitting"
+},
+{
+"mpsno": 5801,
+"mpFirstLastName": "MP 5801",
+"stateName": "Uttar Pradesh",
+"constName": "Fatehpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5583,
+"mpFirstLastName": "MP 5583",
+"stateName": "Uttar Pradesh",
+"constName": "Phulpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5751,
+"mpFirstLastName": "MP 5751",
+"stateName": "Karnataka",
+"constName": "Hassan",
+"status": "Sitting"
+},
+{
+"mpsno": 4662,
+"mpFirstLastName": "MP 4662",
+"stateName": "Uttar Pradesh",
+"constName": "Mirzapur",
+"status": "Sitting"
+},
+{
+"mpsno": 5594,
+"mpFirstLastName": "MP 5594",
+"stateName": "Uttar Pradesh",
+"constName": "Banda",
+"status": "Sitting"
+},
+{
+"mpsno": 4452,
+"mpFirstLastName": "MP 4452",
+"stateName": "Gujarat",
+"constName": "Navsari",
+"status": "Sitting"
+},
+{
+"mpsno": 5535,
+"mpFirstLastName": "MP 5535",
+"stateName": "Madhya Pradesh",
+"constName": "Khandwa",
+"status": "Sitting"
+},
+{
+"mpsno": 4393,
+"mpFirstLastName": "MP 4393",
+"stateName": "Maharashtra",
+"constName": "Mumbai North East",
+"status": "Sitting"
+},
+{
+"mpsno": 5756,
+"mpFirstLastName": "MP 5756",
+"stateName": "Maharashtra",
+"constName": "Sangli",
+"status": "Sitting"
+},
+{
+"mpsno": 5599,
+"mpFirstLastName": "MP 5599",
+"stateName": "Odisha",
+"constName": "Puri",
+"status": "Sitting"
+},
+{
+"mpsno": 5691,
+"mpFirstLastName": "MP 5691",
+"stateName": "West Bengal",
+"constName": "Raiganj",
+"status": "Sitting"
+},
+{
+"mpsno": 5636,
+"mpFirstLastName": "MP 5636",
+"stateName": "Andhra Pradesh",
+"constName": "Guntur",
+"status": "Sitting"
+},
+{
+"mpsno": 5711,
+"mpFirstLastName": "MP 5711",
+"stateName": "Karnataka",
+"constName": "Udupi Chikmagalur",
+"status": "Sitting"
+},
+{
+"mpsno": 4322,
+"mpFirstLastName": "MP 4322",
+"stateName": "Telangana",
+"constName": "Mahabubabad",
+"status": "Sitting"
+},
+{
+"mpsno": 3999,
+"mpFirstLastName": "MP 3999",
+"stateName": "Odisha",
+"constName": "Sambalpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5123,
+"mpFirstLastName": "MP 5123",
+"stateName": "Kerala",
+"constName": "Attingal",
+"status": "Sitting"
+},
+{
+"mpsno": 159,
+"mpFirstLastName": "MP 159",
+"stateName": "Uttar Pradesh",
+"constName": "Hardoi",
+"status": "Sitting"
+},
+{
+"mpsno": 5770,
+"mpFirstLastName": "MP 5770",
+"stateName": "Tamil Nadu",
+"constName": "Erode",
+"status": "Sitting"
+},
+{
+"mpsno": 4971,
+"mpFirstLastName": "MP 4971",
+"stateName": "Tamil Nadu",
+"constName": "Cuddalore",
+"status": "Sitting"
+},
+{
+"mpsno": 5780,
+"mpFirstLastName": "MP 5780",
+"stateName": "Uttar Pradesh",
+"constName": "Faizabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5219,
+"mpFirstLastName": "MP 5219",
+"stateName": "Bihar",
+"constName": "Patna Sahib",
+"status": "Sitting"
+},
+{
+"mpsno": 5641,
+"mpFirstLastName": "MP 5641",
+"stateName": "Bihar",
+"constName": "Arrah",
+"status": "Sitting"
+},
+{
+"mpsno": 4065,
+"mpFirstLastName": "MP 4065",
+"stateName": "Uttar Pradesh",
+"constName": "Pilibhit",
+"status": "Sitting"
+},
+{
+"mpsno": 3754,
+"mpFirstLastName": "MP 3754",
+"stateName": "Kerala",
+"constName": "Kollam",
+"status": "Sitting"
+},
+{
+"mpsno": 5728,
+"mpFirstLastName": "MP 5728",
+"stateName": "Uttar Pradesh",
+"constName": "Barabanki",
+"status": "Sitting"
+},
+{
+"mpsno": 4022,
+"mpFirstLastName": "MP 4022",
+"stateName": "Andhra Pradesh",
+"constName": "Rajahmundry",
+"status": "Sitting"
+},
+{
+"mpsno": 5668,
+"mpFirstLastName": "MP 5668",
+"stateName": "Odisha",
+"constName": "Bargarh",
+"status": "Sitting"
+},
+{
+"mpsno": 5650,
+"mpFirstLastName": "MP 5650",
+"stateName": "Tamil Nadu",
+"constName": "Mayiladuthurai",
+"status": "Sitting"
+},
+{
+"mpsno": 5628,
+"mpFirstLastName": "MP 5628",
+"stateName": "Tamil Nadu",
+"constName": "Dindigul",
+"status": "Sitting"
+},
+{
+"mpsno": 5757,
+"mpFirstLastName": "MP 5757",
+"stateName": "Karnataka",
+"constName": "Gulbarga",
+"status": "Sitting"
+},
+{
+"mpsno": 5812,
+"mpFirstLastName": "MP 5812",
+"stateName": "Kerala",
+"constName": "Alathur",
+"status": "Sitting"
+},
+{
+"mpsno": 4560,
+"mpFirstLastName": "MP 4560",
+"stateName": "Kerala",
+"constName": "Kozhikode",
+"status": "Sitting"
+},
+{
+"mpsno": 4570,
+"mpFirstLastName": "MP 4570",
+"stateName": "Karnataka",
+"constName": "Shimoga",
+"status": "Sitting"
+},
+{
+"mpsno": 5793,
+"mpFirstLastName": "MP 5793",
+"stateName": "Telangana",
+"constName": "Nalgonda",
+"status": "Sitting"
+},
+{
+"mpsno": 5046,
+"mpFirstLastName": "MP 5046",
+"stateName": "West Bengal",
+"constName": "Jangipur",
+"status": "Sitting"
+},
+{
+"mpsno": 4625,
+"mpFirstLastName": "MP 4625",
+"stateName": "Bihar",
+"constName": "Ujiarpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5769,
+"mpFirstLastName": "MP 5769",
+"stateName": "Uttar Pradesh",
+"constName": "Ghosi",
+"status": "Sitting"
+},
+{
+"mpsno": 4960,
+"mpFirstLastName": "MP 4960",
+"stateName": "Tamil Nadu",
+"constName": "Thoothukkudi",
+"status": "Sitting"
+},
+{
+"mpsno": 4305,
+"mpFirstLastName": "MP 4305",
+"stateName": "Uttar Pradesh",
+"constName": "Salempur",
+"status": "Sitting"
+},
+{
+"mpsno": 5731,
+"mpFirstLastName": "MP 5731",
+"stateName": "Telangana",
+"constName": "Malkajgiri",
+"status": "Sitting"
+},
+{
+"mpsno": 5189,
+"mpFirstLastName": "MP 5189",
+"stateName": "Maharashtra",
+"constName": "Osmanabad",
+"status": "Sitting"
+},
+{
+"mpsno": 4666,
+"mpFirstLastName": "MP 4666",
+"stateName": "Uttar Pradesh",
+"constName": "Farrukhabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5649,
+"mpFirstLastName": "MP 5649",
+"stateName": "Maharashtra",
+"constName": "Madha",
+"status": "Sitting"
+},
+{
+"mpsno": 5776,
+"mpFirstLastName": "MP 5776",
+"stateName": "Rajasthan",
+"constName": "Sikar",
+"status": "Sitting"
+},
+{
+"mpsno": 4731,
+"mpFirstLastName": "MP 4731",
+"stateName": "Jharkhand",
+"constName": "Palamu",
+"status": "Sitting"
+},
+{
+"mpsno": 5544,
+"mpFirstLastName": "MP 5544",
+"stateName": "Andhra Pradesh",
+"constName": "Anakapalle",
+"status": "Sitting"
+},
+{
+"mpsno": 5652,
+"mpFirstLastName": "MP 5652",
+"stateName": "Himachal Pradesh",
+"constName": "Mandi",
+"status": "Sitting"
+},
+{
+"mpsno": 5752,
+"mpFirstLastName": "MP 5752",
+"stateName": "Punjab",
+"constName": "Gurdaspur",
+"status": "Sitting"
+},
+{
+"mpsno": 5704,
+"mpFirstLastName": "MP 5704",
+"stateName": "Maharashtra",
+"constName": "Ratnagiri-Sindhudurg",
+"status": "Sitting"
+},
+{
+"mpsno": 5679,
+"mpFirstLastName": "MP 5679",
+"stateName": "Andhra Pradesh",
+"constName": "Araku",
+"status": "Sitting"
+},
+{
+"mpsno": 554,
+"mpFirstLastName": "MP 554",
+"stateName": "Bihar",
+"constName": "Purnia",
+"status": "Sitting"
+},
+{
+"mpsno": 5670,
+"mpFirstLastName": "MP 5670",
+"stateName": "Andhra Pradesh",
+"constName": "Chittoor",
+"status": "Sitting"
+},
+{
+"mpsno": 5573,
+"mpFirstLastName": "MP 5573",
+"stateName": "Telangana",
+"constName": "Medak",
+"status": "Sitting"
+},
+{
+"mpsno": 5678,
+"mpFirstLastName": "MP 5678",
+"stateName": "Chhattisgarh",
+"constName": "Raigarh",
+"status": "Sitting"
+},
+{
+"mpsno": 5743,
+"mpFirstLastName": "MP 5743",
+"stateName": "Uttar Pradesh",
+"constName": "Sitapur",
+"status": "Sitting"
+},
+{
+"mpsno": 5572,
+"mpFirstLastName": "MP 5572",
+"stateName": "Gujarat",
+"constName": "Chhota Udaipur",
+"status": "Sitting"
+},
+{
+"mpsno": 3534,
+"mpFirstLastName": "MP 3534",
+"stateName": "Telangana",
+"constName": "Nagarkurnool",
+"status": "Sitting"
+},
+{
+"mpsno": 5622,
+"mpFirstLastName": "MP 5622",
+"stateName": "Rajasthan",
+"constName": "Udaipur",
+"status": "Sitting"
+},
+{
+"mpsno": 4096,
+"mpFirstLastName": "MP 4096",
+"stateName": "Uttar Pradesh",
+"constName": "Misrikh",
+"status": "Sitting"
+},
+{
+"mpsno": 5556,
+"mpFirstLastName": "MP 5556",
+"stateName": "Uttarakhand",
+"constName": "Hardwar",
+"status": "Sitting"
+},
+{
+"mpsno": 2554,
+"mpFirstLastName": "MP 2554",
+"stateName": "West Bengal",
+"constName": "Dum Dum",
+"status": "Sitting"
+},
+{
+"mpsno": 371,
+"mpFirstLastName": "MP 371",
+"stateName": "Andaman and Nicobar Islands",
+"constName": "Andaman and Nicobar Islands",
+"status": "Sitting"
+},
+{
+"mpsno": 5058,
+"mpFirstLastName": "MP 5058",
+"stateName": "Madhya Pradesh",
+"constName": "Bhind",
+"status": "Sitting"
+},
+{
+"mpsno": 5755,
+"mpFirstLastName": "MP 5755",
+"stateName": "Telangana",
+"constName": "Bhongir",
+"status": "Sitting"
+},
+{
+"mpsno": 5084,
+"mpFirstLastName": "MP 5084",
+"stateName": "Telangana",
+"constName": "Secunderabad",
+"status": "Sitting"
+},
+{
+"mpsno": 4800,
+"mpFirstLastName": "MP 4800",
+"stateName": "Telangana",
+"constName": "Chevella",
+"status": "Sitting"
+},
+{
+"mpsno": 3907,
+"mpFirstLastName": "MP 3907",
+"stateName": "Andhra Pradesh",
+"constName": "Ongole",
+"status": "Sitting"
+},
+{
+"mpsno": 4688,
+"mpFirstLastName": "MP 4688",
+"stateName": "Andhra Pradesh",
+"constName": "Rajampet",
+"status": "Sitting"
+},
+{
+"mpsno": 5716,
+"mpFirstLastName": "MP 5716",
+"stateName": "Telangana",
+"constName": "Khammam",
+"status": "Sitting"
+},
+{
+"mpsno": 4816,
+"mpFirstLastName": "MP 4816",
+"stateName": "Andhra Pradesh",
+"constName": "Kadapa",
+"status": "Sitting"
+},
+{
+"mpsno": 5822,
+"mpFirstLastName": "MP 5822",
+"stateName": "Uttar Pradesh",
+"constName": "Sambhal",
+"status": "Sitting"
+},
+{
+"mpsno": 3972,
+"mpFirstLastName": "MP 3972",
+"stateName": "Arunachal Pradesh",
+"constName": "Arunachal West",
+"status": "Sitting"
+},
+{
+"mpsno": 5764,
+"mpFirstLastName": "MP 5764",
+"stateName": "Rajasthan",
+"constName": "Banswara",
+"status": "Sitting"
+},
+{
+"mpsno": 5045,
+"mpFirstLastName": "MP 5045",
+"stateName": "West Bengal",
+"constName": "Jalpaiguri",
+"status": "Sitting"
+},
+{
+"mpsno": 5048,
+"mpFirstLastName": "MP 5048",
+"stateName": "West Bengal",
+"constName": "Kolkata Dakshin",
+"status": "Sitting"
+},
+{
+"mpsno": 4506,
+"mpFirstLastName": "MP 4506",
+"stateName": "West Bengal",
+"constName": "Birbhum",
+"status": "Sitting"
+},
+{
+"mpsno": 385,
+"mpFirstLastName": "MP 385",
+"stateName": "Bihar",
+"constName": "Saran",
+"status": "Sitting"
+},
+{
+"mpsno": 5598,
+"mpFirstLastName": "MP 5598",
+"stateName": "Gujarat",
+"constName": "Rajkot",
+"status": "Sitting"
+},
+{
+"mpsno": 5542,
+"mpFirstLastName": "MP 5542",
+"stateName": "Tamil Nadu",
+"constName": "Namakkal",
+"status": "Sitting"
+},
+{
+"mpsno": 5798,
+"mpFirstLastName": "MP 5798",
+"stateName": "Tamil Nadu",
+"constName": "Thanjavur",
+"status": "Sitting"
+},
+{
+"mpsno": 5163,
+"mpFirstLastName": "MP 5163",
+"stateName": "Uttar Pradesh",
+"constName": "Shahjahanpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5666,
+"mpFirstLastName": "MP 5666",
+"stateName": "Madhya Pradesh",
+"constName": "Chhindwara",
+"status": "Sitting"
+},
+{
+"mpsno": 5700,
+"mpFirstLastName": "MP 5700",
+"stateName": "Chhattisgarh",
+"constName": "Bilaspur",
+"status": "Sitting"
+},
+{
+"mpsno": 5107,
+"mpFirstLastName": "MP 5107",
+"stateName": "Assam",
+"constName": "Darrang Udalguri",
+"status": "Sitting"
+},
+{
+"mpsno": 3586,
+"mpFirstLastName": "MP 3586",
+"stateName": "Uttar Pradesh",
+"constName": "Unnao",
+"status": "Sitting"
+},
+{
+"mpsno": 5532,
+"mpFirstLastName": "MP 5532",
+"stateName": "Kerala",
+"constName": "Ponnani",
+"status": "Sitting"
+},
+{
+"mpsno": 5553,
+"mpFirstLastName": "MP 5553",
+"stateName": "Meghalaya",
+"constName": "Tura",
+"status": "Sitting"
+},
+{
+"mpsno": 5550,
+"mpFirstLastName": "MP 5550",
+"stateName": "Uttar Pradesh",
+"constName": "Baghpat",
+"status": "Sitting"
+},
+{
+"mpsno": 4985,
+"mpFirstLastName": "MP 4985",
+"stateName": "Odisha",
+"constName": "Balasore",
+"status": "Sitting"
+},
+{
+"mpsno": 4988,
+"mpFirstLastName": "MP 4988",
+"stateName": "Odisha",
+"constName": "Bhubaneswar",
+"status": "Sitting"
+},
+{
+"mpsno": 5768,
+"mpFirstLastName": "MP 5768",
+"stateName": "West Bengal",
+"constName": "Bardhaman Purba",
+"status": "Sitting"
+},
+{
+"mpsno": 5055,
+"mpFirstLastName": "MP 5055",
+"stateName": "West Bengal",
+"constName": "Ranaghat",
+"status": "Sitting"
+},
+{
+"mpsno": 5775,
+"mpFirstLastName": "MP 5775",
+"stateName": "Uttar Pradesh",
+"constName": "Machhlishahr",
+"status": "Sitting"
+},
+{
+"mpsno": 3916,
+"mpFirstLastName": "MP 3916",
+"stateName": "Uttar Pradesh",
+"constName": "Lalganj",
+"status": "Sitting"
+},
+{
+"mpsno": 5804,
+"mpFirstLastName": "MP 5804",
+"stateName": "Uttar Pradesh",
+"constName": "Kaushambi",
+"status": "Sitting"
+},
+{
+"mpsno": 5669,
+"mpFirstLastName": "MP 5669",
+"stateName": "Maharashtra",
+"constName": "Palghar",
+"status": "Sitting"
+},
+{
+"mpsno": 4713,
+"mpFirstLastName": "MP 4713",
+"stateName": "Maharashtra",
+"constName": "Mumbai South",
+"status": "Sitting"
+},
+{
+"mpsno": 4349,
+"mpFirstLastName": "MP 4349",
+"stateName": "Lakshadweep",
+"constName": "Lakshadweep",
+"status": "Sitting"
+},
+{
+"mpsno": 3958,
+"mpFirstLastName": "MP 3958",
+"stateName": "Madhya Pradesh",
+"constName": "Guna",
+"status": "Sitting"
+},
+{
+"mpsno": 5565,
+"mpFirstLastName": "MP 5565",
+"stateName": "NCT of Delhi",
+"constName": "West Delhi",
+"status": "Sitting"
+},
+{
+"mpsno": 407,
+"mpFirstLastName": "MP 407",
+"stateName": "Tamil Nadu",
+"constName": "Salem",
+"status": "Sitting"
+},
+{
+"mpsno": 5681,
+"mpFirstLastName": "MP 5681",
+"stateName": "Tamil Nadu",
+"constName": "Tiruvallur",
+"status": "Sitting"
+},
+{
+"mpsno": 5117,
+"mpFirstLastName": "MP 5117",
+"stateName": "Jharkhand",
+"constName": "Ranchi",
+"status": "Sitting"
+},
+{
+"mpsno": 5610,
+"mpFirstLastName": "MP 5610",
+"stateName": "Odisha",
+"constName": "Bhadrak",
+"status": "Sitting"
+},
+{
+"mpsno": 5687,
+"mpFirstLastName": "MP 5687",
+"stateName": "Andhra Pradesh",
+"constName": "Nandyal",
+"status": "Sitting"
+},
+{
+"mpsno": 5021,
+"mpFirstLastName": "MP 5021",
+"stateName": "Gujarat",
+"constName": "Gandhinagar",
+"status": "Sitting"
+},
+{
+"mpsno": 4582,
+"mpFirstLastName": "MP 4582",
+"stateName": "Uttarakhand",
+"constName": "Tehri Garhwal",
+"status": "Sitting"
+},
+{
+"mpsno": 5656,
+"mpFirstLastName": "MP 5656",
+"stateName": "Uttar Pradesh",
+"constName": "Etah",
+"status": "Sitting"
+},
+{
+"mpsno": 4642,
+"mpFirstLastName": "MP 4642",
+"stateName": "Uttar Pradesh",
+"constName": "Gautam Buddha Nagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5674,
+"mpFirstLastName": "MP 5674",
+"stateName": "Madhya Pradesh",
+"constName": "Bhopal",
+"status": "Sitting"
+},
+{
+"mpsno": 5148,
+"mpFirstLastName": "MP 5148",
+"stateName": "Uttar Pradesh",
+"constName": "Jhansi",
+"status": "Sitting"
+},
+{
+"mpsno": 5066,
+"mpFirstLastName": "MP 5066",
+"stateName": "Madhya Pradesh",
+"constName": "Khajuraho",
+"status": "Sitting"
+},
+{
+"mpsno": 5619,
+"mpFirstLastName": "MP 5619",
+"stateName": "Rajasthan",
+"constName": "Jaipur",
+"status": "Sitting"
+},
+{
+"mpsno": 5830,
+"mpFirstLastName": "MP 5830",
+"stateName": "Jammu and Kashmir",
+"constName": "Baramulla",
+"status": "Sitting"
+},
+{
+"mpsno": 5647,
+"mpFirstLastName": "MP 5647",
+"stateName": "Uttar Pradesh",
+"constName": "Nagina",
+"status": "Sitting"
+},
+{
+"mpsno": 4670,
+"mpFirstLastName": "MP 4670",
+"stateName": "Rajasthan",
+"constName": "Jodhpur",
+"status": "Sitting"
+},
+{
+"mpsno": 4523,
+"mpFirstLastName": "MP 4523",
+"stateName": "Telangana",
+"constName": "Zahirabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5733,
+"mpFirstLastName": "MP 5733",
+"stateName": "Karnataka",
+"constName": "Belgaum",
+"status": "Sitting"
+},
+{
+"mpsno": 5617,
+"mpFirstLastName": "MP 5617",
+"stateName": "Gujarat",
+"constName": "Surendranagar",
+"status": "Sitting"
+},
+{
+"mpsno": 4659,
+"mpFirstLastName": "MP 4659",
+"stateName": "Maharashtra",
+"constName": "Kalyan",
+"status": "Sitting"
+},
+{
+"mpsno": 5759,
+"mpFirstLastName": "MP 5759",
+"stateName": "Maharashtra",
+"constName": "Solapur",
+"status": "Sitting"
+},
+{
+"mpsno": 5633,
+"mpFirstLastName": "MP 5633",
+"stateName": "Uttar Pradesh",
+"constName": "Rampur",
+"status": "Sitting"
+},
+{
+"mpsno": 4638,
+"mpFirstLastName": "MP 4638",
+"stateName": "Bihar",
+"constName": "Maharajganj",
+"status": "Sitting"
+},
+{
+"mpsno": 5169,
+"mpFirstLastName": "MP 5169",
+"stateName": "Punjab",
+"constName": "Fatehgarh Sahib",
+"status": "Sitting"
+},
+{
+"mpsno": 4605,
+"mpFirstLastName": "MP 4605",
+"stateName": "Uttar Pradesh",
+"constName": "Bulandshahr",
+"status": "Sitting"
+},
+{
+"mpsno": 4718,
+"mpFirstLastName": "MP 4718",
+"stateName": "Jammu and Kashmir",
+"constName": "Udhampur",
+"status": "Sitting"
+},
+{
+"mpsno": 5832,
+"mpFirstLastName": "MP 5832",
+"stateName": "Punjab",
+"constName": "Khadoor Sahib",
+"status": "Sitting"
+},
+{
+"mpsno": 4664,
+"mpFirstLastName": "MP 4664",
+"stateName": "Uttar Pradesh",
+"constName": "Akbarpur",
+"status": "Sitting"
+},
+{
+"mpsno": 4647,
+"mpFirstLastName": "MP 4647",
+"stateName": "Haryana",
+"constName": "Bhiwani-Mahendragarh",
+"status": "Sitting"
+},
+{
+"mpsno": 4005,
+"mpFirstLastName": "MP 4005",
+"stateName": "Rajasthan",
+"constName": "Jhalawar-Baran",
+"status": "Sitting"
+},
+{
+"mpsno": 3986,
+"mpFirstLastName": "MP 3986",
+"stateName": "Madhya Pradesh",
+"constName": "Satna",
+"status": "Sitting"
+},
+{
+"mpsno": 4641,
+"mpFirstLastName": "MP 4641",
+"stateName": "Bihar",
+"constName": "Begusarai",
+"status": "Sitting"
+},
+{
+"mpsno": 5618,
+"mpFirstLastName": "MP 5618",
+"stateName": "Jharkhand",
+"constName": "Chatra",
+"status": "Sitting"
+},
+{
+"mpsno": 5581,
+"mpFirstLastName": "MP 5581",
+"stateName": "Uttar Pradesh",
+"constName": "Kaiserganj",
+"status": "Sitting"
+},
+{
+"mpsno": 3926,
+"mpFirstLastName": "MP 3926",
+"stateName": "Uttar Pradesh",
+"constName": "Gonda",
+"status": "Sitting"
+},
+{
+"mpsno": 4459,
+"mpFirstLastName": "MP 4459",
+"stateName": "Bihar",
+"constName": "Araria",
+"status": "Sitting"
+},
+{
+"mpsno": 451,
+"mpFirstLastName": "MP 451",
+"stateName": "Bihar",
+"constName": "Purvi Champaran",
+"status": "Sitting"
+},
+{
+"mpsno": 5642,
+"mpFirstLastName": "MP 5642",
+"stateName": "Bihar",
+"constName": "Karakat",
+"status": "Sitting"
+},
+{
+"mpsno": 4134,
+"mpFirstLastName": "MP 4134",
+"stateName": "Bihar",
+"constName": "Munger",
+"status": "Sitting"
+},
+{
+"mpsno": 4268,
+"mpFirstLastName": "MP 4268",
+"stateName": "Uttar Pradesh",
+"constName": "Lucknow",
+"status": "Sitting"
+},
+{
+"mpsno": 3904,
+"mpFirstLastName": "MP 3904",
+"stateName": "Haryana",
+"constName": "Gurgaon",
+"status": "Sitting"
+},
+{
+"mpsno": 5632,
+"mpFirstLastName": "MP 5632",
+"stateName": "Rajasthan",
+"constName": "Jaipur Rural",
+"status": "Sitting"
+},
+{
+"mpsno": 5634,
+"mpFirstLastName": "MP 5634",
+"stateName": "Bihar",
+"constName": "Buxar",
+"status": "Sitting"
+},
+{
+"mpsno": 5749,
+"mpFirstLastName": "MP 5749",
+"stateName": "Uttar Pradesh",
+"constName": "Allahabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5651,
+"mpFirstLastName": "MP 5651",
+"stateName": "Uttar Pradesh",
+"constName": "Chandauli",
+"status": "Sitting"
+},
+{
+"mpsno": 5070,
+"mpFirstLastName": "MP 5070",
+"stateName": "Madhya Pradesh",
+"constName": "Shahdol",
+"status": "Sitting"
+},
+{
+"mpsno": 5646,
+"mpFirstLastName": "MP 5646",
+"stateName": "Bihar",
+"constName": "Aurangabad",
+"status": "Sitting"
+},
+{
+"mpsno": 4468,
+"mpFirstLastName": "MP 4468",
+"stateName": "West Bengal",
+"constName": "Asansol",
+"status": "Sitting"
+},
+{
+"mpsno": 5667,
+"mpFirstLastName": "MP 5667",
+"stateName": "Andhra Pradesh",
+"constName": "Vijayawada",
+"status": "Sitting"
+},
+{
+"mpsno": 5685,
+"mpFirstLastName": "MP 5685",
+"stateName": "Bihar",
+"constName": "Samastipur",
+"status": "Sitting"
+},
+{
+"mpsno": 5061,
+"mpFirstLastName": "MP 5061",
+"stateName": "Madhya Pradesh",
+"constName": "Dewas",
+"status": "Sitting"
+},
+{
+"mpsno": 5625,
+"mpFirstLastName": "MP 5625",
+"stateName": "Karnataka",
+"constName": "Tumkur",
+"status": "Sitting"
+},
+{
+"mpsno": 4163,
+"mpFirstLastName": "MP 4163",
+"stateName": "Assam",
+"constName": "Dibrugarh",
+"status": "Sitting"
+},
+{
+"mpsno": 5645,
+"mpFirstLastName": "MP 5645",
+"stateName": "Maharashtra",
+"constName": "Beed",
+"status": "Sitting"
+},
+{
+"mpsno": 5826,
+"mpFirstLastName": "MP 5826",
+"stateName": "Jharkhand",
+"constName": "Dumka",
+"status": "Sitting"
+},
+{
+"mpsno": 5659,
+"mpFirstLastName": "MP 5659",
+"stateName": "West Bengal",
+"constName": "Kanthi",
+"status": "Sitting"
+},
+{
+"mpsno": 5128,
+"mpFirstLastName": "MP 5128",
+"stateName": "Kerala",
+"constName": "Palakkad",
+"status": "Sitting"
+},
+{
+"mpsno": 5787,
+"mpFirstLastName": "MP 5787",
+"stateName": "Tamil Nadu",
+"constName": "Tenkasi",
+"status": "Sitting"
+},
+{
+"mpsno": 5676,
+"mpFirstLastName": "MP 5676",
+"stateName": "Andhra Pradesh",
+"constName": "Kakinada",
+"status": "Sitting"
+},
+{
+"mpsno": 5111,
+"mpFirstLastName": "MP 5111",
+"stateName": "Sikkim",
+"constName": "Sikkim",
+"status": "Sitting"
+},
+{
+"mpsno": 5597,
+"mpFirstLastName": "MP 5597",
+"stateName": "Odisha",
+"constName": "Aska",
+"status": "Sitting"
+},
+{
+"mpsno": 5602,
+"mpFirstLastName": "MP 5602",
+"stateName": "Karnataka",
+"constName": "Chikkballapur",
+"status": "Sitting"
+},
+{
+"mpsno": 4558,
+"mpFirstLastName": "MP 4558",
+"stateName": "Kerala",
+"constName": "Kannur",
+"status": "Sitting"
+},
+{
+"mpsno": 5675,
+"mpFirstLastName": "MP 5675",
+"stateName": "Assam",
+"constName": "Silchar",
+"status": "Sitting"
+},
+{
+"mpsno": 4392,
+"mpFirstLastName": "MP 4392",
+"stateName": "Maharashtra",
+"constName": "Baramati",
+"status": "Sitting"
+},
+{
+"mpsno": 5211,
+"mpFirstLastName": "MP 5211",
+"stateName": "Bihar",
+"constName": "Gopalganj",
+"status": "Sitting"
+},
+{
+"mpsno": 477,
+"mpFirstLastName": "MP 477",
+"stateName": "Kerala",
+"constName": "Mavelikkara",
+"status": "Sitting"
+},
+{
+"mpsno": 5748,
+"mpFirstLastName": "MP 5748",
+"stateName": "Maharashtra",
+"constName": "Chandrapur",
+"status": "Sitting"
+},
+{
+"mpsno": 5182,
+"mpFirstLastName": "MP 5182",
+"stateName": "Karnataka",
+"constName": "Bangalore South",
+"status": "Sitting"
+},
+{
+"mpsno": 5616,
+"mpFirstLastName": "MP 5616",
+"stateName": "Gujarat",
+"constName": "Amreli",
+"status": "Sitting"
+},
+{
+"mpsno": 5588,
+"mpFirstLastName": "MP 5588",
+"stateName": "NCT of Delhi",
+"constName": "New Delhi",
+"status": "Sitting"
+},
+{
+"mpsno": 5811,
+"mpFirstLastName": "MP 5811",
+"stateName": "Meghalaya",
+"constName": "Shillong",
+"status": "Died"
+},
+{
+"mpsno": 5686,
+"mpFirstLastName": "MP 5686",
+"stateName": "Tamil Nadu",
+"constName": "Theni",
+"status": "Sitting"
+},
+{
+"mpsno": 4651,
+"mpFirstLastName": "MP 4651",
+"stateName": "Uttarakhand",
+"constName": "Almora",
+"status": "Sitting"
+},
+{
+"mpsno": 4607,
+"mpFirstLastName": "MP 4607",
+"stateName": "Uttar Pradesh",
+"constName": "Amroha",
+"status": "Sitting"
+},
+{
+"mpsno": 4423,
+"mpFirstLastName": "MP 4423",
+"stateName": "Odisha",
+"constName": "Jagatsinghpur",
+"status": "Sitting"
+},
+{
+"mpsno": 4739,
+"mpFirstLastName": "MP 4739",
+"stateName": "Assam",
+"constName": "Kaziranga",
+"status": "Sitting"
+},
+{
+"mpsno": 5680,
+"mpFirstLastName": "MP 5680",
+"stateName": "Andhra Pradesh",
+"constName": "Bapatla",
+"status": "Sitting"
+},
+{
+"mpsno": 4430,
+"mpFirstLastName": "MP 4430",
+"stateName": "Chandigarh",
+"constName": "Chandigarh",
+"status": "Sitting"
+},
+{
+"mpsno": 5744,
+"mpFirstLastName": "MP 5744",
+"stateName": "Gujarat",
+"constName": "Banaskantha",
+"status": "Sitting"
+},
+{
+"mpsno": 4249,
+"mpFirstLastName": "MP 4249",
+"stateName": "Himachal Pradesh",
+"constName": "Hamirpur",
+"status": "Sitting"
+},
+{
+"mpsno": 5662,
+"mpFirstLastName": "MP 5662",
+"stateName": "Bihar",
+"constName": "Sitamarhi",
+"status": "Sitting"
+},
+{
+"mpsno": 5176,
+"mpFirstLastName": "MP 5176",
+"stateName": "Bihar",
+"constName": "Darbhanga",
+"status": "Sitting"
+},
+{
+"mpsno": 5036,
+"mpFirstLastName": "MP 5036",
+"stateName": "West Bengal",
+"constName": "Bangaon",
+"status": "Sitting"
+},
+{
+"mpsno": 5712,
+"mpFirstLastName": "MP 5712",
+"stateName": "Bihar",
+"constName": "Nawada",
+"status": "Sitting"
+},
+{
+"mpsno": 4596,
+"mpFirstLastName": "MP 4596",
+"stateName": "Madhya Pradesh",
+"constName": "Dhar",
+"status": "Sitting"
+},
+{
+"mpsno": 4961,
+"mpFirstLastName": "MP 4961",
+"stateName": "Tamil Nadu",
+"constName": "Chennai South",
+"status": "Sitting"
+},
+{
+"mpsno": 4569,
+"mpFirstLastName": "MP 4569",
+"stateName": "Kerala",
+"constName": "Thiruvananthapuram",
+"status": "Sitting"
+},
+{
+"mpsno": 4549,
+"mpFirstLastName": "MP 4549",
+"stateName": "Tamil Nadu",
+"constName": "Chidambaram",
+"status": "Sitting"
+},
+{
+"mpsno": 5596,
+"mpFirstLastName": "MP 5596",
+"stateName": "West Bengal",
+"constName": "Alipurduars",
+"status": "Sitting"
+},
+{
+"mpsno": 5658,
+"mpFirstLastName": "MP 5658",
+"stateName": "Assam",
+"constName": "Diphu",
+"status": "Sitting"
+},
+{
+"mpsno": 4606,
+"mpFirstLastName": "MP 4606",
+"stateName": "NCT of Delhi",
+"constName": "North East Delhi",
+"status": "Sitting"
+},
+{
+"mpsno": 5604,
+"mpFirstLastName": "MP 5604",
+"stateName": "Madhya Pradesh",
+"constName": "Morena",
+"status": "Sitting"
+},
+{
+"mpsno": 5823,
+"mpFirstLastName": "MP 5823",
+"stateName": "Karnataka",
+"constName": "Bellary",
+"status": "Sitting"
+},
+{
+"mpsno": 5057,
+"mpFirstLastName": "MP 5057",
+"stateName": "Madhya Pradesh",
+"constName": "Betul",
+"status": "Sitting"
+},
+{
+"mpsno": 4996,
+"mpFirstLastName": "MP 4996",
+"stateName": "Odisha",
+"constName": "Koraput",
+"status": "Sitting"
+},
+{
+"mpsno": 5127,
+"mpFirstLastName": "MP 5127",
+"stateName": "Kerala",
+"constName": "Kasaragod",
+"status": "Sitting"
+},
+{
+"mpsno": 5800,
+"mpFirstLastName": "MP 5800",
+"stateName": "Tamil Nadu",
+"constName": "Nagapattinam",
+"status": "Sitting"
+},
+{
+"mpsno": 5836,
+"mpFirstLastName": "MP 5836",
+"stateName": "Kerala",
+"constName": "Wayanad",
+"status": "Sitting"
+},
+{
+"mpsno": 5828,
+"mpFirstLastName": "MP 5828",
+"stateName": "Tamil Nadu",
+"constName": "Tiruchirappalli",
+"status": "Sitting"
+},
+{
+"mpsno": 5120,
+"mpFirstLastName": "MP 5120",
+"stateName": "Puducherry",
+"constName": "Puducherry",
+"status": "Sitting"
+},
+{
+"mpsno": 4021,
+"mpFirstLastName": "MP 4021",
+"stateName": "Andhra Pradesh",
+"constName": "Machilipatnam",
+"status": "Sitting"
+},
+{
+"mpsno": 5576,
+"mpFirstLastName": "MP 5576",
+"stateName": "Uttar Pradesh",
+"constName": "Hathras",
+"status": "Sitting"
+},
+{
+"mpsno": 5600,
+"mpFirstLastName": "MP 5600",
+"stateName": "Mizoram",
+"constName": "Mizoram",
+"status": "Sitting"
+},
+{
+"mpsno": 5533,
+"mpFirstLastName": "MP 5533",
+"stateName": "Tamil Nadu",
+"constName": "Kanniyakumari",
+"status": "Sitting"
+},
+{
+"mpsno": 5835,
+"mpFirstLastName": "MP 5835",
+"stateName": "Maharashtra",
+"constName": "Nanded",
+"status": "Sitting"
+},
+{
+"mpsno": 501,
+"mpFirstLastName": "MP 501",
+"stateName": "Gujarat",
+"constName": "Bharuch",
+"status": "Sitting"
+},
+{
+"mpsno": 4757,
+"mpFirstLastName": "MP 4757",
+"stateName": "Gujarat",
+"constName": "Bardoli",
+"status": "Sitting"
+},
+{
+"mpsno": 4959,
+"mpFirstLastName": "MP 4959",
+"stateName": "Tamil Nadu",
+"constName": "Chennai North",
+"status": "Sitting"
+},
+{
+"mpsno": 5765,
+"mpFirstLastName": "MP 5765",
+"stateName": "Andhra Pradesh",
+"constName": "Nellore",
+"status": "Sitting"
+},
+{
+"mpsno": 4965,
+"mpFirstLastName": "MP 4965",
+"stateName": "Tamil Nadu",
+"constName": "Madurai",
+"status": "Sitting"
+},
+{
+"mpsno": 4567,
+"mpFirstLastName": "MP 4567",
+"stateName": "Kerala",
+"constName": "Alappuzha",
+"status": "Sitting"
+},
+{
+"mpsno": 5794,
+"mpFirstLastName": "MP 5794",
+"stateName": "Uttar Pradesh",
+"constName": "Ambedkar Nagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5605,
+"mpFirstLastName": "MP 5605",
+"stateName": "Bihar",
+"constName": "Khagaria",
+"status": "Sitting"
+},
+{
+"mpsno": 5164,
+"mpFirstLastName": "MP 5164",
+"stateName": "Uttar Pradesh",
+"constName": "Shrawasti",
+"status": "Sitting"
+},
+{
+"mpsno": 5706,
+"mpFirstLastName": "MP 5706",
+"stateName": "Uttar Pradesh",
+"constName": "Moradabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5682,
+"mpFirstLastName": "MP 5682",
+"stateName": "Karnataka",
+"constName": "Mysore",
+"status": "Sitting"
+},
+{
+"mpsno": 5723,
+"mpFirstLastName": "MP 5723",
+"stateName": "Maharashtra",
+"constName": "Jalgaon",
+"status": "Sitting"
+},
+{
+"mpsno": 5701,
+"mpFirstLastName": "MP 5701",
+"stateName": "Maharashtra",
+"constName": "Mumbai North West",
+"status": "Sitting"
+},
+{
+"mpsno": 5790,
+"mpFirstLastName": "MP 5790",
+"stateName": "Maharashtra",
+"constName": "Nashik",
+"status": "Sitting"
+},
+{
+"mpsno": 4385,
+"mpFirstLastName": "MP 4385",
+"stateName": "Maharashtra",
+"constName": "Shirdi",
+"status": "Sitting"
+},
+{
+"mpsno": 5713,
+"mpFirstLastName": "MP 5713",
+"stateName": "Maharashtra",
+"constName": "Amravati",
+"status": "Sitting"
+},
+{
+"mpsno": 5692,
+"mpFirstLastName": "MP 5692",
+"stateName": "Madhya Pradesh",
+"constName": "Sagar",
+"status": "Sitting"
+},
+{
+"mpsno": 5747,
+"mpFirstLastName": "MP 5747",
+"stateName": "Punjab",
+"constName": "Ludhiana",
+"status": "Sitting"
+},
+{
+"mpsno": 5802,
+"mpFirstLastName": "MP 5802",
+"stateName": "Uttar Pradesh",
+"constName": "Badaun",
+"status": "Sitting"
+},
+{
+"mpsno": 564,
+"mpFirstLastName": "MP 564",
+"stateName": "Uttar Pradesh",
+"constName": "Kannauj",
+"status": "Sitting"
+},
+{
+"mpsno": 4779,
+"mpFirstLastName": "MP 4779",
+"stateName": "Uttar Pradesh",
+"constName": "Firozabad",
+"status": "Sitting"
+},
+{
+"mpsno": 5217,
+"mpFirstLastName": "MP 5217",
+"stateName": "Bihar",
+"constName": "Madhubani",
+"status": "Sitting"
+},
+{
+"mpsno": 5541,
+"mpFirstLastName": "MP 5541",
+"stateName": "Rajasthan",
+"constName": "Alwar",
+"status": "Sitting"
+},
+{
+"mpsno": 4206,
+"mpFirstLastName": "MP 4206",
+"stateName": "Uttar Pradesh",
+"constName": "Azamgarh",
+"status": "Sitting"
+},
+{
+"mpsno": 527,
+"mpFirstLastName": "MP 527",
+"stateName": "Bihar",
+"constName": "Madhepura",
+"status": "Sitting"
+},
+{
+"mpsno": 3830,
+"mpFirstLastName": "MP 3830",
+"stateName": "Bihar",
+"constName": "Banka",
+"status": "Sitting"
+},
+{
+"mpsno": 3955,
+"mpFirstLastName": "MP 3955",
+"stateName": "Bihar",
+"constName": "Jahanabad",
+"status": "Sitting"
+},
+{
+"mpsno": 4580,
+"mpFirstLastName": "MP 4580",
+"stateName": "Uttar Pradesh",
+"constName": "Mainpuri",
+"status": "Sitting"
+},
+{
+"mpsno": 5818,
+"mpFirstLastName": "MP 5818",
+"stateName": "West Bengal",
+"constName": "Baharampur",
+"status": "Sitting"
+}
+]
+}

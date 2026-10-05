@@ -3,7 +3,7 @@ import { CATEGORIES, SOURCES, type EventRow, type Severity } from "@/lib/types";
 
 /** Columns the UI reads from `events` — deliberately excludes the heavy `raw` payload. */
 export const EVENT_COLUMNS =
-  "id,source,external_id,title,summary,category,severity,lat,lng,country,url,occurred_at,created_at" as const;
+  "id,source,external_id,title,summary,category,severity,lat,lng,state,district,lang,title_en,title_hi,url,occurred_at,created_at" as const;
 
 const eventRowSchema = z.object({
   id: z.coerce.number().int(),
@@ -15,7 +15,11 @@ const eventRowSchema = z.object({
   severity: z.coerce.number().int().min(1).max(5),
   lat: z.number().nullable().default(null),
   lng: z.number().nullable().default(null),
-  country: z.string().nullable().default(null),
+  state: z.string().nullable().default(null),
+  district: z.string().nullable().default(null),
+  lang: z.string().default("en"),
+  title_en: z.string().nullable().default(null),
+  title_hi: z.string().nullable().default(null),
   url: z.string().nullable().default(null),
   occurred_at: z.string(),
   created_at: z.string(),

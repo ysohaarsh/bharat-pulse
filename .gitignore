@@ -46,3 +46,10 @@ next-env.d.ts
 
 # MapLibre worker files, copied from node_modules by scripts/copy-maplibre-worker.mjs
 /public/maplibre/
+
+# Boundary build inputs/outputs (scripts/build-geo.mjs); public/geo and lib/india/places.json are committed
+/data/raw/
+/data/processed/
+
+# Ad-hoc live checks against real APIs (not part of the test suite)
+/.smoke/

@@ -11,6 +11,7 @@ import {
   toggleValue,
 } from "@/lib/events/filters";
 import { CORE_CATEGORIES, CORE_SOURCES } from "@/lib/events/sports";
+import { useLang } from "@/components/i18n/lang-provider";
 import { FOCUS_RING, SOURCE_LABEL, WINDOW_LABEL } from "./labels";
 
 const CHIP =
@@ -32,6 +33,7 @@ export function FilterBar({
 }) {
   // "All" = every non-sports category. Sports is a separate opt-in toggle (hidden by default and
   // never counted in the threat index, stats or brief), so it sits apart after a divider.
+  const { lang } = useLang();
   const allCategories = CORE_CATEGORIES.every((c) => filters.categories.includes(c));
   const sports = sportsEnabled(filters);
 
@@ -66,7 +68,7 @@ export function FilterBar({
                   boxShadow: pressed ? `0 0 5px ${CATEGORY_META[c].color}` : undefined,
                 }}
               />
-              {CATEGORY_META[c].label}
+              {lang === "hi" ? CATEGORY_META[c].hi : CATEGORY_META[c].label}
             </button>
           );
         })}

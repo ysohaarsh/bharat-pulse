@@ -1,87 +1,91 @@
-# PULSE — Global Situation Monitor
+# BHARAT PULSE — India Situation Monitor
 
-A real-time world events dashboard in a green-on-black "control room" style: earthquakes, wildfires, storms, volcanoes and world news, plotted live on a 3D globe, with a daily AI World Brief and personal watchlist alerts.
+India on one live map: official disaster alerts, earthquakes, satellite fires, air quality, power
+demand, mandi prices, development projects, citizen-reported potholes, and **who represents any
+point in India**. Bilingual (English / हिन्दी) with machine translation into 12 Indian languages.
 
-Inspired by [koala73/worldmonitor](https://github.com/koala73/worldmonitor). Built end to end with [Claude Code](https://claude.com/claude-code), using parallel sub-agents in separate git worktrees (see [How it was built](#how-it-was-built)).
-
-![Pulse home: SITREP panel, 3D globe and live feed](docs/screenshot-home.png)
+Forked from [Pulse](../../2/pulse) (a world monitor) and rebuilt around free, mostly Indian
+government data. Full source research: [`docs/INDIA_DATA_SOURCES.md`](docs/INDIA_DATA_SOURCES.md).
 
 ## Features
 
-- **3D globe** (MapLibre GL globe projection) that flattens into a street-level map as you zoom; clusters colored by severity, pulsing markers for severity 4+, fly-to, cursor lat/long readout
-- **Live feed** over Supabase Realtime — new events appear without a refresh; filters for category, source, severity and time window live in the URL
-- **SITREP panel** — UTC clock, threat index, category matrix, data-feed status, hotspots, priority traffic
-- **Headline ticker** of the latest notable events
-- **Stats** — events over time, by category, country, source and severity
-- **World Brief** — a daily summary written by any OpenAI-compatible LLM (free tiers work), with an automatic extractive fallback when no key is set
-- **Accounts, watchlists and alerts** — email/password or magic link; a Postgres trigger creates alerts when new events match your watchlists
-
-![Stats page](docs/screenshot-stats.png)
+- **India map** (MapLibre, flat, India-centred). Borders come from the Survey of India based
+  outline (DataMeet), not OpenStreetMap's lines of control.
+- **Live feed** over Supabase Realtime. Sources: NDMA SACHET (IMD, CWC, state SDMAs), NCS earthquakes,
+  NASA FIRMS fires, CPCB AQI, PIB press releases and six Indian news feeds. Filters live in the URL.
+- **India now** panel: IST clock, threat index, live all-India power demand with a 24h sparkline,
+  worst-AQI cities, mandi prices, top states, priority alerts.
+- **Who represents this place?** Click anywhere, use your location or type a pincode to get
+  state, district, Lok Sabha seat and sitting MP (sansad.in), plus the assembly seat. Links go out
+  to MyNeta (assets and criminal cases), PRS and MPLADS eSAKSHI. PostGIS point-in-polygon.
+- **Civic reports**: pin a pothole, garbage pile, broken streetlight or waterlogging, add a photo,
+  and others can "me too" it. Each report is tagged with its ward/MP/MLA seat.
+- **Development layer**: metro, rail and highway works under construction (OpenStreetMap).
+- **Indic AI**: alerts arrive in Telugu, Hindi, Bengali…; headlines are machine-translated to
+  English and Hindi (Bhashini → Sarvam fallback, cached forever). Any event can be read in 12
+  languages, and the daily India Brief has a Hindi edition.
+- Inherited from Pulse: accounts, watchlists (now by state) with alerts, /stats, the daily brief.
 
 ## Stack (all free tier)
 
-| Layer | Tech |
-|---|---|
-| App | Next.js 16 (App Router, Server Actions), React 19, TypeScript, Tailwind CSS v4 |
-| Data | Supabase — Postgres + Row Level Security, Auth, Realtime, pg_cron |
-| Map | MapLibre GL JS v6 + [OpenFreeMap](https://openfreemap.org) vector tiles (no API key) |
-| Charts | Recharts |
-| Tests | Vitest (unit), Playwright (e2e, desktop + mobile), GitHub Actions CI |
-| Hosting | Vercel |
-
-**Data sources:** [USGS Earthquakes](https://earthquake.usgs.gov/earthquakes/feed/) · [NASA EONET](https://eonet.gsfc.nasa.gov/) · [The GDELT Project](https://www.gdeltproject.org/) (15-minute event exports) · [GDACS](https://www.gdacs.org/) disaster alerts · [WHO Disease Outbreak News](https://www.who.int/emergencies/disease-outbreak-news) (© WHO, CC BY-NC-SA 3.0 IGO) · world news RSS from BBC, Al Jazeera, NPR, Guardian, DW, France 24 and Crisis Group, plus Reuters/AP headlines via Google News · opt-in sports RSS (BBC Sport, Guardian, Sky Sports, ESPN). Headlines remain © their publishers and always link to the original.
+Next.js 16 · React 19 · Tailwind v4 · Supabase (Postgres + **PostGIS**, Auth, Realtime, Storage,
+pg_cron) · MapLibre GL + OpenFreeMap · Vitest · Playwright · Vercel.
 
 ## Architecture
 
 ```
-pg_cron (every 10 min) ──POST /api/ingest──▶ ingesters (USGS, EONET, GDELT, RSS)
-                                               │ fetchRaw → zod-validated normalize()
-                                               ▼
-                                   Postgres `events` (upsert on source+external_id)
-                                     │                │ AFTER INSERT trigger
-                        Supabase Realtime             ▼
-                                     │          `alerts` for matching watchlists
-                                     ▼
-                     Browser: globe + live feed + SITREP (filters in URL)
+pg_cron ──POST /api/ingest?source=…──▶ ingesters (sachet, ncs, firms, aqi, pib, news, sports)
+                                        │ fetchRaw → zod-validated normalize() (+ metrics())
+                                        ▼
+                          events ◀── trigger fills state/district from PostGIS boundaries
+                            │   └── trigger → alerts for matching watchlists
+                            ▼
+                     Realtime → map + feed
 
-pg_cron (daily) ──POST /api/brief──▶ select top events → LLM (or extractive) → `briefs`
+        jobs: power, mandi (metrics) · sansad (representatives) · osm (projects) · translate
+        boundaries (state/district/pc/ac) ← scripts/load-boundaries.mjs ← scripts/build-geo.mjs
+        whois(lat,lng) RPC → "who represents this place"
 ```
 
-- `lib/types.ts` — the shared `NormalizedEvent` contract every ingester outputs
-- `lib/ingest/*` — one file per source, pure `normalize()` tested against saved fixtures
-- `supabase/migrations/*` — schema, RLS policies, alert trigger, column grants
-- `components/map/*` — MapLibre globe and the custom green vector style
-
-## Local setup
+## Setup
 
 ```bash
 npm install
-cp .env.example .env.local   # fill in your Supabase URL/keys and a random CRON_SECRET
-# apply supabase/migrations/*.sql to your Supabase project (SQL editor or `supabase db push`)
+cp .env.example .env.local            # Supabase URL/keys, CRON_SECRET (32+ chars), optional API keys
+# 1. New Supabase project → apply supabase/migrations/*.sql (SQL editor or `npx supabase db push`)
+# 2. Boundaries (downloads ~70 MB of open data once, then loads ~4,800 polygons):
+npm run geo:build
+npm run geo:load
+# 3. Run it and pull data once:
 npm run dev
-
-# pull data once by hand:
-curl -X POST -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/ingest
-curl -X POST -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/brief
+for s in sansad sachet ncs aqi power pib news sports osm; do
+  curl -s -X POST -H "Authorization: Bearer $CRON_SECRET" "http://localhost:3000/api/ingest?source=$s"; echo
+done
 ```
+
+In production, add the two Vault secrets described in `supabase/migrations/20261005130000_cron_jobs.sql`
+and pg_cron does the rest.
+
+### Free keys worth getting
+
+| Key | For | Without it |
+|---|---|---|
+| `DATA_GOV_IN_API_KEY` | CPCB station AQI, mandi prices | AQI uses modelled Open-Meteo values; no mandi panel |
+| `FIRMS_MAP_KEY` | Satellite fire hotspots | No fire layer |
+| `BHASHINI_USER_ID` + `BHASHINI_ULCA_API_KEY` | Translation | Alerts stay in their original language |
+| `SARVAM_API_KEY` | Fallback translation | — |
+| `LLM_API_KEY` (Groq etc.) | AI-written India Brief | Extractive brief |
+
+Also apply early for the **IMD API** (needs IP whitelisting) and **Delhi OTD** GTFS-RT.
 
 ```bash
-npm run lint && npm run typecheck && npm test   # unit tests
-npm run test:e2e                                # Playwright (builds + starts the app)
+npm run lint && npm run typecheck && npm test   # unit tests (fixtures, no network)
+npm run test:e2e                                # Playwright
 ```
 
-## How it was built
+## Licences and credits
 
-The project was built in phases with Claude Code, with independent modules developed **in parallel by sub-agents in isolated git worktrees**, then reviewed and merged by a lead agent:
-
-1. **Foundation** — scaffold, shared types, Supabase clients, schema + RLS (sequential: it's the contract everything else builds on)
-2. **Parallel build** — 4 agents at once: USGS+EONET ingesters · GDELT+RSS ingesters with geo/classify helpers · map + live feed · stats + brief pages
-3. **Parallel build** — 3 agents: auth + watchlists + alert trigger · AI brief generator · Playwright e2e + CI
-4. **Research agent** — compared free 3D globe options (MapLibre, globe.gl, deck.gl, Cesium) before the map was swapped
-5. **Security review agent** before going public
-
-Module ownership per agent is documented in [`CLAUDE.md`](CLAUDE.md).
-
-## License
-
-[MIT](LICENSE)
+Code: MIT. Boundaries: DataMeet (MIT) and shijithpk/2024_maps_supplement (public domain).
+Map data © OpenStreetMap contributors. Government data from NDMA, NCS, CPCB, PIB, Ministry of Power,
+Agmarknet and Parliament of India; NASA FIRMS. Candidate affidavit data belongs to ADR/MyNeta and is
+only linked.

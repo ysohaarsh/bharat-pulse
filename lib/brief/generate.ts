@@ -1,4 +1,5 @@
 import "server-only";
+import { translateMarkdown } from "@/lib/i18n/translate";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Category, Severity, Source } from "@/lib/types";
 import { buildExtractiveBrief, EXTRACTIVE_MODEL } from "./fallback";
@@ -8,7 +9,7 @@ import { completeChat, llmConfigFromEnv } from "./provider";
 import { selectEvents } from "./select";
 import { HIGH_SEVERITY, type BriefEvent } from "./types";
 
-export const WORLD_SCOPE = "world";
+export const INDIA_SCOPE = "india";
 /** Upper bound on rows loaded for selection (most severe/recent first). */
 const LOAD_LIMIT = 1000;
 
@@ -32,7 +33,7 @@ export interface GenerateResult {
 }
 
 /** Load events → select → LLM (or extractive fallback) → upsert into briefs on (scope, period_start). */
-export async function generateWorldBrief({ force = false, periodEnd }: GenerateOptions = {}): Promise<GenerateResult> {
+export async function generateIndiaBrief({ force = false, periodEnd }: GenerateOptions = {}): Promise<GenerateResult> {
   const { start, end } = periodEnd ? periodEndingAt(periodEnd) : defaultPeriod();
   const period_start = start.toISOString();
   const period_end = end.toISOString();
@@ -42,13 +43,13 @@ export async function generateWorldBrief({ force = false, periodEnd }: GenerateO
     const { data: existing, error } = await db
       .from("briefs")
       .select("content, model")
-      .eq("scope", WORLD_SCOPE)
+      .eq("scope", INDIA_SCOPE)
       .eq("period_start", period_start)
       .maybeSingle();
     if (error) throw new Error(`Failed to check existing brief: ${error.message}`);
     if (existing) {
       return {
-        scope: WORLD_SCOPE,
+        scope: INDIA_SCOPE,
         period_start,
         period_end,
         model: existing.model ?? "unknown",
@@ -62,10 +63,10 @@ export async function generateWorldBrief({ force = false, periodEnd }: GenerateO
   const [rowsRes, highRes] = await Promise.all([
     db
       .from("events")
-      .select("id, title, category, severity, country, occurred_at, source", { count: "exact" })
+      .select("id, title, title_en, category, severity, state, occurred_at, source", { count: "exact" })
       .gte("occurred_at", period_start)
       .lt("occurred_at", period_end)
-      // Sports is an opt-in side feed: never part of the World Brief (selectEvents drops it too).
+      // Sports is an opt-in side feed: never part of the India Brief (selectEvents drops it too).
       .neq("category", "sports")
       .neq("source", "sports")
       .order("severity", { ascending: false })
@@ -110,13 +111,21 @@ export async function generateWorldBrief({ force = false, periodEnd }: GenerateO
     model = EXTRACTIVE_MODEL;
   }
 
+  // Hindi edition via Bhashini/Sarvam (null when no translation provider is configured).
+  let content_hi: string | null = null;
+  try {
+    content_hi = await translateMarkdown(db, content, "en", "hi");
+  } catch (err) {
+    console.error("[brief] Hindi translation failed:", err instanceof Error ? err.message : err);
+  }
+
   const { error: upsertError } = await db
     .from("briefs")
     .upsert(
-      { scope: WORLD_SCOPE, period_start, period_end, content, model, created_at: new Date().toISOString() },
+      { scope: INDIA_SCOPE, period_start, period_end, content, content_hi, model, created_at: new Date().toISOString() },
       { onConflict: "scope,period_start" },
     );
   if (upsertError) throw new Error(`Failed to save brief: ${upsertError.message}`);
 
-  return { scope: WORLD_SCOPE, period_start, period_end, model, chars: content.length, cached: false, ...(llm_error ? { llm_error } : {}) };
+  return { scope: INDIA_SCOPE, period_start, period_end, model, chars: content.length, cached: false, ...(llm_error ? { llm_error } : {}) };
 }

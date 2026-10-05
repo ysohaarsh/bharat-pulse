@@ -64,10 +64,10 @@ test.describe("sports opt-in feed", () => {
     }
   });
 
-  test("the SITREP ignores sports even when they are shown", async ({ page }) => {
+  test("the India now panel ignores sports even when they are shown", async ({ page }) => {
     await page.goto("/?sports=1");
     await waitForFeed(page);
-    const sitrep = page.getByLabel("Situation report");
+    const sitrep = page.getByLabel("India now");
     await expect(sitrep.getByRole("button", { name: /^Show only Earthquake/ })).toBeVisible();
     await expect(sitrep.getByRole("button", { name: /^Show only Sports/ })).toHaveCount(0);
     await expect(sitrep.getByText("SPORTS", { exact: true })).toHaveCount(0);
@@ -76,6 +76,6 @@ test.describe("sports opt-in feed", () => {
   test("/stats leaves sports out", async ({ page }) => {
     await page.goto("/stats");
     await expect(page.getByRole("heading", { level: 1, name: "Stats" })).toBeVisible();
-    await expect(page.getByRole("main").getByText("Sports RSS")).toHaveCount(0);
+    await expect(page.getByRole("main").getByText("Sports", { exact: true })).toHaveCount(0);
   });
 });

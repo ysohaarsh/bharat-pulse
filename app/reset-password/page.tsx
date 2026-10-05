@@ -4,7 +4,7 @@ import { ResetPasswordForm } from "@/components/auth/reset-password-form";
 import { getCurrentUser, hasSupabaseEnv } from "@/components/auth/session";
 import { safeNext } from "../auth/safe-next";
 
-export const metadata: Metadata = { title: "Choose a new password — Pulse" };
+export const metadata: Metadata = { title: "Choose a new password — Bharat Pulse" };
 
 function first(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;

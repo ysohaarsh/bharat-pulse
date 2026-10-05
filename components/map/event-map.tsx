@@ -17,19 +17,23 @@ import {
   type MapLayerMouseEvent,
 } from "maplibre-gl";
 import { CATEGORY_META } from "@/lib/categories";
+import { displayTitle } from "@/lib/i18n/display";
+import type { UiLang } from "@/lib/i18n/languages";
 import type { EventRow } from "@/lib/types";
-import { pulseStyle } from "./pulse-style";
+import { INDIA_BOUNDS, INDIA_CENTER, indiaStyle } from "./india-style";
+import { LAYER_KEYS, type LayerKey, type OverlayData } from "./layers";
 
 // Served from public/ by scripts/copy-maplibre-worker.mjs (MapLibre's documented Next.js setup).
 setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
 
 export type GeoEvent = EventRow & { lat: number; lng: number };
 
-/** A request to fly the map to an event; `nonce` lets the same event be re-targeted. */
+/** A request to fly the map to a point; `nonce` lets the same point be re-targeted. */
 export interface FlyTarget {
   lat: number;
   lng: number;
   nonce: number;
+  zoom?: number;
 }
 
 export interface EventMapProps {
@@ -37,6 +41,12 @@ export interface EventMapProps {
   selected: GeoEvent | null;
   flyTarget: FlyTarget | null;
   onSelect: (id: number) => void;
+  /** Click on empty map: "who represents this point?" */
+  onPick?: (lat: number, lng: number) => void;
+  picked?: { lat: number; lng: number } | null;
+  layers: Record<LayerKey, boolean>;
+  overlays: OverlayData;
+  lang: UiLang;
 }
 
 const ACCENT = "#00ff88";
@@ -48,22 +58,38 @@ const RADIUS: ExpressionSpecification = ["+", 4, ["*", 2, ["get", "severity"]]];
 /** Cluster color = most severe event inside it. */
 const CLUSTER_COLOR: ExpressionSpecification = ["step", ["get", "maxSev"], ACCENT, 3, WARN, 4, DANGER];
 const PULSE_MS = 1800;
-/** Zoom at which the globe fills an ~830px panel; scaled so it fits smaller (mobile) panels too. */
-const BASE_ZOOM = 2.1;
+/** Zoom at which India fills an ~830px panel; scaled for smaller (mobile) panels. */
+const BASE_ZOOM = 3.9;
 function fitZoom(el: HTMLElement): number {
   const size = Math.min(el.clientWidth, el.clientHeight) || 830;
-  return Math.min(BASE_ZOOM, Math.max(0.8, BASE_ZOOM + Math.log2(size / 830)));
+  return Math.min(BASE_ZOOM, Math.max(2.6, BASE_ZOOM + Math.log2(size / 830)));
 }
-const SPIN_DEG_PER_SEC = 3;
 
-function toFeatures(events: GeoEvent[]): GeoJSON.FeatureCollection<GeoJSON.Point> {
+/** Layers each toggle controls. */
+const LAYER_IDS: Record<LayerKey, string[]> = {
+  events: ["cluster-halo", "clusters", "cluster-count", "events-glow", "events-points", "events-hot"],
+  pc: ["pc-fill", "pc-line"],
+  ac: ["ac-line"],
+  projects: ["projects"],
+  reports: ["reports"],
+  aqi: ["aqi"],
+};
+/** Overlay layers that open a popup when clicked. */
+const POPUP_LAYERS = ["projects", "reports", "aqi"] as const;
+
+function toFeatures(events: GeoEvent[], lang: UiLang): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
     type: "FeatureCollection",
     features: events.map((e) => ({
       type: "Feature",
       id: e.id,
       geometry: { type: "Point", coordinates: [e.lng, e.lat] },
-      properties: { id: e.id, title: e.title, severity: e.severity, color: CATEGORY_META[e.category].color },
+      properties: {
+        id: e.id,
+        title: displayTitle(e, lang),
+        severity: e.severity,
+        color: CATEGORY_META[e.category].color,
+      },
     })),
   };
 }
@@ -76,14 +102,86 @@ function reducedMotion(): boolean {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/** Adds the event, cluster, pulse and selection layers on top of the basemap. */
+/** Constituency outlines, development projects, citizen reports, AQI stations: under the events. */
+function addOverlayLayers(map: MapLibreMap) {
+  map.addSource("pc", { type: "geojson", data: EMPTY });
+  map.addSource("ac", { type: "geojson", data: EMPTY });
+  map.addSource("projects", { type: "geojson", data: EMPTY });
+  map.addSource("reports", { type: "geojson", data: EMPTY });
+  map.addSource("aqi", { type: "geojson", data: EMPTY });
+  map.addSource("picked", { type: "geojson", data: EMPTY });
+
+  map.addLayer({
+    id: "pc-fill",
+    type: "fill",
+    source: "pc",
+    layout: { visibility: "none" },
+    paint: { "fill-color": ACCENT, "fill-opacity": 0.02 },
+  });
+  map.addLayer({
+    id: "pc-line",
+    type: "line",
+    source: "pc",
+    layout: { visibility: "none" },
+    paint: { "line-color": "#2fe0ff", "line-opacity": 0.55, "line-width": ["interpolate", ["linear"], ["zoom"], 4, 0.4, 9, 1.4] },
+  });
+  map.addLayer({
+    id: "ac-line",
+    type: "line",
+    source: "ac",
+    minzoom: 5,
+    layout: { visibility: "none" },
+    paint: { "line-color": "#b388ff", "line-opacity": 0.45, "line-dasharray": [1, 1], "line-width": 0.7 },
+  });
+  map.addLayer({
+    id: "aqi",
+    type: "circle",
+    source: "aqi",
+    layout: { visibility: "none" },
+    paint: {
+      "circle-color": ["get", "color"],
+      "circle-opacity": 0.75,
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 4, 8, 9],
+      "circle-stroke-color": "#000",
+      "circle-stroke-width": 0.8,
+    },
+  });
+  map.addLayer({
+    id: "projects",
+    type: "circle",
+    source: "projects",
+    layout: { visibility: "none" },
+    paint: {
+      "circle-color": ["match", ["get", "kind"], "metro", "#ff7ad9", "railway", "#ffd23f", "highway", "#2fe0ff", "#8aa898"],
+      "circle-opacity": 0.85,
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 2.5, 9, 6],
+      "circle-stroke-color": "#000",
+      "circle-stroke-width": 0.6,
+    },
+  });
+  map.addLayer({
+    id: "reports",
+    type: "circle",
+    source: "reports",
+    layout: { visibility: "none" },
+    paint: {
+      "circle-color": ["case", ["==", ["get", "status"], "resolved"], "#5f9e7b", "#f5e663"],
+      "circle-opacity": 0.9,
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, ["+", 3, ["min", ["get", "upvotes"], 6]], 10, 9],
+      "circle-stroke-color": "#000",
+      "circle-stroke-width": 1,
+    },
+  });
+}
+
+/** Adds the event, cluster, pulse and selection layers on top of the overlays. */
 function addEventLayers(map: MapLibreMap) {
   map.addSource("events", {
     type: "geojson",
     data: EMPTY,
     cluster: true,
-    clusterRadius: 45,
-    clusterMaxZoom: 6,
+    clusterRadius: 40,
+    clusterMaxZoom: 7,
     clusterProperties: { maxSev: ["max", ["get", "severity"]] },
   });
   map.addSource("selected", { type: "geojson", data: EMPTY });
@@ -134,12 +232,7 @@ function addEventLayers(map: MapLibreMap) {
     type: "circle",
     source: "events",
     filter: single,
-    paint: {
-      "circle-color": ["get", "color"],
-      "circle-radius": ["+", RADIUS, 5],
-      "circle-opacity": 0.22,
-      "circle-blur": 1,
-    },
+    paint: { "circle-color": ["get", "color"], "circle-radius": ["+", RADIUS, 5], "circle-opacity": 0.22, "circle-blur": 1 },
   });
   map.addLayer({
     id: "events-points",
@@ -185,23 +278,35 @@ function addEventLayers(map: MapLibreMap) {
       "circle-stroke-width": 2.5,
     },
   });
+  map.addLayer({
+    id: "picked",
+    type: "circle",
+    source: "picked",
+    paint: {
+      "circle-color": "transparent",
+      "circle-radius": 9,
+      "circle-stroke-color": ACCENT,
+      "circle-stroke-width": 2,
+    },
+  });
 }
 
-export default function EventMap({ events, selected, flyTarget, onSelect }: EventMapProps) {
+/** Lazily fetch the heavy constituency outlines the first time their layer is switched on. */
+const BOUNDARY_URLS: Partial<Record<LayerKey, string>> = { pc: "/geo/pc.geojson", ac: "/geo/ac.geojson" };
+
+export default function EventMap({ events, selected, flyTarget, onSelect, onPick, picked, layers, overlays, lang }: EventMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const readyRef = useRef(false);
-  const eventsRef = useRef(events);
-  const selectedRef = useRef(selected);
-  const onSelectRef = useRef(onSelect);
+  const latest = useRef({ events, selected, onSelect, onPick, layers, overlays, picked, lang });
+  const loadedBoundaries = useRef(new Set<LayerKey>());
+  const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [cursor, setCursor] = useState<LngLat | null>(null);
   const [zoom, setZoom] = useState(BASE_ZOOM);
 
   useEffect(() => {
-    eventsRef.current = events;
-    selectedRef.current = selected;
-    onSelectRef.current = onSelect;
+    latest.current = { events, selected, onSelect, onPick, layers, overlays, picked, lang };
   });
 
   // Create the map once.
@@ -212,12 +317,13 @@ export default function EventMap({ events, selected, flyTarget, onSelect }: Even
     try {
       map = new MapLibreMap({
         container: containerRef.current,
-        style: pulseStyle(),
-        center: [15, 22],
+        style: indiaStyle(),
+        center: INDIA_CENTER,
         zoom: initialZoom,
-        minZoom: 0.8,
+        minZoom: 2.6,
         maxZoom: 16,
-        attributionControl: { compact: true },
+        maxBounds: INDIA_BOUNDS,
+        attributionControl: { compact: true, customAttribution: "Boundaries: Survey of India via DataMeet" },
       });
     } catch (err) {
       console.warn("[map] WebGL2 unavailable:", err instanceof GPUInitializationError ? err.message : err);
@@ -226,59 +332,59 @@ export default function EventMap({ events, selected, flyTarget, onSelect }: Even
     }
     mapRef.current = map;
     queueMicrotask(() => setZoom(initialZoom));
-    map.addControl(new NavigationControl({ visualizePitch: true }), "top-left");
+    map.addControl(new NavigationControl({ visualizePitch: false }), "top-left");
 
-    const popup = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 10 });
+    const hover = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 10 });
+    const info = new Popup({ closeButton: true, closeOnClick: true, className: "pulse-tip pulse-info", offset: 10, maxWidth: "280px" });
     const motionOk = !reducedMotion();
     let raf = 0;
     let lastFrame = 0;
-    let spinning = motionOk;
-    const stopSpin = () => {
-      spinning = false;
-    };
 
     map.on("load", () => {
+      addOverlayLayers(map);
       addEventLayers(map);
       readyRef.current = true;
-      (map.getSource("events") as GeoJSONSource).setData(toFeatures(eventsRef.current));
-      const sel = selectedRef.current;
-      if (sel) (map.getSource("selected") as GeoJSONSource).setData(toFeatures([sel]));
+      setReady(true);
+      const cur = latest.current;
+      (map.getSource("events") as GeoJSONSource).setData(toFeatures(cur.events, cur.lang));
+      if (cur.selected) (map.getSource("selected") as GeoJSONSource).setData(toFeatures([cur.selected], cur.lang));
 
-      // Pulse severity 4+ markers and slowly spin the globe until the user takes control.
+      // Pulse severity 4+ markers (animation).
       const tick = (now: number) => {
         raf = requestAnimationFrame(tick);
         if (document.hidden || now - lastFrame < 33) return;
-        const dt = lastFrame ? now - lastFrame : 0;
         lastFrame = now;
-        if (motionOk) {
-          const p = (Math.sin(((now % PULSE_MS) / PULSE_MS) * Math.PI * 2) + 1) / 2;
-          map.setPaintProperty("events-hot", "circle-stroke-width", 1.5 + 8 * p);
-          map.setPaintProperty("events-hot", "circle-stroke-opacity", 0.9 - 0.75 * p);
-        }
-        if (spinning && map.getZoom() < 3 && !map.isMoving()) {
-          const c = map.getCenter();
-          map.setCenter([c.lng + (SPIN_DEG_PER_SEC * dt) / 1000, c.lat]);
-        }
+        const p = (Math.sin(((now % PULSE_MS) / PULSE_MS) * Math.PI * 2) + 1) / 2;
+        map.setPaintProperty("events-hot", "circle-stroke-width", 1.5 + 8 * p);
+        map.setPaintProperty("events-hot", "circle-stroke-opacity", 0.9 - 0.75 * p);
       };
       if (motionOk) raf = requestAnimationFrame(tick);
     });
 
-    for (const ev of ["mousedown", "touchstart", "wheel", "dragstart"] as const) map.on(ev, stopSpin);
+    map.on("click", (e) => {
+      const hits = map.queryRenderedFeatures(e.point, {
+        layers: ["events-points", "clusters", ...POPUP_LAYERS].filter((id) => map.getLayer(id)),
+      });
+      const top = hits[0];
+      if (!top) {
+        info.remove();
+        latest.current.onPick?.(e.lngLat.lat, e.lngLat.lng);
+        return;
+      }
+      const [lng, lat] = (top.geometry as GeoJSON.Point).coordinates;
+      if (top.layer.id === "events-points") {
+        const id = Number(top.properties?.id);
+        if (Number.isFinite(id)) latest.current.onSelect(id);
+      } else if (top.layer.id === "clusters") {
+        void (map.getSource("events") as GeoJSONSource)
+          .getClusterExpansionZoom(Number(top.properties?.cluster_id))
+          .then((z) => map.easeTo({ center: [lng, lat], zoom: z + 0.5, duration: 700 }));
+      } else {
+        info.setLngLat([lng, lat]).setDOMContent(popupContent(top.layer.id, top.properties ?? {})).addTo(map);
+      }
+    });
 
-    map.on("click", "events-points", (e: MapLayerMouseEvent) => {
-      const id = Number(e.features?.[0]?.properties?.id);
-      if (Number.isFinite(id)) onSelectRef.current(id);
-    });
-    map.on("click", "clusters", async (e: MapLayerMouseEvent) => {
-      const f = e.features?.[0];
-      if (!f) return;
-      const zoomTo = await (map.getSource("events") as GeoJSONSource).getClusterExpansionZoom(
-        Number(f.properties?.cluster_id),
-      );
-      const [lng, lat] = (f.geometry as GeoJSON.Point).coordinates;
-      map.easeTo({ center: [lng, lat], zoom: zoomTo + 0.5, duration: 700 });
-    });
-    for (const layer of ["events-points", "clusters"]) {
+    for (const layer of ["events-points", "clusters", ...POPUP_LAYERS]) {
       map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", layer, () => (map.getCanvas().style.cursor = ""));
     }
@@ -286,39 +392,73 @@ export default function EventMap({ events, selected, flyTarget, onSelect }: Even
       const f = e.features?.[0];
       if (!f) return;
       const [lng, lat] = (f.geometry as GeoJSON.Point).coordinates;
-      popup.setLngLat([lng, lat]).setText(String(f.properties?.title ?? "")).addTo(map);
+      hover.setLngLat([lng, lat]).setText(String(f.properties?.title ?? "")).addTo(map);
     });
-    map.on("mouseleave", "events-points", () => popup.remove());
+    map.on("mouseleave", "events-points", () => hover.remove());
     map.on("mousemove", (e) => setCursor(e.lngLat.wrap()));
     map.on("mouseout", () => setCursor(null));
     map.on("zoomend", () => setZoom(map.getZoom()));
 
     return () => {
       cancelAnimationFrame(raf);
-      popup.remove();
+      hover.remove();
+      info.remove();
       readyRef.current = false;
       mapRef.current = null;
       map.remove();
     };
   }, []);
 
-  // Realtime: push new data into the existing source; the map is never re-mounted.
+  // Realtime: push new data into the existing sources; the map is never re-mounted.
   useEffect(() => {
-    if (readyRef.current) (mapRef.current?.getSource("events") as GeoJSONSource | undefined)?.setData(toFeatures(events));
-  }, [events]);
+    if (ready) (mapRef.current?.getSource("events") as GeoJSONSource | undefined)?.setData(toFeatures(events, lang));
+  }, [events, lang, ready]);
 
   useEffect(() => {
-    if (readyRef.current) {
+    if (ready) {
       (mapRef.current?.getSource("selected") as GeoJSONSource | undefined)?.setData(
-        selected ? toFeatures([selected]) : EMPTY,
+        selected ? toFeatures([selected], lang) : EMPTY,
       );
     }
-  }, [selected]);
+  }, [selected, lang, ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const map = mapRef.current;
+    if (!map) return;
+    (map.getSource("picked") as GeoJSONSource | undefined)?.setData(
+      picked ? { type: "Feature", properties: {}, geometry: { type: "Point", coordinates: [picked.lng, picked.lat] } } : EMPTY,
+    );
+  }, [picked, ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const map = mapRef.current;
+    if (!map) return;
+    (map.getSource("projects") as GeoJSONSource | undefined)?.setData(overlays.projects);
+    (map.getSource("reports") as GeoJSONSource | undefined)?.setData(overlays.reports);
+    (map.getSource("aqi") as GeoJSONSource | undefined)?.setData(overlays.aqi);
+  }, [overlays, ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const map = mapRef.current;
+    if (!map) return;
+    for (const key of LAYER_KEYS) {
+      const on = layers[key];
+      for (const id of LAYER_IDS[key]) if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", on ? "visible" : "none");
+      const url = BOUNDARY_URLS[key];
+      if (on && url && !loadedBoundaries.current.has(key)) {
+        loadedBoundaries.current.add(key);
+        (map.getSource(key) as GeoJSONSource | undefined)?.setData(url);
+      }
+    }
+  }, [layers, ready]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !flyTarget) return;
-    map.flyTo({ center: [flyTarget.lng, flyTarget.lat], zoom: Math.max(map.getZoom(), 4.5), duration: 1200 });
+    map.flyTo({ center: [flyTarget.lng, flyTarget.lat], zoom: Math.max(map.getZoom(), flyTarget.zoom ?? 6.5), duration: 1200 });
   }, [flyTarget]);
 
   if (failed) {
@@ -326,14 +466,14 @@ export default function EventMap({ events, selected, flyTarget, onSelect }: Even
       <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-background text-center">
         <span className="blink text-sm font-bold tracking-[0.4em] text-danger">NO SIGNAL</span>
         <span className="max-w-xs text-[11px] text-muted">
-          This device can&apos;t render the 3D globe (WebGL2 unavailable). The live feed and SITREP still work.
+          This device can&apos;t render the map (WebGL2 unavailable). The live feed and India Now panel still work.
         </span>
       </div>
     );
   }
 
   return (
-    <div className="pulse-map relative h-full w-full" aria-label="Globe of recent world events">
+    <div className="pulse-map relative h-full w-full" aria-label="Map of India with live events">
       {/* Not `absolute`: maplibre-gl.css (unlayered) forces .maplibregl-map to position: relative. */}
       <div ref={containerRef} className="h-full w-full" />
       <div
@@ -347,4 +487,38 @@ export default function EventMap({ events, selected, flyTarget, onSelect }: Even
       </div>
     </div>
   );
+}
+
+/** Popup body for an overlay feature, built as DOM nodes (feature text is untrusted). */
+function popupContent(layer: string, p: Record<string, unknown>): HTMLElement {
+  const root = document.createElement("div");
+  const line = (text: string, cls = "") => {
+    const el = document.createElement("div");
+    el.textContent = text;
+    if (cls) el.className = cls;
+    root.appendChild(el);
+  };
+  const link = (href: unknown, text: string) => {
+    if (typeof href !== "string" || !/^https:\/\//.test(href)) return;
+    const a = document.createElement("a");
+    a.href = href;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.textContent = text;
+    root.appendChild(a);
+  };
+  if (layer === "projects") {
+    line(String(p.name ?? ""), "font-bold");
+    line(`${String(p.kind ?? "").toUpperCase()} · under construction · ${String(p.segments ?? 1)} OSM segment(s)`);
+    link(p.url, "View on OpenStreetMap ↗");
+  } else if (layer === "reports") {
+    line(String(p.kindLabel ?? p.kind ?? ""), "font-bold");
+    line(String(p.description ?? ""));
+    line(`${String(p.status ?? "")} · ${String(p.upvotes ?? 0)} ✋ · ${String(p.when ?? "")}`);
+    link(p.photo, "Photo ↗");
+  } else if (layer === "aqi") {
+    line(`${String(p.label ?? "")}`, "font-bold");
+    line(`AQI ${String(p.value ?? "")} — ${String(p.band ?? "")}${p.modelled ? " (modelled)" : ""}`);
+  }
+  return root;
 }

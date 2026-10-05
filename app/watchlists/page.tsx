@@ -8,9 +8,9 @@ import { CATEGORY_META } from "@/lib/categories";
 import { createClient } from "@/lib/supabase/server";
 import type { Category } from "@/lib/types";
 import { watchlistMapHref } from "@/lib/watchlists/links";
-import { countryName, toFormValues } from "@/lib/watchlists/schema";
+import { stateLabel, toFormValues } from "@/lib/watchlists/schema";
 
-export const metadata: Metadata = { title: "Watchlists — Pulse" };
+export const metadata: Metadata = { title: "Watchlists — Bharat Pulse" };
 
 function first(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
@@ -42,7 +42,7 @@ export default async function WatchlistsPage({ searchParams }: PageProps<"/watch
   const supabase = await createClient();
   const { data: watchlists, error } = await supabase
     .from("watchlists")
-    .select("id, name, countries, categories, keywords, min_severity, created_at")
+    .select("id, name, states, categories, keywords, min_severity, created_at")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -105,13 +105,13 @@ export default async function WatchlistsPage({ searchParams }: PageProps<"/watch
                         })
                       )}
                     </Row>
-                    <Row label="Countries">
-                      {w.countries.length === 0 ? (
+                    <Row label="States">
+                      {w.states.length === 0 ? (
                         <span className="text-muted">Anywhere</span>
                       ) : (
-                        w.countries.map((c) => (
+                        w.states.map((c) => (
                           <Chip key={c}>
-                            <abbr title={countryName(c)} className="font-mono no-underline">
+                            <abbr title={stateLabel(c)} className="font-mono no-underline">
                               {c}
                             </abbr>
                           </Chip>
@@ -131,7 +131,7 @@ export default async function WatchlistsPage({ searchParams }: PageProps<"/watch
                       href={watchlistMapHref(w)}
                       className={BTN_SECONDARY}
                       title={
-                        w.countries.length || w.keywords.length
+                        w.states.length || w.keywords.length
                           ? "The map filters by category and severity only"
                           : undefined
                       }

@@ -8,7 +8,7 @@ function ev(p: Partial<EventRow>): EventRow {
   id++;
   return {
     id,
-    source: "rss",
+    source: "news",
     external_id: `x${id}`,
     title: `Event ${id}`,
     summary: null,
@@ -16,7 +16,11 @@ function ev(p: Partial<EventRow>): EventRow {
     severity: 1,
     lat: null,
     lng: null,
-    country: null,
+    state: null,
+    district: null,
+    lang: "en",
+    title_en: null,
+    title_hi: null,
     url: null,
     occurred_at: "2026-10-04T10:00:00Z",
     created_at: "2026-10-04T10:00:00Z",
@@ -54,17 +58,17 @@ describe("summarizeSitrep", () => {
 
   it("counts categories, sources, hotspots and picks priority events", () => {
     const s = summarizeSitrep([
-      ev({ category: "conflict", severity: 4, country: "UA", source: "rss", occurred_at: "2026-10-04T09:00:00Z" }),
-      ev({ category: "conflict", severity: 3, country: "UA", source: "gdelt", occurred_at: "2026-10-04T11:00:00Z" }),
-      ev({ category: "earthquake", severity: 5, country: "TR", source: "usgs" }),
-      ev({ category: "politics", severity: 2, country: "BR" }),
+      ev({ category: "security", severity: 4, state: "IN-KA", source: "news", occurred_at: "2026-10-04T09:00:00Z" }),
+      ev({ category: "security", severity: 3, state: "IN-KA", source: "sachet", occurred_at: "2026-10-04T11:00:00Z" }),
+      ev({ category: "earthquake", severity: 5, state: "IN-AS", source: "ncs" }),
+      ev({ category: "politics", severity: 2, state: "IN-BR" }),
     ]);
-    expect(s.byCategory[0]).toEqual({ category: "conflict", count: 2 });
+    expect(s.byCategory[0]).toEqual({ category: "security", count: 2 });
     expect(s.highSeverity).toBe(2);
-    expect(s.hotspots[0]).toEqual({ country: "UA", count: 2, maxSeverity: 4 });
+    expect(s.hotspots[0]).toEqual({ state: "IN-KA", count: 2, maxSeverity: 4 });
     expect(s.priority.map((e) => e.severity)).toEqual([5, 4, 3]);
-    expect(s.bySource.find((x) => x.source === "gdelt")).toEqual({
-      source: "gdelt",
+    expect(s.bySource.find((x) => x.source === "sachet")).toEqual({
+      source: "sachet",
       count: 1,
       latest: "2026-10-04T11:00:00Z",
     });
@@ -72,14 +76,14 @@ describe("summarizeSitrep", () => {
 
   it("ignores sports entirely, even when they are shown", () => {
     const core = [
-      ev({ category: "conflict", severity: 4, country: "UA" }),
-      ev({ category: "flood", severity: 2, country: "PK", source: "gdelt" }),
+      ev({ category: "security", severity: 4, state: "IN-KA" }),
+      ev({ category: "flood", severity: 2, state: "IN-UP", source: "sachet" }),
     ];
     const sports = [
-      ...Array.from({ length: 30 }, () => ev({ category: "sports", source: "sports", severity: 1, country: "GB" })),
+      ...Array.from({ length: 30 }, () => ev({ category: "sports", source: "sports", severity: 1, state: "IN-TN" })),
       // Defensive: either field marks an item as sports.
-      ev({ category: "sports", source: "rss", severity: 5, country: "BR" }),
-      ev({ category: "other", source: "sports", severity: 5, country: "BR" }),
+      ev({ category: "sports", source: "news", severity: 5, state: "IN-BR" }),
+      ev({ category: "other", source: "sports", severity: 5, state: "IN-BR" }),
     ];
     const s = summarizeSitrep([...core, ...sports]);
     expect(s).toEqual(summarizeSitrep(core));
@@ -87,7 +91,7 @@ describe("summarizeSitrep", () => {
     expect(s.threat).toBe(50); // mean of 4 and 2, not diluted by 30 severity-1 sports items
     expect(s.byCategory.map((c) => c.category)).not.toContain("sports");
     expect(s.bySource.map((x) => x.source)).not.toContain("sports");
-    expect(s.hotspots.map((h) => h.country)).toEqual(["UA", "PK"]);
+    expect(s.hotspots.map((h) => h.state)).toEqual(["IN-KA", "IN-UP"]);
     expect(summarizeSitrep(sports)).toMatchObject({ total: 0, threat: 0, threatLabel: "LOW", priority: [] });
   });
 });

@@ -1,80 +1,72 @@
 import { describe, expect, it } from "vitest";
-import { COUNTRY_COUNT, countryByCode, countryByName, detectCountry } from "./geo";
+import { detectPlace, inIndiaBox, statePoint } from "./geo";
 
-const code = (text: string) => detectCountry(text)?.country ?? null;
-
-describe("detectCountry", () => {
-  it("covers ~100+ countries", () => {
-    expect(COUNTRY_COUNT).toBeGreaterThanOrEqual(100);
+describe("detectPlace", () => {
+  it("finds a state", () => {
+    expect(detectPlace("Heavy rain lashes Kerala; schools shut")).toMatchObject({ state: "IN-KL", district: null });
   });
 
-  it("matches names, demonyms and capitals", () => {
-    expect(code("Kyiv bridge hit in drone attack")).toBe("UA");
-    expect(code("Ukrainian forces advance")).toBe("UA");
-    expect(code("Ukraine's grain exports")).toBe("UA");
-    expect(code("Talks in Tehran stall")).toBe("IR");
-    expect(code("Ethiopian government forces seize Mekelle")).toBe("ET");
-    expect(code("Brazilians head to the polls")).toBe("BR");
+  it("prefers a district over its state, and maps modern city names", () => {
+    expect(detectPlace("Bengaluru potholes: Karnataka HC pulls up civic body")).toMatchObject({
+      state: "IN-KA",
+      district: "Bangalore",
+    });
+    expect(detectPlace("Prayagraj gears up for Magh Mela")).toMatchObject({ state: "IN-UP", district: "Allahabad" });
+    expect(detectPlace("Gurugram waterlogging after 2 hours of rain")).toMatchObject({ state: "IN-HR", district: "Gurgaon" });
   });
 
-  it("returns capital coordinates", () => {
-    const m = detectCountry("Explosion reported in Kyiv");
-    expect(m).toEqual({ country: "UA", lat: 50.45, lng: 30.52 });
+  it("prefers the longest alias at a position", () => {
+    expect(detectPlace("Navi Mumbai airport opens")).toMatchObject({ district: "Thane" });
+    expect(detectPlace("Tourists stranded in North Goa")).toMatchObject({ district: "North Goa" });
   });
 
-  it("is case-insensitive for names", () => {
-    expect(code("BREAKING: FLOODS IN PAKISTAN")).toBe("PK");
-    expect(code("floods in pakistan")).toBe("PK");
+  it("treats plain Delhi as the state and New Delhi as the district", () => {
+    expect(detectPlace("Delhi air quality slips to severe")).toMatchObject({ state: "IN-DL", district: null });
+    expect(detectPlace("Protest at Jantar Mantar in New Delhi")).toMatchObject({ state: "IN-DL", district: "New Delhi" });
   });
 
-  it("matches US/UK acronyms only in uppercase", () => {
-    expect(code("US sanctions announced")).toBe("US");
-    expect(code("U.S.-backed plan collapses")).toBe("US");
-    expect(code("UK inflation slows")).toBe("GB");
-    expect(code("Tell us what you think")).toBeNull();
+  it("resolves districts shared by two states only when the state is named", () => {
+    expect(detectPlace("Bus accident in Aurangabad")).toBeNull();
+    expect(detectPlace("Bus accident in Aurangabad, Bihar")).toMatchObject({ state: "IN-BR", district: "Aurangabad" });
+    expect(detectPlace("Landslide near Bilaspur in Himachal Pradesh")).toMatchObject({ state: "IN-HP", district: "Bilaspur" });
   });
 
-  it("prefers the longest alias", () => {
-    expect(code("Clashes in South Sudan")).toBe("SS");
-    expect(code("Papua New Guinea landslide")).toBe("PG");
-    expect(code("Democratic Republic of the Congo outbreak")).toBe("CD");
-    expect(code("Missile test by North Korea")).toBe("KP");
+  it("ignores district names that are ordinary words", () => {
+    expect(detectPlace("Onion prices in the mandi fall")).toBeNull();
+    expect(detectPlace("Shooter wins gold, punches the air")).toBeNull();
+    expect(detectPlace("Five arrested in East Delhi")).toMatchObject({ state: "IN-DL", district: null });
   });
 
-  it("picks the most-mentioned country, ties to the earliest", () => {
-    expect(code("Iran says Hormuz to remain closed until US meets conditions")).toBe("IR");
-    expect(code("US envoy in Israel; Israeli officials and Netanyahu respond")).toBe("IL");
+  it("does not pin IPL teams, seas or foreign places", () => {
+    expect(detectPlace("Mumbai Indians beat Chennai Super Kings")).toBeNull();
+    expect(detectPlace("Low pressure area forms over Bay of Bengal")).toBeNull();
+    expect(detectPlace("India tour of West Indies announced")).toBeNull();
+    expect(detectPlace("Trade talks with the US resume")).toBeNull();
   });
 
-  it("does not match inside other words or on sink phrases", () => {
-    expect(code("Indiana governor signs bill")).toBeNull();
-    expect(code("Flydubai flight delayed")).toBeNull();
-    expect(code("Storms hit New Mexico")).toBeNull();
-    expect(code("Latin American leaders meet")).toBeNull();
-    expect(code("Georgia election officials certify results")).toBeNull();
+  it("is case-insensitive and respects letter boundaries", () => {
+    expect(detectPlace("KERALA FLOODS")).toMatchObject({ state: "IN-KL" });
+    expect(detectPlace("Assam's tea gardens")).toMatchObject({ state: "IN-AS" });
+    expect(detectPlace("Indoreans celebrate")).toBeNull();
   });
 
-  it("matches the country Georgia only via unambiguous aliases", () => {
-    expect(code("Protests in Tbilisi")).toBe("GE");
-  });
-
-  it("returns null for neutral text", () => {
-    expect(code("Scientists say the new battery could charge in minutes")).toBeNull();
-    expect(detectCountry("")).toBeNull();
-    expect(detectCountry(null)).toBeNull();
+  it("picks the most-mentioned place, earliest on ties", () => {
+    expect(detectPlace("Chennai rain: Chennai schools shut; Madurai dry")).toMatchObject({ district: "Chennai" });
+    expect(detectPlace("Patna and Ranchi brace for heat")).toMatchObject({ district: "Patna" });
   });
 });
 
-describe("countryByName / countryByCode", () => {
-  it("resolves GDELT-style source country names", () => {
-    expect(countryByName("United Kingdom")?.country).toBe("GB");
-    expect(countryByName("India")?.country).toBe("IN");
-    expect(countryByName("")).toBeNull();
-    expect(countryByName("Atlantis")).toBeNull();
+describe("statePoint / inIndiaBox", () => {
+  it("returns a point inside India for every state", () => {
+    const p = statePoint("IN-TN");
+    expect(p).toMatchObject({ state: "IN-TN", district: null });
+    expect(inIndiaBox(p!.lat, p!.lng)).toBe(true);
+    expect(statePoint("XX")).toBeNull();
   });
 
-  it("resolves ISO codes", () => {
-    expect(countryByCode("fr")?.country).toBe("FR");
-    expect(countryByCode("ZZ")).toBeNull();
+  it("knows India's bounding box", () => {
+    expect(inIndiaBox(28.6, 77.2)).toBe(true);
+    expect(inIndiaBox(35.9, 70.6)).toBe(true); // Hindu Kush quakes are within the margin
+    expect(inIndiaBox(51.5, -0.1)).toBe(false);
   });
 });

@@ -1,5 +1,5 @@
 {
-  "name": "pulse",
+  "name": "bharat-pulse",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,7 +11,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
     "prebuild": "node ./scripts/copy-maplibre-worker.mjs",
-    "predev": "node ./scripts/copy-maplibre-worker.mjs"
+    "predev": "node ./scripts/copy-maplibre-worker.mjs",
+    "geo:build": "node scripts/build-geo.mjs",
+    "geo:load": "node --env-file=.env.local scripts/load-boundaries.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -33,6 +35,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
+    "mapshaper": "^0.7.72",
     "supabase": "^2.119.0",
     "tailwindcss": "^4",
     "typescript": "^5",

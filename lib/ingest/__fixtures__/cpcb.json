@@ -1,0 +1,9 @@
+{"records":[
+ {"id":"1","country":"India","state":"Delhi","city":"Delhi","station":"Anand Vihar, Delhi - DPCC","last_update":"05-10-2026 09:00:00","latitude":"28.646835","longitude":"77.316032","pollutant_id":"PM2.5","pollutant_min":"301","pollutant_max":"455","pollutant_avg":"412"},
+ {"id":"2","country":"India","state":"Delhi","city":"Delhi","station":"Anand Vihar, Delhi - DPCC","last_update":"05-10-2026 09:00:00","latitude":"28.646835","longitude":"77.316032","pollutant_id":"PM10","pollutant_min":"200","pollutant_max":"390","pollutant_avg":"330"},
+ {"id":"3","country":"India","state":"Delhi","city":"Delhi","station":"Lodhi Road, Delhi - IMD","last_update":"05-10-2026 09:00:00","latitude":"28.591825","longitude":"77.227307","pollutant_id":"PM2.5","pollutant_min":"180","pollutant_max":"320","pollutant_avg":"305"},
+ {"id":"4","country":"India","state":"Uttar_Pradesh","city":"Greater Noida","station":"Knowledge Park - III, Greater Noida - UPPCB","last_update":"05-10-2026 09:00:00","pollutant_id":"PM10","pollutant_min":"57","pollutant_max":"136","pollutant_avg":"93"},
+ {"id":"5","country":"India","state":"Karnataka","city":"Bengaluru","station":"BTM Layout, Bengaluru - CPCB","last_update":"05-10-2026 09:00:00","latitude":"12.9135218","longitude":"77.5950804","pollutant_id":"PM2.5","pollutant_min":"20","pollutant_max":"64","pollutant_avg":"NA"},
+ {"id":"6","country":"India","state":"Karnataka","city":"Bengaluru","station":"BTM Layout, Bengaluru - CPCB","last_update":"05-10-2026 09:00:00","latitude":"12.9135218","longitude":"77.5950804","pollutant_id":"OZONE","pollutant_min":"10","pollutant_max":"44","pollutant_avg":"38"},
+ {"id":"7","country":"India","state":"Karnataka","city":"Bengaluru","station":"Broken row","last_update":"yesterday","pollutant_id":"PM10","pollutant_avg":"50"}
+]}

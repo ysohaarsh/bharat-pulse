@@ -1,28 +1,8 @@
-/* MapLibre globe in the green-on-black control-room theme. Scoped to .pulse-map. */
+/* MapLibre map of India in the green-on-black control-room theme. Scoped to .pulse-map. */
 
-/* Deep space behind the globe, with a phosphor-green halo where the atmosphere would be. */
 .pulse-map {
-  background:
-    radial-gradient(circle at 50% 50%, rgb(0 255 136 / 0.16) 0%, rgb(0 255 136 / 0.05) 28%, transparent 46%),
-    radial-gradient(ellipse at center, #02100a 0%, #010503 70%);
+  background: radial-gradient(ellipse at center, #02100a 0%, #010503 70%);
   font-family: var(--font-mono);
-}
-
-/* Sparse star field. */
-.pulse-map::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    radial-gradient(1px 1px at 12% 18%, rgb(0 255 136 / 0.5), transparent),
-    radial-gradient(1px 1px at 83% 12%, rgb(0 255 136 / 0.35), transparent),
-    radial-gradient(1px 1px at 67% 82%, rgb(0 255 136 / 0.45), transparent),
-    radial-gradient(1px 1px at 22% 74%, rgb(0 255 136 / 0.3), transparent),
-    radial-gradient(1px 1px at 91% 58%, rgb(0 255 136 / 0.4), transparent),
-    radial-gradient(1px 1px at 41% 9%, rgb(0 255 136 / 0.3), transparent),
-    radial-gradient(1px 1px at 6% 46%, rgb(0 255 136 / 0.35), transparent);
 }
 
 /* Center crosshair, above the canvas but below the controls. */
@@ -93,7 +73,7 @@
   box-shadow: 0 0 12px rgb(0 255 136 / 0.18);
   padding: 6px 8px;
   max-width: 280px;
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-sans);
   font-size: 12px;
   line-height: 1.35;
 }
@@ -112,4 +92,23 @@
 }
 .pulse-tip.maplibregl-popup-anchor-right .maplibregl-popup-tip {
   border-left-color: var(--border-strong);
+}
+
+/* Click-to-open info popups (projects, reports, AQI stations). */
+.pulse-info .maplibregl-popup-content {
+  padding: 8px 22px 8px 10px;
+  display: grid;
+  gap: 2px;
+}
+.pulse-info .maplibregl-popup-content .font-bold {
+  font-weight: 600;
+  color: var(--accent);
+}
+.pulse-info .maplibregl-popup-content a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.pulse-info .maplibregl-popup-close-button {
+  color: var(--muted);
+  font-size: 16px;
 }

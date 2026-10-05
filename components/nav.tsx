@@ -3,8 +3,11 @@ import { signOut } from "@/app/auth/actions";
 import { AlertsBadge } from "@/components/auth/alerts-badge";
 import { getCurrentUser } from "@/components/auth/session";
 import { FOCUS } from "@/components/auth/styles";
-import { UtcClock } from "@/components/hud/utc-clock";
+import { IstClock } from "@/components/hud/ist-clock";
+import { LangToggle } from "@/components/i18n/lang-provider";
 import { NavTabs, type NavTab } from "@/components/nav-tabs";
+import { t } from "@/lib/i18n/dict";
+import { getLang } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 async function unreadAlertCount(userId: string): Promise<number> {
@@ -22,17 +25,18 @@ async function unreadAlertCount(userId: string): Promise<number> {
 }
 
 export async function Nav() {
-  const user = await getCurrentUser();
+  const [user, lang] = await Promise.all([getCurrentUser(), getLang()]);
   const unread = user ? await unreadAlertCount(user.id) : 0;
 
   const tabs: NavTab[] = [
-    { href: "/", label: "Map" },
-    { href: "/brief", label: "World Brief" },
-    { href: "/stats", label: "Stats" },
-    { href: "/watchlists", label: "Watchlists" },
+    { href: "/", label: t(lang, "navMap") },
+    { href: "/brief", label: t(lang, "navBrief") },
+    { href: "/stats", label: t(lang, "navStats") },
+    { href: "/report", label: t(lang, "navReport") },
+    { href: "/watchlists", label: t(lang, "navWatchlists") },
   ];
   if (user) {
-    tabs.push({ href: "/alerts", label: "Alerts", extra: <AlertsBadge userId={user.id} initialCount={unread} /> });
+    tabs.push({ href: "/alerts", label: t(lang, "navAlerts"), extra: <AlertsBadge userId={user.id} initialCount={unread} /> });
   }
 
   return (
@@ -42,8 +46,8 @@ export async function Nav() {
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-50" />
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent shadow-[0_0_10px_var(--accent)]" />
         </span>
-        <span className="glow text-sm font-bold tracking-[0.3em] text-accent">PULSE</span>
-        <span className="hidden text-[10px] tracking-[0.2em] text-muted lg:inline">{"// GLOBAL SITUATION MONITOR"}</span>
+        <span className="glow text-sm font-bold tracking-[0.3em] text-accent">BHARAT PULSE</span>
+        <span className="hidden text-[10px] tracking-[0.2em] text-muted 2xl:inline">{t(lang, "brandTag")}</span>
       </Link>
 
       <NavTabs tabs={tabs} />
@@ -53,7 +57,10 @@ export async function Nav() {
           SYS <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_6px_var(--accent)]" />
           <span className="text-accent">NOMINAL</span>
         </span>
-        <UtcClock className="hidden text-[11px] text-foreground md:inline" />
+        <IstClock className="hidden text-[11px] text-foreground md:inline" />
+        <LangToggle
+          className={`border border-border px-2 py-1 text-[11px] text-accent hover:border-accent disabled:opacity-50 ${FOCUS}`}
+        />
         {user ? (
           <div className="flex items-center gap-3">
             <span className="hidden max-w-40 truncate text-muted sm:inline" title={user.email ?? undefined}>
@@ -64,7 +71,7 @@ export async function Nav() {
                 type="submit"
                 className={`border border-border px-2 py-1 uppercase tracking-widest text-muted hover:border-accent hover:text-accent ${FOCUS}`}
               >
-                Sign out
+                {t(lang, "signOut")}
               </button>
             </form>
           </div>
@@ -73,7 +80,7 @@ export async function Nav() {
             href="/login"
             className={`border border-border-strong px-2.5 py-1 uppercase tracking-widest text-accent hover:bg-accent hover:text-black ${FOCUS}`}
           >
-            Sign in
+            {t(lang, "signIn")}
           </Link>
         )}
       </div>

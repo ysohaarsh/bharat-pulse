@@ -1,4 +1,4 @@
-// LLM provider for the World Brief — any OpenAI-compatible Chat Completions endpoint.
+// LLM provider for the India Brief — any OpenAI-compatible Chat Completions endpoint.
 //
 //   LLM_API_KEY   API key. If empty, briefs fall back to the deterministic extractive brief.
 //   LLM_BASE_URL  Base URL ending in the API version; "/chat/completions" is appended.

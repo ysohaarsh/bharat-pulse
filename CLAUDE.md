@@ -1,27 +1,36 @@
 @AGENTS.md
 
-# Pulse — project conventions
+# Bharat Pulse — project conventions
 
-Real-time world events dashboard (mini World Monitor). Next.js 16 App Router + Supabase + Leaflet, deployed on Vercel.
+India situation monitor (fork of Pulse). Next.js 16 App Router + Supabase (PostGIS) + MapLibre, deployed on Vercel.
 Note: Next 16 renamed `middleware.ts` → `proxy.ts`, and `cookies()`/`params` are async.
 
 ## Commands
 - `npm run dev` / `npm run build`
 - `npm run lint && npm run typecheck && npm test` — must pass before any commit
+- `npm run geo:build` (download + simplify boundaries) → `npm run geo:load` (into PostGIS)
 
 ## Architecture
-- `lib/types.ts` — **shared contract** (`NormalizedEvent`, `Category`, `Source`). Don't change it without coordinating; every module depends on it.
-- `lib/categories.ts` — category labels/colors. Map, feed and stats must use these.
+- `lib/types.ts` — **shared contract** (`NormalizedEvent`, `Category`, `Source`, `Job`, `MetricRow`). Don't change it without coordinating.
+- `lib/india/` — states table (ISO 3166-2:IN, 2023 codes), generated gazetteer `places.json`, NAQI bands.
+- `lib/categories.ts` — category labels (en + hi) and colours. Map, feed and stats must use these.
 - `lib/supabase/{client,server,admin}.ts` — browser / per-request server / service-role clients. Never import `admin` in client code.
 - `supabase/migrations/` — schema. New changes go in a new timestamped migration file, never edit applied ones.
-- Ingestion: `lib/ingest/<source>.ts` implements `Ingester` (`fetchRaw` + pure `normalize`). `lib/ingest/run.ts` upserts on `(source, external_id)`. `POST /api/ingest` (Bearer `CRON_SECRET`) is called by Supabase pg_cron.
+- Ingestion: `lib/ingest/<source>.ts` implements `Ingester` (`fetchRaw` + pure `normalize`, optional `metrics`, `insertOnly`). Jobs that aren't events live in `lib/jobs/` (power, mandi, sansad, osm) with pure transforms. `lib/ingest/run.ts` dispatches both; `POST /api/ingest?source=…` (Bearer `CRON_SECRET`) is called by pg_cron.
+- Location: ingesters set `state` when the source names it; otherwise a DB trigger fills `state`/`district` from PostGIS boundaries. `whois(lat,lng)` RPC powers "who represents this place".
+- i18n: UI strings in `lib/i18n/dict.ts` (en/hi, `lang` cookie). Content translation: `lib/i18n/translate.ts` (Bhashini → Sarvam, cached in `translations`). Show headlines with `displayTitle(event, lang)`.
+- Data sources and their quirks: `docs/INDIA_DATA_SOURCES.md`. Don't scrape MyNeta (ADR declined permission) — link to it.
 
 ## Module ownership (for parallel agents — stay inside your folders)
 | Agent | Owns |
 |---|---|
-| ingest-<source> (usgs, eonet, gdelt, rss, gdacs, who, sports) | `lib/ingest/<source>.ts`, `lib/ingest/<source>.test.ts`, `lib/ingest/__fixtures__/<source>.*` |
-| ui-map | `components/map/**`, map half of `app/page.tsx` |
-| ui-feed | `components/feed/**`, feed half of `app/page.tsx`, `lib/events/**` (queries + realtime hook) |
+| ingest-<source> (sachet, ncs, firms, aqi, pib, news, sports) | `lib/ingest/<source>.ts`, its test, `lib/ingest/__fixtures__/<source>.*` |
+| jobs | `lib/jobs/**` |
+| geo | `scripts/*geo*`, `scripts/load-boundaries.mjs`, `lib/india/**`, `public/geo/**` |
+| ui-map | `components/map/**`, `components/neta/**`, map half of `app/page.tsx` |
+| ui-feed | `components/feed/**`, feed half of `app/page.tsx`, `lib/events/**`, `lib/metrics/**` |
+| civic | `app/report/**`, `components/reports/**`, `lib/reports/**` |
+| i18n | `lib/i18n/**`, `components/i18n/**`, `app/api/translate/**` |
 | ui-insights | `app/stats/**`, `app/brief/**`, `components/stats/**` |
 | ai-brief | `lib/brief/**`, `app/api/brief/**` |
 | auth | `app/login/**`, `app/auth/**`, `app/watchlists/**`, `components/auth/**`, `components/nav.tsx` |
@@ -30,7 +39,8 @@ If you truly need to touch a shared file (`lib/types.ts`, `package.json`, `app/l
 
 ## Style
 - Dark UI; use the theme tokens in `app/globals.css` (`bg-surface`, `border-border`, `text-muted`, `text-accent`), not raw hex.
-- Server Components by default; add `"use client"` only where needed (the map must be client-only, load via `next/dynamic` with `ssr: false`).
-- Map: MapLibre GL v6 globe + OpenFreeMap vector tiles (keyless), style in `components/map/pulse-style.ts`. Its worker is served from `public/maplibre/` (copied by `scripts/copy-maplibre-worker.mjs` in `predev`/`prebuild`; gitignored) — don't import the worker through the bundler.
+- Server Components by default; add `"use client"` only where needed (maps are client-only, loaded via `next/dynamic` with `ssr: false`).
+- Map: MapLibre GL v6, Mercator, OpenFreeMap tiles, style in `components/map/india-style.ts`. OSM boundary layers are deliberately omitted; India's outline/state lines come from `public/geo/`. Worker served from `public/maplibre/` (copied by `scripts/copy-maplibre-worker.mjs`).
+- Times shown to users are IST (`formatIst`, `IstClock`); stats buckets are IST hours/days.
 - Validate external API payloads with zod inside `normalize`; skip bad items instead of throwing.
 - Tests: Vitest, colocated `*.test.ts`, run against saved fixtures — no network in unit tests.

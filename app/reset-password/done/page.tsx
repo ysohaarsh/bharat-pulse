@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BTN_PRIMARY } from "@/components/auth/styles";
 import { safeNext } from "../../auth/safe-next";
 
-export const metadata: Metadata = { title: "Password updated — Pulse" };
+export const metadata: Metadata = { title: "Password updated — Bharat Pulse" };
 
 function first(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
@@ -24,7 +24,7 @@ export default async function PasswordUpdatedPage({ searchParams }: PageProps<"/
             Your password has been changed and you&apos;re signed in. Other devices have been signed out.
           </p>
           <Link href={next} className={BTN_PRIMARY}>
-            Continue to Pulse
+            Continue to Bharat Pulse
           </Link>
         </section>
       </div>

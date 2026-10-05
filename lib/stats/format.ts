@@ -1,51 +1,40 @@
 // Small display helpers shared by /stats, /brief and the home SITREP panel.
-import { countryDisplayName } from "@/lib/ingest/geo";
+import { stateName } from "@/lib/india/states";
 
-let regionNames: Intl.DisplayNames | null = null;
-
-/**
- * ISO 3166-1 alpha-2 → English name; falls back to the raw code.
- * Prefers our own country table: Intl.DisplayNames differs between Node and browsers
- * (e.g. "PS"), which breaks hydration when a client component renders the name.
- */
-export function countryName(code: string): string {
-  const own = countryDisplayName(code);
-  if (own) return own;
-  try {
-    regionNames ??= new Intl.DisplayNames(["en"], { type: "region" });
-    return regionNames.of(code.toUpperCase()) ?? code;
-  } catch {
-    return code;
-  }
+/** ISO 3166-2:IN code → state name ("IN-KA" → "Karnataka"); unknown codes pass through. */
+export function stateLabel(code: string, lang: "en" | "hi" = "en"): string {
+  return stateName(code, lang) ?? code;
 }
 
-const UTC_DATETIME = new Intl.DateTimeFormat("en-GB", {
-  timeZone: "UTC",
+// An explicit timeZone keeps server and client output identical (no hydration mismatch).
+const IST_DATETIME = new Intl.DateTimeFormat("en-IN", {
+  timeZone: "Asia/Kolkata",
   day: "numeric",
   month: "short",
   year: "numeric",
   hour: "2-digit",
   minute: "2-digit",
+  hour12: false,
 });
-const UTC_DATE = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", day: "numeric", month: "short", year: "numeric" });
+const IST_DATE = new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" });
 
-/** e.g. "4 Oct 2026, 12:34 UTC" — deterministic on server and client. */
-export function formatUtc(iso: string): string {
+/** e.g. "5 Oct 2026, 14:34 IST". */
+export function formatIst(iso: string): string {
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? iso : `${UTC_DATETIME.format(d)} UTC`;
+  return Number.isNaN(d.getTime()) ? iso : `${IST_DATETIME.format(d)} IST`;
 }
 
-export function formatUtcDate(iso: string): string {
+export function formatIstDate(iso: string): string {
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? iso : UTC_DATE.format(d);
+  return Number.isNaN(d.getTime()) ? iso : IST_DATE.format(d);
 }
 
 export const SOURCE_LABELS: Record<string, string> = {
-  usgs: "USGS",
-  eonet: "NASA EONET",
-  gdelt: "GDELT",
-  rss: "News RSS",
-  gdacs: "GDACS",
-  who: "WHO",
-  sports: "Sports RSS",
+  sachet: "NDMA SACHET alerts",
+  ncs: "NCS earthquakes",
+  firms: "NASA FIRMS fires",
+  aqi: "Air quality (CPCB)",
+  pib: "PIB press releases",
+  news: "Indian news",
+  sports: "Sports",
 };

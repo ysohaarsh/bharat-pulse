@@ -8,7 +8,7 @@ import { CATEGORY_META } from "@/lib/categories";
 import { CATEGORIES } from "@/lib/types";
 import type { WatchlistField, WatchlistFormValues } from "@/lib/watchlists/schema";
 
-const BLANK: WatchlistFormValues = { name: "", countries: "", categories: [], keywords: "", min_severity: "1" };
+const BLANK: WatchlistFormValues = { name: "", states: "", categories: [], keywords: "", min_severity: "1" };
 
 const SEVERITY_OPTIONS = [
   { value: "1", label: "1 — Any" },
@@ -92,24 +92,24 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor={fid("countries")} className={LABEL}>
-            Countries
+          <label htmlFor={fid("states")} className={LABEL}>
+            States
           </label>
           <input
-            id={fid("countries")}
-            name="countries"
-            defaultValue={values.countries}
-            placeholder="US, JP, GB"
+            id={fid("states")}
+            name="states"
+            defaultValue={values.states}
+            placeholder="Karnataka, KA, IN-MH"
             autoCapitalize="characters"
             spellCheck={false}
-            aria-invalid={errs.countries ? true : undefined}
-            aria-describedby={describe("countries", true)}
+            aria-invalid={errs.states ? true : undefined}
+            aria-describedby={describe("states", true)}
             className={`${INPUT} font-mono`}
           />
-          <p id={`${fid("countries")}-hint`} className="mt-1 text-xs text-muted">
-            Comma-separated ISO 2-letter codes. Empty = anywhere.
+          <p id={`${fid("states")}-hint`} className="mt-1 text-xs text-muted">
+            Comma-separated states or UTs (names or codes). Empty = all of India.
           </p>
-          <Errors id={`${fid("countries")}-error`} errors={errs.countries} />
+          <Errors id={`${fid("states")}-error`} errors={errs.states} />
         </div>
 
         <div>

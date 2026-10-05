@@ -3,7 +3,7 @@ import { CATEGORIES, type Category, type Severity } from "@/lib/types";
 
 /**
  * Home-page URL that approximates a watchlist using the map's filter params
- * (`cat`, `sev`, `win`). The map has no country/keyword filters, so those are not applied.
+ * (`cat`, `sev`, `win`). The map has no state/keyword filters, so those are not applied.
  */
 export function watchlistMapHref(w: { categories: readonly string[]; min_severity: number }): string {
   const categories = CATEGORIES.filter((c: Category) => w.categories.includes(c));

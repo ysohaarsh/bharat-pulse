@@ -1,11 +1,12 @@
 import { CATEGORY_META } from "@/lib/categories";
-import { countryName, formatUtc, SOURCE_LABELS } from "@/lib/stats/format";
+import { stateLabel, formatIst, SOURCE_LABELS } from "@/lib/stats/format";
 import type { Category } from "@/lib/types";
 import type { TopEvent } from "@/app/brief/queries";
+import { displayTitle } from "@/lib/i18n/display";
+import type { UiLang } from "@/lib/i18n/languages";
 import { safeHttpUrl } from "@/lib/url";
 
-
-export function TopEvents({ events }: { events: TopEvent[] }) {
+export function TopEvents({ events, lang = "en" }: { events: TopEvent[]; lang?: UiLang }) {
   if (events.length === 0) {
     return (
       <p className="rounded-md border border-dashed border-border px-4 py-6 text-center text-sm text-muted">
@@ -29,20 +30,20 @@ export function TopEvents({ events }: { events: TopEvent[] }) {
                   rel="noopener noreferrer"
                   className="font-medium hover:text-accent hover:underline"
                 >
-                  {e.title}
+                  {displayTitle(e, lang)}
                   <span className="sr-only"> (opens in a new tab)</span>
                   <span aria-hidden className="ml-1 text-muted">
                     ↗
                   </span>
                 </a>
               ) : (
-                <span className="font-medium">{e.title}</span>
+                <span className="font-medium">{displayTitle(e, lang)}</span>
               )}
               <p className="mt-0.5 text-xs text-muted">
-                <span style={{ color: meta.color }}>{meta.label}</span>
+                <span style={{ color: meta.color }}>{lang === "hi" ? meta.hi : meta.label}</span>
                 {" · "}
-                <time dateTime={e.occurred_at}>{formatUtc(e.occurred_at)}</time>
-                {e.country && <> · {countryName(e.country)}</>}
+                <time dateTime={e.occurred_at}>{formatIst(e.occurred_at)}</time>
+                {e.state && <> · {stateLabel(e.state, lang)}</>}
                 {" · "}
                 {SOURCE_LABELS[e.source] ?? e.source}
               </p>

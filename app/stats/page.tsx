@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { summarize, parseWindow } from "@/lib/stats/aggregate";
-import { countryName, SOURCE_LABELS } from "@/lib/stats/format";
+import { stateLabel, SOURCE_LABELS } from "@/lib/stats/format";
 import { fetchStatsEvents, STATS_EVENT_LIMIT } from "@/lib/stats/queries";
 import { BarList } from "@/components/stats/bar-list";
 import { CategoryDonut } from "@/components/stats/category-donut";
-import { CountriesChart } from "@/components/stats/countries-chart";
+import { StatesChart } from "@/components/stats/states-chart";
 import { KpiRow } from "@/components/stats/kpi-row";
 import { EmptyChart, Panel } from "@/components/stats/panel";
 import { TimelineChart } from "@/components/stats/timeline-chart";
 import { WindowToggle } from "@/components/stats/window-toggle";
 
-export const metadata: Metadata = { title: "Stats — Pulse" };
+export const metadata: Metadata = { title: "Stats — Bharat Pulse" };
 
 const SEVERITY_LABELS = ["Minor", "Low", "Moderate", "High", "Severe"];
 
@@ -30,8 +30,8 @@ export default async function StatsPage({
     ? `No events in the ${windowText}.`
     : `Events per ${window === "7d" ? "day" : "hour"} over the ${windowText}, stacked by category. Peak: ${
         s.timeline.reduce((a, b) => (b.total > a.total ? b : a)).label
-      } UTC.`;
-  const countries = s.countries.map((c) => ({ code: c.country, name: countryName(c.country), count: c.count }));
+      } IST.`;
+  const states = s.states.map((c) => ({ code: c.state, name: stateLabel(c.state), count: c.count }));
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
@@ -39,7 +39,7 @@ export default async function StatsPage({
         <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h1 className="glow text-lg font-bold uppercase tracking-[0.25em] text-accent">Stats</h1>
-            <p className="text-sm text-muted">Global event activity over the {windowText}. Times in UTC.</p>
+            <p className="text-sm text-muted">Activity across India over the {windowText}. Times in IST.</p>
           </div>
           <WindowToggle current={window} />
         </header>
@@ -67,7 +67,7 @@ export default async function StatsPage({
         <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
           <Panel
             title="Events over time"
-            subtitle={`${window === "7d" ? "Daily" : "Hourly"} counts by category (UTC)`}
+            subtitle={`${window === "7d" ? "Daily" : "Hourly"} counts by category (IST)`}
             className="lg:col-span-2"
           >
             {empty ? (
@@ -92,13 +92,13 @@ export default async function StatsPage({
             )}
           </Panel>
 
-          <Panel title="Top countries" subtitle="Events with a known country" className="lg:col-span-2">
-            {countries.length === 0 ? (
-              <EmptyChart message={empty ? undefined : "No events in this window have a country attached."} />
+          <Panel title="Top states" subtitle="Events with a known state" className="lg:col-span-2">
+            {states.length === 0 ? (
+              <EmptyChart message={empty ? undefined : "No events in this window have a state attached."} />
             ) : (
-              <CountriesChart
-                data={countries}
-                ariaLabel={`Top ${countries.length} countries by event count: ${countries
+              <StatesChart
+                data={states}
+                ariaLabel={`Top ${states.length} states by event count: ${states
                   .map((c) => `${c.name} ${c.count}`)
                   .join(", ")}.`}
               />

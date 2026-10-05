@@ -1,10 +1,11 @@
-// Pure aggregation helpers for the /stats page. No I/O, no local-timezone math:
-// every bucket boundary is computed in UTC so results are identical on any server.
+// Pure aggregation helpers for the /stats page. No I/O, no local-timezone math: bucket
+// boundaries are computed in IST (a fixed UTC+05:30 offset, no DST) so results are identical
+// on any server.
 import { CATEGORY_META } from "@/lib/categories";
 import { CORE_SOURCES, withoutSports } from "@/lib/events/sports";
 import { CATEGORIES, type Category, type EventRow, type Source } from "@/lib/types";
 
-export type StatsEvent = Pick<EventRow, "category" | "severity" | "country" | "source" | "occurred_at">;
+export type StatsEvent = Pick<EventRow, "category" | "severity" | "state" | "source" | "occurred_at">;
 
 export const STATS_WINDOWS = ["24h", "7d"] as const;
 export type StatsWindow = (typeof STATS_WINDOWS)[number];
@@ -13,6 +14,8 @@ export const HIGH_SEVERITY = 4;
 
 const HOUR_MS = 3_600_000;
 const DAY_MS = 24 * HOUR_MS;
+/** India Standard Time: UTC+05:30, no daylight saving. */
+export const IST_OFFSET_MS = 5.5 * HOUR_MS;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function parseWindow(value: unknown): StatsWindow {
@@ -30,13 +33,13 @@ export interface WindowRange {
 }
 
 /**
- * 24h → 24 hourly buckets ending with the current (partial) UTC hour.
- * 7d  → 7 daily buckets ending with the current (partial) UTC day.
+ * 24h → 24 hourly buckets ending with the current (partial) IST hour.
+ * 7d  → 7 daily buckets ending with the current (partial) IST day.
  */
 export function windowRange(window: StatsWindow, now: Date = new Date()): WindowRange {
   const t = now.getTime();
   if (window === "7d") {
-    const dayStart = Math.floor(t / DAY_MS) * DAY_MS;
+    const dayStart = Math.floor((t + IST_OFFSET_MS) / DAY_MS) * DAY_MS - IST_OFFSET_MS;
     return {
       start: new Date(dayStart - 6 * DAY_MS),
       end: new Date(dayStart + DAY_MS),
@@ -44,7 +47,8 @@ export function windowRange(window: StatsWindow, now: Date = new Date()): Window
       bucketCount: 7,
     };
   }
-  const hourStart = Math.floor(t / HOUR_MS) * HOUR_MS;
+  // IST hours start at :30 UTC.
+  const hourStart = Math.floor((t + IST_OFFSET_MS) / HOUR_MS) * HOUR_MS - IST_OFFSET_MS;
   return {
     start: new Date(hourStart - 23 * HOUR_MS),
     end: new Date(hourStart + HOUR_MS),
@@ -61,8 +65,10 @@ function pad2(n: number): string {
   return n < 10 ? `0${n}` : String(n);
 }
 
+/** Bucket label in IST: "Oct 5" or "14:00". */
 export function bucketLabel(start: Date, window: StatsWindow): string {
-  return window === "7d" ? `${MONTHS[start.getUTCMonth()]} ${start.getUTCDate()}` : `${pad2(start.getUTCHours())}:00`;
+  const ist = new Date(start.getTime() + IST_OFFSET_MS);
+  return window === "7d" ? `${MONTHS[ist.getUTCMonth()]} ${ist.getUTCDate()}` : `${pad2(ist.getUTCHours())}:00`;
 }
 
 export function countByCategory(events: readonly StatsEvent[]): Record<Category, number> {
@@ -108,22 +114,22 @@ export function timeBuckets(events: readonly StatsEvent[], window: StatsWindow, 
   return buckets;
 }
 
-export interface CountryCount {
-  country: string;
+export interface StateCount {
+  state: string;
   count: number;
 }
 
-/** Top-N countries by event count; events without a country are skipped. */
-export function topCountries(events: readonly StatsEvent[], limit = 10): CountryCount[] {
+/** Top-N states by event count; events without a state are skipped. */
+export function topStates(events: readonly StatsEvent[], limit = 10): StateCount[] {
   const counts = new Map<string, number>();
   for (const e of events) {
-    const c = e.country?.trim().toUpperCase();
+    const c = e.state?.trim().toUpperCase();
     if (!c) continue;
     counts.set(c, (counts.get(c) ?? 0) + 1);
   }
   return [...counts]
-    .map(([country, count]) => ({ country, count }))
-    .sort((a, b) => b.count - a.count || a.country.localeCompare(b.country))
+    .map(([state, count]) => ({ state, count }))
+    .sort((a, b) => b.count - a.count || a.state.localeCompare(b.state))
     .slice(0, limit);
 }
 
@@ -158,22 +164,22 @@ export function severityDistribution(events: readonly StatsEvent[]): SeverityCou
 export interface Kpis {
   total: number;
   highSeverity: number;
-  countries: number;
+  states: number;
   topCategory: Category | null;
 }
 
 export function kpis(events: readonly StatsEvent[]): Kpis {
-  const countries = new Set<string>();
+  const states = new Set<string>();
   let highSeverity = 0;
   for (const e of events) {
     if (e.severity >= HIGH_SEVERITY) highSeverity++;
-    const c = e.country?.trim().toUpperCase();
-    if (c) countries.add(c);
+    const c = e.state?.trim().toUpperCase();
+    if (c) states.add(c);
   }
   return {
     total: events.length,
     highSeverity,
-    countries: countries.size,
+    states: states.size,
     topCategory: categoryShares(events)[0]?.category ?? null,
   };
 }
@@ -183,7 +189,7 @@ export interface StatsSummary {
   kpis: Kpis;
   categories: CategoryShare[];
   timeline: TimeBucket[];
-  countries: CountryCount[];
+  states: StateCount[];
   sources: SourceCount[];
   severity: SeverityCount[];
 }
@@ -196,7 +202,7 @@ export function summarize(all: readonly StatsEvent[], window: StatsWindow, now: 
     kpis: kpis(events),
     categories: categoryShares(events),
     timeline: timeBuckets(events, window, now),
-    countries: topCountries(events, 10),
+    states: topStates(events, 10),
     sources: countBySource(events),
     severity: severityDistribution(events),
   };

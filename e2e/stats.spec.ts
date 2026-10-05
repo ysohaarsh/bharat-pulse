@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { collectErrors, HAS_DB } from "./helpers";
 
-const KPI_LABELS = ["Total events", /High severity/, "Countries affected", "Most active category"];
+const KPI_LABELS = ["Total events", /High severity/, "States affected", "Most active category"];
 
 test.describe("stats", () => {
   test("renders KPIs", async ({ page }) => {

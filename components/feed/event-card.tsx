@@ -3,9 +3,18 @@
 import { memo } from "react";
 import { formatDistanceStrict } from "date-fns";
 import { CATEGORY_META } from "@/lib/categories";
+import { stateShort } from "@/lib/india/states";
+import { displayTitle, isTranslated } from "@/lib/i18n/display";
+import { useLang } from "@/components/i18n/lang-provider";
 import type { EventRow } from "@/lib/types";
 import { FOCUS_RING, SOURCE_LABEL } from "./labels";
 import { SeverityPips } from "./severity-pips";
+
+/** "HH:MM" in IST (UTC+05:30) from an ISO timestamp, deterministic on server and client. */
+export function istHhmm(iso: string): string {
+  const t = Date.parse(iso);
+  return Number.isNaN(t) ? "--:--" : new Date(t + 5.5 * 3600_000).toISOString().slice(11, 16);
+}
 
 /** Relative time against an explicit `now`, so server and client render the same string. */
 export function relativeTime(iso: string, now: number): string {
@@ -28,8 +37,9 @@ export const EventCard = memo(function EventCard({
   fresh: boolean;
   onSelect: (id: number) => void;
 }) {
+  const { lang } = useLang();
   const meta = CATEGORY_META[event.category];
-  const zulu = event.occurred_at.length >= 16 ? `${event.occurred_at.slice(11, 16)}Z` : "--:--Z";
+  const translated = isTranslated(event, lang);
   return (
     <button
       type="button"
@@ -48,12 +58,17 @@ export const EventCard = memo(function EventCard({
       {selected && <span aria-hidden className="absolute inset-y-0 right-0 w-0.5 bg-accent" />}
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-x-2 text-[10px] tracking-wider">
-          <span className="tabular-nums text-accent">{zulu}</span>
+          <span className="tabular-nums text-accent">{istHhmm(event.occurred_at)}</span>
           <span className="uppercase" style={{ color: meta.color }}>
-            {meta.label}
+            {lang === "hi" ? meta.hi : meta.label}
           </span>
           <span className="text-muted">[{SOURCE_LABEL[event.source]}]</span>
-          {event.country && <span className="text-foreground/80">{event.country}</span>}
+          {event.state && <span className="text-foreground/80">{stateShort(event.state)}</span>}
+          {translated && (
+            <span className="text-muted" title={`Machine-translated from ${event.lang}`}>
+              ⇄{event.lang}
+            </span>
+          )}
           {fresh && <span className="blink font-bold text-accent">● NEW</span>}
           <time
             dateTime={event.occurred_at}
@@ -64,7 +79,7 @@ export const EventCard = memo(function EventCard({
           </time>
         </span>
         <span className="mt-1 line-clamp-2 font-sans text-[13px] leading-snug text-foreground group-hover:text-accent">
-          {event.title}
+          {displayTitle(event, lang)}
         </span>
       </span>
       <SeverityPips severity={event.severity} className="mt-0.5 shrink-0 self-center" />

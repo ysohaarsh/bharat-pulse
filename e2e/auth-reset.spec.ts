@@ -31,7 +31,7 @@ test.describe("password reset", () => {
     skipWithoutDb();
     const errors = collectErrors(page);
     await page.goto("/forgot-password");
-    await expect(page).toHaveTitle(/Reset password — Pulse/);
+    await expect(page).toHaveTitle(/Reset password — Bharat Pulse/);
 
     const email = page.getByLabel("Email");
     await email.fill("not-an-email");
@@ -80,6 +80,6 @@ test.describe("password reset", () => {
   test("/reset-password/done offers a way back", async ({ page }) => {
     await page.goto("/reset-password/done?next=//evil.example");
     await expect(page.getByRole("heading", { level: 1, name: "Password updated" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Continue to Pulse" })).toHaveAttribute("href", "/");
+    await expect(page.getByRole("link", { name: "Continue to Bharat Pulse" })).toHaveAttribute("href", "/");
   });
 });

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Pulse — "control room" theme: phosphor green on black.
+ * Bharat Pulse — "control room" theme: phosphor green on black.
  * Use these tokens (bg-surface, border-border, text-accent…) instead of raw colors.
  */
 :root {
@@ -30,8 +30,8 @@
   --color-accent-dim: var(--accent-dim);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-jetbrains-mono);
+  --font-sans: var(--font-geist-sans), var(--font-devanagari), sans-serif;
+  --font-mono: var(--font-jetbrains-mono), var(--font-devanagari), monospace;
 
   /* Hard-edged consoles: near-square corners everywhere except true circles. */
   --radius-sm: 1px;
@@ -176,4 +176,11 @@ body::after {
   .ticker-track {
     animation: none;
   }
+}
+
+/* Letter-spacing splits Devanagari conjuncts and matras apart; keep Hindi text tight. */
+html:lang(hi) [class*="tracking-"],
+html:lang(hi) .hud-label,
+html:lang(hi) .hud-tab {
+  letter-spacing: 0.01em;
 }

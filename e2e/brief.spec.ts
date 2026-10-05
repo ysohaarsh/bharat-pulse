@@ -7,7 +7,7 @@ test.describe("brief", () => {
     await page.goto("/brief");
 
     await expect(page).toHaveTitle(/Pulse/);
-    await expect(page.getByRole("heading", { level: 1, name: "World Brief" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "India Brief" })).toBeVisible();
 
     if (HAS_DB) {
       // Either a generated brief (article labelled by its period heading) or the documented empty state.
