@@ -1,0 +1,68 @@
+{
+    "parse": {
+        "title": "15th Maharashtra Assembly",
+        "pageid": 78044910,
+        "redirects": [
+            {
+                "from": "15th Maharashtra Legislative Assembly",
+                "to": "15th Maharashtra Assembly"
+            }
+        ],
+        "tocdata": {
+            "sections": [
+                {
+                    "tocLevel": 1,
+                    "hLevel": 2,
+                    "line": "Office bearers",
+                    "number": "1",
+                    "index": "1",
+                    "fromTitle": "15th_Maharashtra_Assembly",
+                    "codepointOffset": 3411,
+                    "anchor": "Office_bearers"
+                },
+                {
+                    "tocLevel": 1,
+                    "hLevel": 2,
+                    "line": "Members of Legislative Assembly",
+                    "number": "2",
+                    "index": "2",
+                    "fromTitle": "15th_Maharashtra_Assembly",
+                    "codepointOffset": 5374,
+                    "anchor": "Members_of_Legislative_Assembly"
+                },
+                {
+                    "tocLevel": 1,
+                    "hLevel": 2,
+                    "line": "Composition",
+                    "number": "3",
+                    "index": "3",
+                    "fromTitle": "15th_Maharashtra_Assembly",
+                    "codepointOffset": 49830,
+                    "anchor": "Composition"
+                },
+                {
+                    "tocLevel": 1,
+                    "hLevel": 2,
+                    "line": "References",
+                    "number": "4",
+                    "index": "4",
+                    "fromTitle": "15th_Maharashtra_Assembly",
+                    "codepointOffset": 52849,
+                    "anchor": "References"
+                },
+                {
+                    "tocLevel": 2,
+                    "hLevel": 3,
+                    "line": "Notes",
+                    "number": "4.1",
+                    "index": "5",
+                    "fromTitle": "15th_Maharashtra_Assembly",
+                    "codepointOffset": 52907,
+                    "anchor": "Notes"
+                }
+            ],
+            "extensionData": []
+        },
+        "showtoc": true
+    }
+}

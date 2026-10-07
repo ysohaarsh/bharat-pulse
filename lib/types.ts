@@ -5,7 +5,7 @@ export const SOURCES = ["sachet", "ncs", "firms", "aqi", "pib", "news", "sports"
 export type Source = (typeof SOURCES)[number];
 
 /** Background jobs that refresh panels, projects and reference data, not events (see lib/jobs). */
-export const JOBS = ["power", "mandi", "sansad", "osm"] as const;
+export const JOBS = ["power", "mandi", "sansad", "mla", "osm"] as const;
 export type Job = (typeof JOBS)[number];
 
 export const CATEGORIES = [

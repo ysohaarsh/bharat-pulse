@@ -2,6 +2,7 @@ import "server-only";
 import type { Json } from "@/lib/database.types";
 import { translatePendingEvents } from "@/lib/i18n/translate";
 import { fetchMandi, mandiMetrics } from "@/lib/jobs/mandi";
+import { ASSEMBLIES, fetchAssembly, mlasFromWikipedia } from "@/lib/jobs/mla";
 import { fetchOverpass, OVERPASS_TIMEOUT_MS, projectsFromOverpass, RUN_BUDGET_MS, statesForRun } from "@/lib/jobs/osm";
 import { fetchPower, powerMetrics } from "@/lib/jobs/power";
 import { fetchSansad, representativesFromSansad } from "@/lib/jobs/sansad";
@@ -92,6 +93,38 @@ async function runJob(job: Job | "translate", db: Admin): Promise<IngestResult> 
       const { error: delErr } = await db.from("representatives").delete().eq("house", "ls").lt("refreshed_at", now);
       if (delErr) throw new Error(delErr.message);
       return { source: job, fetched: reps.length, detail: { unmatched: reps.filter((r) => !r.boundary_code).map((r) => r.constituency) } };
+    }
+    case "mla": {
+      // One state at a time (polite to Wikipedia); a state whose page looks wrong keeps its old rows.
+      const loaded: Record<string, number> = {};
+      const failed: string[] = [];
+      for (const assembly of ASSEMBLIES) {
+        try {
+          const { data: acs, error } = await db.from("boundaries").select("code, name, state_code").eq("kind", "ac").eq("state_code", assembly.state);
+          if (error) throw new Error(error.message);
+          const rows = mlasFromWikipedia(await fetchAssembly(assembly), assembly, acs ?? []);
+          if (rows.length < assembly.seats * 0.9) throw new Error(`only ${rows.length}/${assembly.seats} sitting MLAs parsed; not replacing data`);
+          const now = new Date().toISOString();
+          const { error: upErr } = await db
+            .from("representatives")
+            .upsert(rows.map((r) => ({ ...r, refreshed_at: now })), { onConflict: "house,external_id" });
+          if (upErr) throw new Error(upErr.message);
+          // Seats that fell vacant drop out.
+          const { error: delErr } = await db
+            .from("representatives")
+            .delete()
+            .eq("house", "vs")
+            .eq("state_code", assembly.state)
+            .lt("refreshed_at", now);
+          if (delErr) throw new Error(delErr.message);
+          loaded[assembly.state] = rows.length;
+        } catch (err) {
+          failed.push(`${assembly.state}: ${err instanceof Error ? err.message : String(err)}`);
+        }
+      }
+      const fetched = Object.values(loaded).reduce((a, b) => a + b, 0);
+      if (fetched === 0) throw new Error(`mla: no state loaded (${failed.join("; ")})`);
+      return { source: job, fetched, detail: { loaded, failed } };
     }
     case "osm": {
       const states = statesForRun(new Date());
