@@ -4,6 +4,8 @@
 //   - DataMeet maps (MIT): Survey of India outline, states, 2011 districts, assembly constituencies
 //   - shijithpk/2024_maps_supplement (public domain): 543 Lok Sabha seats after the 2023
 //     Assam + J&K delimitation, new J&K and Sikkim assembly maps
+//   - OpenCity CKAN "GBA Wards Delimitation 2025" (public domain): Bengaluru's 369 wards across
+//     the five GBA city corporations (final map with population, Dec 2025)
 //
 // Outputs:
 //   public/geo/*.geojson       light, simplified overlays the map fetches on demand (committed)
@@ -24,6 +26,7 @@ const PUBLIC_GEO = path.join(ROOT, "public", "geo");
 
 const DATAMEET = "https://raw.githubusercontent.com/datameet/maps/master";
 const SUPPLEMENT = "https://raw.githubusercontent.com/shijithpk/2024_maps_supplement/main";
+const OPENCITY_GBA = "https://data.opencity.in/dataset/863209cb-4ced-4f51-b5c5-156939c50922/resource";
 const shp = (dir, base) => ["shp", "dbf", "shx", "prj"].map((ext) => [`${base}.${ext}`, `${dir}/${base}.${ext}`]);
 
 const DOWNLOADS = [
@@ -34,6 +37,7 @@ const DOWNLOADS = [
   ["india_ls_seats_543.geojson", `${SUPPLEMENT}/india_ls_seats_543.geojson`],
   ["jk_assembly.geojson", `${SUPPLEMENT}/j_and_k_assembly_new_borders.geojson`],
   ["sikkim_assembly.geojson", `${SUPPLEMENT}/sikkim_assembly_updated.geojson`],
+  ["gba_wards_2025.kml", `${OPENCITY_GBA}/9013d656-8051-4e2d-9648-46efd0d86d3d/download/gba-369-wards-december-2025.kml`],
 ];
 
 const STATES = JSON.parse(readFileSync(path.join(ROOT, "lib", "india", "states.json"), "utf8"));
@@ -191,6 +195,41 @@ async function main() {
       code: p.code,
       name: p.name,
       state_code: p.state_code,
+    })),
+  );
+
+  // ---- Bengaluru wards (GBA 2025 delimitation, 369 wards in 5 corporations) ----
+  // ward_id restarts at 1 in every corporation, so the code includes the corporation.
+  // KML properties are all strings ("20170.0"); population fields become numbers.
+  const int = (v) => (v == null || v === "" ? null : Math.round(Number(v)));
+  const wardsFine = mapProps(await ms(`-i ${raw("gba_wards_2025.kml")} -simplify 30% keep-shapes`), (p) => ({
+    code: `WARD:BLR:${p.Corporation.toUpperCase()}:${int(p.ward_id)}`,
+    name: p.ward_name.trim(),
+    name_hi: null,
+    state_code: "IN-KA",
+    number: int(p.ward_id),
+    name_kn: p.ward_name_kn?.trim() || null,
+    corporation: `Bengaluru ${p.Corporation}`,
+    corporation_kn: p.corporation_kn ?? null,
+    district: "Bengaluru Urban",
+    ac_code: p.ac_no ? `AC:IN-KA:${int(p.ac_no)}` : null,
+    ac_name: p.ac ?? null,
+    zone: p.zone_name ?? null,
+    population: int(p.TOT_P),
+    source: "OpenCity: GBA Wards Delimitation 2025",
+  }));
+  const wardCodes = new Set(wardsFine.features.map((f) => f.properties.code));
+  if (wardsFine.features.length !== 369 || wardCodes.size !== 369) {
+    throw new Error(`expected 369 unique GBA wards, got ${wardsFine.features.length} (${wardCodes.size} codes)`);
+  }
+  write(path.join(PROCESSED, "wards.geojson"), wardsFine);
+  write(
+    path.join(PUBLIC_GEO, "wards-blr.geojson"),
+    mapProps(await ms(`-i ${JSON.stringify(path.join(PROCESSED, "wards.geojson"))} -simplify 40% keep-shapes`), (p) => ({
+      code: p.code,
+      name: p.name,
+      number: p.number,
+      corporation: p.corporation,
     })),
   );
 

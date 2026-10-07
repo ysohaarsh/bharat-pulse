@@ -1,4 +1,4 @@
-// Loads state / district / Lok Sabha / assembly polygons into Supabase (PostGIS) via the
+// Loads state / district / Lok Sabha / assembly / Bengaluru ward polygons into Supabase (PostGIS) via the
 // service-role-only `load_boundaries` RPC. Run after `npm run geo:build`:
 //
 //   npm run geo:load            (reads NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY from .env.local)
@@ -22,9 +22,10 @@ const LAYERS = [
   ["district", "districts.geojson"],
   ["pc", "pc.geojson"],
   ["ac", "ac.geojson"],
+  ["ward", "wards.geojson"], // Bengaluru GBA wards only (pilot); no corporators until GBA polls are held
 ];
 // Payload size per RPC call; assembly polygons are small, states are large.
-const BATCH = { state: 4, district: 40, pc: 40, ac: 150 };
+const BATCH = { state: 4, district: 40, pc: 40, ac: 150, ward: 150 };
 
 for (const [kind, file] of LAYERS) {
   const full = path.join(PROCESSED, file);

@@ -1,6 +1,6 @@
 // Applies every migration to an in-memory Postgres + PostGIS (PGlite, no Docker) with Supabase
 // stubs (roles, auth.uid(), storage, vault, cron, net), loads the real boundaries and checks:
-// whois lookups, location/alert triggers, report RLS + column grants + daily cap, anon access.
+// whois lookups (incl. Bengaluru wards), location/alert triggers, report RLS + column grants + daily cap, anon access.
 //
 //   npm run geo:build   # once, creates data/processed/*.geojson
 //   npm run db:check
@@ -59,7 +59,7 @@ for (const f of readdirSync(dir).sort()) {
 }
 
 // ---------- Boundaries ----------
-for (const [kind, file, batch] of [["state", "states", 4], ["district", "districts", 40], ["pc", "pc", 40], ["ac", "ac", 150]]) {
+for (const [kind, file, batch] of [["state", "states", 4], ["district", "districts", 40], ["pc", "pc", 40], ["ac", "ac", 150], ["ward", "wards", 150]]) {
   const { features } = JSON.parse(readFileSync(path.join(APP, "data/processed", `${file}.geojson`), "utf8"));
   let n = 0;
   for (let i = 0; i < features.length; i += batch) {
@@ -95,6 +95,26 @@ for (const [label, lat, lng, state, pc] of cases) {
   const mp = w.representatives.find((r) => r.house === "ls")?.name;
   if (got[0] === state && got[1] === pc) ok(`whois ${label}: ${got.join(" / ")} · AC ${b.ac?.name ?? "-"} · district ${b.district?.name ?? "-"}${mp ? ` · MP ${mp}` : ""}`);
   else fail(`whois ${label}: expected ${state}/${pc}, got ${got.join("/")}`);
+}
+
+// Bengaluru GBA wards (pilot): a central point resolves to exactly one ward, which sits in the
+// same assembly seat the ward file names; Delhi has no ward.
+{
+  const wardOf = async (lat, lng) =>
+    (await q("select public.whois($1, $2) as w", [lat, lng]))[0].w.boundaries.filter((x) => x.kind === "ward");
+  const mg = await wardOf(12.9756, 77.6066);
+  const acMg = (await q("select public.whois($1, $2) as w", [12.9756, 77.6066]))[0].w.boundaries.find((x) => x.kind === "ac");
+  check(
+    mg.length === 1 && mg[0].state_code === "IN-KA" && mg[0].meta.district === "Bengaluru Urban" && mg[0].meta.number > 0,
+    `whois Bengaluru MG Road ward: ${mg[0]?.code} ${mg[0]?.name} (${mg[0]?.meta.corporation}, AC ${mg[0]?.meta.ac_name}; whois AC ${acMg?.name})`,
+    `whois Bengaluru MG Road ward: ${JSON.stringify(mg)}`,
+  );
+  const dl = await wardOf(28.6315, 77.2167);
+  check(dl.length === 0, "whois Connaught Place: no ward (wards are Bengaluru-only)", `Connaught Place ward: ${JSON.stringify(dl)}`);
+  const outside = await q(`select count(*)::int as n from boundaries w
+    where w.kind = 'ward' and not exists (select 1 from boundaries s where s.kind = 'state' and s.code = 'IN-KA'
+      and extensions.st_intersects(s.geom, extensions.st_pointonsurface(w.geom)))`);
+  check(outside[0].n === 0, "all 369 wards lie inside Karnataka", `${outside[0].n} wards outside Karnataka`);
 }
 
 // ---------- events: location trigger + watchlist alerts ----------
