@@ -29,6 +29,10 @@ export async function translateCached(
     for (const provider of providers) {
       try {
         const out = await provider.translate(missing, source, target);
+        // Never cache a short/blank batch; let the next provider try instead.
+        if (out.length !== missing.length || out.some((t) => typeof t !== "string" || !t.trim())) {
+          throw new Error("provider returned an incomplete batch");
+        }
         const rows = missing.map((t, i) => ({ hash: textHash(source, t), lang: target, text: out[i], provider: provider.name }));
         await db.from("translations").upsert(rows, { onConflict: "hash,lang" });
         for (const r of rows) byHash.set(r.hash, r.text);
