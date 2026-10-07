@@ -4,14 +4,16 @@
 //   - DataMeet maps (MIT): Survey of India outline, states, 2011 districts, assembly constituencies
 //   - shijithpk/2024_maps_supplement (public domain): 543 Lok Sabha seats after the 2023
 //     Assam + J&K delimitation, new J&K and Sikkim assembly maps
+//   - Election Commission of India results portal (official, no licence stated): Assam's 126
+//     assembly seats after the 2023 delimitation, as served for the May 2026 count
 //
 // Outputs:
 //   public/geo/*.geojson       light, simplified overlays the map fetches on demand (committed)
 //   data/processed/*.geojson   finer polygons for PostGIS; loaded by scripts/load-boundaries.mjs (gitignored)
 //   lib/india/places.json      state + district centroids for the offline news geocoder (committed)
 //
-// Known gaps, documented in docs/INDIA_DATA_SOURCES.md: assembly seats outside J&K/Sikkim are
-// pre-2023 (Assam is pre-delimitation), districts are Census 2011 (~640, today ~780), and the
+// Known gaps, documented in docs/INDIA_DATA_SOURCES.md: assembly seats outside J&K/Sikkim/Assam
+// are DataMeet's 2008-delimitation map, districts are Census 2011 (~640, today ~780), and the
 // AC file predates Telangana — states are assigned spatially, so Telangana seats land correctly.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -24,6 +26,9 @@ const PUBLIC_GEO = path.join(ROOT, "public", "geo");
 
 const DATAMEET = "https://raw.githubusercontent.com/datameet/maps/master";
 const SUPPLEMENT = "https://raw.githubusercontent.com/shijithpk/2024_maps_supplement/main";
+// ECI wraps the GeoJSON in `var json_All_AC = {...}`; S03 = Assam. Mirror (same data, plain GeoJSON):
+// github.com/saisantoshv3/assemnbly_gis_files/blob/main/2026_assembly_election/assam_S03/assam.geojson
+const ECI_ASSAM_AC = "https://results.eci.gov.in/ResultAcGenMay2026/ac/S03.js";
 const shp = (dir, base) => ["shp", "dbf", "shx", "prj"].map((ext) => [`${base}.${ext}`, `${dir}/${base}.${ext}`]);
 
 const DOWNLOADS = [
@@ -34,6 +39,7 @@ const DOWNLOADS = [
   ["india_ls_seats_543.geojson", `${SUPPLEMENT}/india_ls_seats_543.geojson`],
   ["jk_assembly.geojson", `${SUPPLEMENT}/j_and_k_assembly_new_borders.geojson`],
   ["sikkim_assembly.geojson", `${SUPPLEMENT}/sikkim_assembly_updated.geojson`],
+  ["assam_assembly_eci.txt", ECI_ASSAM_AC], // .txt: a .js under data/ would be linted
 ];
 
 const STATES = JSON.parse(readFileSync(path.join(ROOT, "lib", "india", "states.json"), "utf8"));
@@ -77,6 +83,14 @@ async function download() {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
     writeFileSync(dest, Buffer.from(await res.arrayBuffer()));
+  }
+  // Strip ECI's JS wrapper so mapshaper can read it.
+  const assam = path.join(RAW, "assam_assembly.geojson");
+  if (!existsSync(assam)) {
+    const js = readFileSync(path.join(RAW, "assam_assembly_eci.txt"), "utf8");
+    const fc = JSON.parse(js.slice(js.indexOf("{"), js.lastIndexOf("}") + 1));
+    if (fc.features?.length !== 126) throw new Error(`ECI Assam AC file: expected 126 seats, got ${fc.features?.length}`);
+    writeFileSync(assam, JSON.stringify(fc));
   }
 }
 
@@ -136,14 +150,23 @@ async function main() {
     })),
   );
 
-  // ---- Assembly seats: DataMeet all-India, minus J&K and Sikkim (replaced by newer maps) ----
+  // ---- Assembly seats: DataMeet all-India, minus J&K, Sikkim and Assam (replaced by newer maps) ----
   // `-join point-method` gives each seat the state its interior point falls in.
   const acMain = await ms(
-    `-i ${raw("India_AC.shp")} -filter "ST_NAME !== 'JAMMU & KASHMIR' && ST_NAME !== 'SIKKIM'"` +
+    `-i ${raw("India_AC.shp")} -filter "ST_NAME !== 'JAMMU & KASHMIR' && ST_NAME !== 'SIKKIM' && ST_NAME !== 'ASSAM'"` +
       ` -join ${JSON.stringify(statesPath)} point-method fields=code -simplify 15% keep-shapes`,
   );
   const acJk = await ms(`-i ${raw("jk_assembly.geojson")} -simplify 15% keep-shapes`);
   const acSk = await ms(`-i ${raw("sikkim_assembly.geojson")} -simplify 15% keep-shapes`);
+  // ECI's polygons are ~15x denser than DataMeet's, hence the lower simplify percentage.
+  const acAs = await ms(`-i ${raw("assam_assembly.geojson")} -simplify 1% keep-shapes`);
+  // ECI has no district column; take the (Census 2011) district each seat's interior point falls
+  // in, matching DataMeet's DIST_NAME elsewhere. (Polygon `-join point-method` matched only 27/126.)
+  const asDistrict = new Map(
+    (await ms(`-i ${raw("assam_assembly.geojson")} -points inner -join ${raw("2011_Dist.shp")} fields=DISTRICT`)).features.map(
+      (f) => [f.properties.AC_NO, f.properties.DISTRICT],
+    ),
+  );
   const acFeatures = mergeByCode([
     // AC_NO 0 rows are unnamed slivers (water bodies, gaps), not seats.
     ...acMain.features.filter((f) => f.properties.AC_NO > 0 && f.properties.AC_NAME).map((f) => ({
@@ -178,6 +201,17 @@ async function main() {
         state_code: "IN-SK",
         number: f.properties.ac_num,
         district: null,
+      },
+    })),
+    ...acAs.features.map((f) => ({
+      ...f,
+      properties: {
+        code: `AC:IN-AS:${f.properties.AC_NO}`,
+        name: cleanName(f.properties.AC_NAME),
+        name_hi: null,
+        state_code: "IN-AS",
+        number: f.properties.AC_NO,
+        district: asDistrict.get(f.properties.AC_NO) ? cleanName(asDistrict.get(f.properties.AC_NO)) : null,
       },
     })),
   ]);

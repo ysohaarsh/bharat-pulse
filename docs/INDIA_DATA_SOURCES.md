@@ -21,6 +21,7 @@ Research catalog behind Bharat Pulse. "Verified" means we called the endpoint fr
 | **OpenStreetMap Overpass** | Metro, rail and highway works tagged `construction` | `https://overpass-api.de/api/interpreter` (+ kumi.systems mirror) | none | ✅ verified — ~1–6 s per state for rail/roads; `landuse=construction` takes ~30 s/state and is skipped. Public instances stall at times → per-state timeout + rotation | `lib/jobs/osm.ts` |
 | **DataMeet maps** (MIT) | Survey of India outline, states, 2011 districts, assembly seats | `github.com/datameet/maps` | none | ✅ | `scripts/build-geo.mjs` |
 | **shijithpk/2024_maps_supplement** (public domain) | 543 Lok Sabha seats after the 2023 Assam/J&K delimitation; new J&K + Sikkim assembly maps | `github.com/shijithpk/2024_maps_supplement` | none | ✅ | `scripts/build-geo.mjs` |
+| **ECI results portal** (official; no licence stated, public record of the gazetted Delimitation Order 2023) | Assam's 126 assembly seats after the 2023 delimitation (AC_NO 1–126, ECI names) | `https://results.eci.gov.in/ResultAcGenMay2026/ac/S03.js` (GeoJSON in a `var json_All_AC =` wrapper; same pattern serves S11 Kerala, S22 TN, S25 WB, U07 Puducherry) | none | ✅ verified 2026-10-07 — 126 features, 124 Polygon + 2 MultiPolygon, no district column; ~15× denser than DataMeet. Mirror: `github.com/saisantoshv3/assemnbly_gis_files` (no licence) | `scripts/build-geo.mjs` |
 | **India Post pincode API** | Pincode → post office, district, state | `https://api.postalpincode.in/pincode/{pin}` | none | ✅ verified (CORS open) | `app/api/pincode/route.ts` |
 | **Bhashini** (MeitY) | Translation/ASR/TTS, 22 languages | ULCA pipeline `getModelsPipeline` → inference callback | free account | ⚠️ needs your keys; flow per Bhashini docs | `lib/i18n/providers.ts` |
 | **Sarvam AI** | Translation (`sarvam-translate:v1`), TTS | `https://api.sarvam.ai/translate` | ₹100 free credits | ⚠️ needs your key | `lib/i18n/providers.ts` |
@@ -60,8 +61,10 @@ open-source WHOOP client (not Indian). They shaped the civic-report and neta fea
 
 ## Known data gaps
 
-- Assembly seats outside J&K and Sikkim are DataMeet's 2008-delimitation map; **Assam is pre-2023**.
-  The file predates Telangana — seats are assigned to states spatially.
+- Assembly seats outside J&K, Sikkim and Assam are DataMeet's 2008-delimitation map (current for
+  those states). The file predates Telangana — seats are assigned to states spatially. Assam uses
+  ECI's post-2023 map; its `district` is the Census 2011 district at each seat's interior point.
+  Checked: DataMeet `maps` has no post-2023 Assam AC file; shijithpk's supplement has Assam PCs only.
 - Districts are Census 2011 (~640; India has ~780 today).
 - MLA names are not loaded yet (no national open API) — the panel shows the seat and links out.
 - Machine translations can be wrong; the original text is always shown alongside.
