@@ -53,7 +53,12 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
   responses (Bhashini pipeline id, response shape; Sarvam model name); add a unit test with a
   mocked fetch for each provider.
 - **Done when:** SACHET Telugu/Hindi alerts show English + Hindi titles; `/brief` has `content_hi`.
-- **Status:** todo
+- **Status:** in progress — key-free half done (`e496a84`): providers checked against current docs,
+  zod-validated, no longer cache untranslated text on bad responses, Bhashini picks the translation
+  config by taskType + language pair and refetches on 401/403, Sarvam 2000-char guard; mocked-fetch
+  tests incl. Bhashini→Sarvam fallback. **Still needs keys to verify:** MeitY pipeline coverage for
+  ur/as/or (+ script codes for Urdu), live compute response wrapper, inference-key TTL (code assumes
+  6 h) and expiry status, Bhashini batch limit, Sarvam error body/rate limits. Then the done-when checks.
 
 ### T6 · E2E coverage for the new flows (needs T1)
 - Playwright specs for: whois panel (click map → MP name), pincode lookup, report submit
@@ -64,13 +69,13 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
 
 | Id | Feature | Notes / source |
 |---|---|---|
-| F1 | MLA names for assembly seats | No national API. Options: state CEO sites, Wikipedia "List of members of the X Legislative Assembly" (CC BY-SA). Store in `representatives` with `house='vs'`. Start with 2–3 big states. |
-| F2 | Bengaluru wards + corporators pilot | OpenCity CKAN: "GBA Wards Delimitation 2025" (369 wards) → `boundaries kind='ward'`. Note: GBA councils may not have elected corporators yet. |
+| F1 | ✅ done (`5edbbd5`) — MLA names for KA/UP/MH | `lib/jobs/mla.ts` parses Wikipedia section HTML; 907 rows (KA 223, UP 396, MH 288), matched by AC number; weekly cron `bharat-mla`. Not yet run against prod (needs T1 → `/api/ingest?source=mla`). Next: add states to `ASSEMBLIES`; update page titles after each state election; optional `source_url` column; MLA whois case in db:check. |
+| F2 | ✅ done (`c11d448`) — Bengaluru wards | 369 GBA wards (OpenCity, public domain) → `boundaries kind='ward'`, `public/geo/wards-blr.geojson`. No corporators yet (polls due by 31 Dec 2026). Follow-ups: ward map layer when zoomed into Bengaluru; neta panel ward/corporation; corporators `house='ward'` after polls; optional reservations KML; optional ward in `locate()`/reports via new migration. |
 | F3 | IMD district warnings + nowcast | Needs IMD key + IP whitelisting (user applies at mausam.imd.gov.in). New ingester `lib/ingest/imd.ts`. |
 | F4 | Delhi live buses | otd.delhi.gov.in GTFS-RT (free key on request), protobuf → map layer. |
 | F5 | Women's health choropleth | NFHS-5 district indicators (data.gov.in) → static layer by district (menstrual hygiene, anaemia). |
 | F6 | Flights over India | OpenSky anonymous, India bbox; count + map layer; mind credit limits. |
-| F7 | Assam post-2023 assembly boundaries | Data gap: DataMeet AC for Assam is pre-delimitation. Georeference ECI maps or find newer GeoJSON. |
+| F7 | ✅ done (`e49712a`) — Assam post-2023 ACs | ECI results portal `results.eci.gov.in/ResultAcGenMay2026/ac/S03.js` (126 seats; **no licence stated**, official gazetted delimitation). Counts unchanged (4098 ACs). Needs `npm run geo:load` (T1). Same URL pattern serves KL/TN/WB/PY if ever needed. |
 | F8 | Mobile layout + README screenshots | Use Playwright to capture `docs/screenshot-*.png` once real data flows (after T2). |
 
 ## Gotchas learned (keep adding — this is the project's memory)
@@ -82,3 +87,8 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
 - `rm` is aliased to `rm -i` in this shell → use `/bin/rm -f`. zsh doesn't word-split `$VAR` in loops → use `xargs` or `bash -c`. macOS `sed` has no `\b` → use `perl -pi -e`.
 - Docker wasn't running here; `npm run db:check` (PGlite + PostGIS) tests migrations without it.
 - `.smoke/` (gitignored) is for ad-hoc live-API checks; Vitest excludes it.
+- Wards (F2): GBA ward numbers restart at 1 in each of the 5 corporations → code `WARD:BLR:<CORP>:<n>`. Source is KML only, all props are strings ("20170.0"); names come in Kannada (`meta.name_kn`), not Hindi. Ward-file AC can disagree with DataMeet AC near borders. `locate()`/triggers don't fill ward; only `whois` returns it.
+- Assam (F7): ECI polygons are ~15× denser → simplified at 1% vs 15%. ECI file has no district → take Census 2011 district at the seat's interior point; mapshaper `-join point-method` between polygon layers matched only 27/126, `-points inner` + point-in-polygon join matches all. Raw saved as `.txt` (a `.js` under `data/` gets linted). ECI typos kept ("Dibrugrah").
+- MLAs (F1): match Wikipedia seats by AC number, not name (Raibag/Raybag, Prayagraj/Allahabad West…). Table layouts differ per state (UP has full party names; MH has an Alliance column). Seats that changed hands list one row per member — last wins; "Died/Resigned/Vacant" remarks mark vacancies. MediaWiki `prop=sections` is deprecated → `prop=tocdata`. Supabase caps queries at 1000 rows → read AC boundaries per state.
+- Translation (T5): Bhashini docs at bhashini.gitbook.io (append `.md` for markdown, `/llms.txt` index); Sarvam ref at docs.sarvam.ai/api-reference/text/translate-text.md. Sarvam uses `od-IN` for Odia; stay on `sarvam-translate:v1` (`mayura:v1` = 11 langs, 1000 chars). Tests of `server-only` modules need `vi.mock("server-only", () => ({}))` + dynamic import.
+- Parallel agents in git worktrees: worktrees have no `node_modules`/`data/` → symlink from the main checkout; launching several worktree agents at the same instant can race (`commondir` error) — retry. F2 and F7 both edit `scripts/build-geo.mjs` (source list) → expect an additive conflict.
