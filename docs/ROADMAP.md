@@ -65,6 +65,8 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
   (logged-in user, photo upload, appears on map), language toggle. Files: `e2e/*`.
 - **Status:** todo
 
+- **UI · Bahi-Khata retheme** — done 2026-10-22. Whole UI moved from green CRT to an Indian ledger-as-database look (maroon cloth chrome, cream ruled pages, indigo ink, Rozha One / Mukta / IBM Plex Mono, block-print/toran/jaali motifs). Design language + class catalogue: `docs/DESIGN.md` — follow it for any new UI. Follow-ups (design-system gaps from the phase-2 agents): `.ledger-prose` (unruled long-form body), `.stamp` colour override/size variants, compact `.ledger-table` modifier, non-interactive chip + small swatch chip, global `Notice` class (now local in `components/auth/notice.tsx`), file-input style, `.ledger-title` wrapping, sub-section numbering inside panels, `ledger-panel` opacity under slips; Hindi `stateLabel` returns codes (`DL DL`) in `lib/stats/format`.
+
 ## Later (v1.1 features, each its own session)
 
 | Id | Feature | Notes / source |
