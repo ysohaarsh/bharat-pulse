@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { fetchOgdPages } from "@/lib/ingest/ogd";
 import { stateByName } from "@/lib/india/states";
 import type { MetricRow } from "@/lib/types";
 
@@ -7,13 +8,14 @@ import type { MetricRow } from "@/lib/types";
  * DATA_GOV_IN_API_KEY). For a handful of kitchen staples we publish the national median of
  * the modal price across reporting markets, plus a per-state median.
  * Resource: "Current daily price of various commodities from various markets (Mandi)".
- * ⚠ Unverified end to end: api.data.gov.in was unreachable from the research sandbox.
+ * Verified against the live feed 2026-10-22: field ids match; prices are JSON numbers (₹/quintal),
+ * `arrival_date` is dd/mm/yyyy and the resource holds only the current day. Paged with limit/offset.
  */
 export const MANDI_RESOURCE = "9ef84268-d588-465a-a308-a864a43d0070";
 export const MANDI_COMMODITIES = ["Onion", "Tomato", "Potato", "Wheat", "Rice"] as const;
 
-export const mandiUrl = (key: string, commodity: string) =>
-  `https://api.data.gov.in/resource/${MANDI_RESOURCE}?api-key=${encodeURIComponent(key)}&format=json&limit=2000` +
+export const mandiUrl = (key: string, commodity: string, offset = 0) =>
+  `https://api.data.gov.in/resource/${MANDI_RESOURCE}?api-key=${encodeURIComponent(key)}&format=json&limit=2000&offset=${offset}` +
   `&filters%5Bcommodity%5D=${encodeURIComponent(commodity)}`;
 
 const num = z.preprocess((v) => (v === "" || v == null ? null : Number(v)), z.number().finite().positive().nullable());
@@ -90,10 +92,8 @@ export async function fetchMandi(): Promise<{ commodity: string; records: unknow
   if (!key) throw new Error("DATA_GOV_IN_API_KEY is not set (free key: https://data.gov.in → My Account → API keys)");
   const out: { commodity: string; records: unknown[] }[] = [];
   for (const commodity of MANDI_COMMODITIES) {
-    const res = await fetch(mandiUrl(key, commodity), { signal: AbortSignal.timeout(30_000), cache: "no-store" });
-    if (!res.ok) throw new Error(`data.gov.in mandi ${commodity}: HTTP ${res.status}`);
-    const body = (await res.json()) as { records?: unknown[] };
-    out.push({ commodity, records: Array.isArray(body.records) ? body.records : [] });
+    const { records } = await fetchOgdPages((offset) => mandiUrl(key, commodity, offset), { maxCalls: 4 });
+    out.push({ commodity, records });
   }
   return out;
 }

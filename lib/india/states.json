@@ -15,7 +15,7 @@
   { "code": "IN-JK", "name": "Jammu and Kashmir", "hi": "जम्मू और कश्मीर", "aliases": ["Jammu & Kashmir", "J&K"] },
   { "code": "IN-JH", "name": "Jharkhand", "hi": "झारखंड", "aliases": [] },
   { "code": "IN-KA", "name": "Karnataka", "hi": "कर्नाटक", "aliases": [] },
-  { "code": "IN-KL", "name": "Kerala", "hi": "केरल", "aliases": [] },
+  { "code": "IN-KL", "name": "Kerala", "hi": "केरल", "aliases": ["Keralam"] },
   { "code": "IN-LA", "name": "Ladakh", "hi": "लद्दाख", "aliases": [] },
   { "code": "IN-LD", "name": "Lakshadweep", "hi": "लक्षद्वीप", "aliases": [] },
   { "code": "IN-MP", "name": "Madhya Pradesh", "hi": "मध्य प्रदेश", "aliases": [] },

@@ -1,17 +1,23 @@
 import { z } from "zod";
-import { aqiBand, naqiFromPm } from "@/lib/india/aqi";
+import { aqiBand, naqiFromPm, naqiSubIndex } from "@/lib/india/aqi";
 import { stateByName } from "@/lib/india/states";
 import type { MetricRow, NormalizedEvent, Severity } from "@/lib/types";
 import { detectPlace } from "./geo";
+import { fetchOgdPages } from "./ogd";
 import type { Ingester } from "./types";
 
 /**
  * Air quality, two ways:
  * 1. CPCB's real-time station feed via the Open Government Data API (data.gov.in, free key in
- *    DATA_GOV_IN_API_KEY). Rows are one pollutant per station; `pollutant_avg` is the pollutant's
- *    sub-index, so a station's AQI is the max across its pollutants (as on CPCB's dashboard).
- *    ⚠ Field names are taken from published samples; api.data.gov.in was unreachable from the
- *    research sandbox, so both naming variants seen in the wild are accepted.
+ *    DATA_GOV_IN_API_KEY). One row per station x pollutant: `min_value/max_value/avg_value` are the
+ *    last hour's RAW CONCENTRATIONS (not sub-indices; verified 2026-10-22), values may be "NA".
+ *    Rows are grouped per station and each pollutant is converted to a CPCB NAQI sub-index
+ *    (`naqiSubIndex`, breakpoints in lib/india/aqi.ts). Station AQI = the highest sub-index, only
+ *    when >= 3 pollutants are valid and at least one is PM2.5/PM10 (CPCB's reporting rule).
+ *    Hourly averages stand in for the 24-h (PM, NO2, SO2, NH3) and 8-h (O3) averages, so this is an
+ *    "instantaneous NAQI", not CPCB's official daily figure.
+ *    CO is EXCLUDED: the feed's CO numbers (e.g. 25-119) are not mg/m3 (NAQI expects ~0-35) and the
+ *    unit is undocumented, so a sub-index from them would be nonsense (docs/DATA_GOV_IN.md).
  * 2. Fallback (no key, or CPCB down): Open-Meteo's CAMS model for 50 large cities, converted to
  *    India's NAQI from PM2.5/PM10. Modelled, not measured — flagged as such in `meta`.
  *
@@ -19,8 +25,9 @@ import type { Ingester } from "./types";
  * become one event per city per day.
  */
 export const OGD_AQI_RESOURCE = "3b01bcb8-0b14-4abf-b6f2-c1bfd384ba69";
-export const ogdAqiUrl = (key: string) =>
-  `https://api.data.gov.in/resource/${OGD_AQI_RESOURCE}?api-key=${encodeURIComponent(key)}&format=json&limit=4000`;
+export const OGD_PAGE_LIMIT = 4000;
+export const ogdAqiUrl = (key: string, offset = 0) =>
+  `https://api.data.gov.in/resource/${OGD_AQI_RESOURCE}?api-key=${encodeURIComponent(key)}&format=json&limit=${OGD_PAGE_LIMIT}&offset=${offset}`;
 
 /** Largest cities by population (plus a few state capitals), for the Open-Meteo fallback. */
 export const AQI_CITIES: readonly { city: string; state: string; lat: number; lng: number }[] = [
@@ -68,6 +75,8 @@ interface Reading {
   lng: number | null;
   aqi: number;
   dominant: string | null;
+  /** Sub-index per contributing pollutant (CPCB readings only). */
+  subIndices?: Record<string, number>;
   observedAt: string;
   modelled: boolean;
 }
@@ -80,7 +89,6 @@ const CpcbRecord = z.object({
   station: z.string().min(1),
   last_update: z.string().min(1),
   pollutant_id: z.string().min(1),
-  pollutant_avg: num.optional(),
   avg_value: num.optional(),
   latitude: num.optional(),
   longitude: num.optional(),
@@ -94,37 +102,53 @@ export function parseCpcbTime(s: string): string | null {
   return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }
 
+const PM_POLLUTANTS = new Set(["PM2.5", "PM10"]);
+
 export function readingsFromCpcb(records: unknown[]): Reading[] {
-  const stations = new Map<string, Reading>();
+  interface Station extends Omit<Reading, "aqi" | "dominant" | "subIndices"> {
+    sub: Map<string, number>;
+  }
+  const stations = new Map<string, Station>();
   for (const r of records) {
     const p = CpcbRecord.safeParse(r);
     if (!p.success) continue;
     const rec = p.data;
-    const value = rec.pollutant_avg ?? rec.avg_value ?? null;
     const observedAt = parseCpcbTime(rec.last_update);
-    if (value == null || !observedAt) continue;
-    const stateName = rec.state.replace(/_/g, " ");
+    if (!observedAt) continue;
     const id = `cpcb:${rec.station}`;
-    const prev = stations.get(id);
-    if (prev) {
-      if (value > prev.aqi) Object.assign(prev, { aqi: value, dominant: rec.pollutant_id });
-      continue;
+    let st = stations.get(id);
+    if (!st) {
+      const stateName = rec.state.replace(/_/g, " ");
+      const hasXy = rec.latitude != null && rec.longitude != null;
+      const place = hasXy ? null : detectPlace(`${rec.city}, ${stateName}`);
+      st = {
+        id,
+        label: rec.station,
+        city: rec.city,
+        state: stateByName(stateName)?.code ?? place?.state ?? null,
+        lat: rec.latitude ?? place?.lat ?? null,
+        lng: rec.longitude ?? place?.lng ?? null,
+        observedAt,
+        modelled: false,
+        sub: new Map(),
+      };
+      stations.set(id, st);
     }
-    const place = rec.latitude != null && rec.longitude != null ? null : detectPlace(`${rec.city}, ${stateName}`);
-    stations.set(id, {
-      id,
-      label: rec.station,
-      city: rec.city,
-      state: stateByName(stateName)?.code ?? place?.state ?? null,
-      lat: rec.latitude ?? place?.lat ?? null,
-      lng: rec.longitude ?? place?.lng ?? null,
-      aqi: value,
-      dominant: rec.pollutant_id,
-      observedAt,
-      modelled: false,
-    });
+    if (observedAt > st.observedAt) st.observedAt = observedAt;
+    // "NA" -> null -> skipped; CO and unknown pollutants have no breakpoints -> NaN -> skipped.
+    const value = rec.avg_value ?? null;
+    if (value == null) continue;
+    const sub = naqiSubIndex(rec.pollutant_id, value);
+    if (!Number.isNaN(sub)) st.sub.set(rec.pollutant_id, sub);
   }
-  return [...stations.values()].map((s) => ({ ...s, aqi: Math.round(s.aqi) }));
+  const out: Reading[] = [];
+  for (const { sub, ...st } of stations.values()) {
+    // CPCB rule: at least 3 pollutants, one of them PM2.5 or PM10.
+    if (sub.size < 3 || ![...sub.keys()].some((k) => PM_POLLUTANTS.has(k))) continue;
+    const [dominant, aqi] = [...sub.entries()].reduce((a, b) => (b[1] > a[1] ? b : a));
+    out.push({ ...st, aqi, dominant, subIndices: Object.fromEntries(sub) });
+  }
+  return out;
 }
 
 const OpenMeteoResult = z.object({
@@ -186,11 +210,8 @@ export const aqiIngester: Ingester<AqiRaw> = {
     const key = process.env.DATA_GOV_IN_API_KEY;
     if (key) {
       try {
-        const res = await fetch(ogdAqiUrl(key), { signal: AbortSignal.timeout(30_000), cache: "no-store" });
-        if (res.ok) {
-          const body = (await res.json()) as { records?: unknown[] };
-          if (Array.isArray(body.records) && body.records.length > 0) return { kind: "cpcb", fetchedAt, records: body.records };
-        }
+        const { records } = await fetchOgdPages((offset) => ogdAqiUrl(key, offset), { maxCalls: 6 });
+        if (records.length > 0) return { kind: "cpcb", fetchedAt, records };
       } catch {
         // fall through to the modelled fallback
       }
@@ -247,7 +268,13 @@ export const aqiIngester: Ingester<AqiRaw> = {
         lng: r.lng,
         state: r.state,
         observed_at: r.observedAt,
-        meta: { city: r.city, dominant: r.dominant, modelled: r.modelled, band: aqiBand(r.aqi).label },
+        meta: {
+          city: r.city,
+          dominant: r.dominant,
+          modelled: r.modelled,
+          band: aqiBand(r.aqi).label,
+          ...(r.subIndices ? { sub_indices: r.subIndices, pollutants: Object.keys(r.subIndices).length } : {}),
+        },
       }),
     );
   },

@@ -37,15 +37,27 @@ describe("mandi", () => {
     expect(median([4, 1, 2, 3])).toBe(2.5);
   });
 
-  it("uses the latest arrival date only, nationally and per state", () => {
-    const rows = mandiMetrics("Onion", jsonFixture<{ records: unknown[] }>("mandi.onion.json").records);
+  // mandi.onion.json = 20 real rows (2 pages of 10) from the live feed on 2026-10-22: numeric prices, dd/mm/yyyy.
+  it("computes national + per-state medians from the real feed shape", () => {
+    const records = jsonFixture<{ records: unknown[] }>("mandi.onion.json").records;
+    const rows = mandiMetrics("Onion", records);
     const national = rows.find((r) => r.region === "IN")!;
-    expect(national).toMatchObject({ key: "mandi:Onion", value: 2550, unit: "₹/qtl", meta: { markets: 4 } });
-    expect(national.observed_at).toBe("2026-10-04T06:30:00.000Z");
-    expect(rows.find((r) => r.region === "IN-MH")!.value).toBe(2200);
-    expect(rows.find((r) => r.region === "IN-KA")!.value).toBe(2800); // the 9999 is from an older day
-    expect(rows.find((r) => r.region === "IN-DL")).toBeTruthy(); // "NCT of Delhi"
+    expect(national).toMatchObject({ key: "mandi:Onion", value: 6000, unit: "₹/qtl", meta: { markets: 20 } });
+    expect(national.observed_at).toBe("2026-10-22T06:30:00.000Z");
+    expect(rows.find((r) => r.region === "IN-TN")).toMatchObject({ value: 6000, meta: { markets: 17 } });
+    expect(rows.find((r) => r.region === "IN-PB")!.value).toBe(5000);
+    expect(rows.find((r) => r.region === "IN-KL")!.value).toBe(6000); // feed says "Keralam"
     expect(mandiMetrics("Onion", [])).toEqual([]);
+  });
+
+  it("uses the latest arrival date only and skips rows without a price", () => {
+    const [a, b, c] = jsonFixture<{ records: Record<string, unknown>[] }>("mandi.onion.json").records;
+    const rows = mandiMetrics("Onion", [
+      { ...a, arrival_date: "21/10/2026", modal_price: 9999 },
+      { ...b, modal_price: "" },
+      c,
+    ]);
+    expect(rows.find((r) => r.region === "IN")).toMatchObject({ value: c.modal_price, meta: { markets: 1 } });
   });
 });
 
