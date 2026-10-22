@@ -38,7 +38,7 @@ export function KpiRow({ kpis }: { kpis: Kpis }) {
         </div>
       ))}
       <div className="border-b border-rule p-4 lg:border-b-0">
-        <dt className="label">सर्वाधिक सक्रिय / Most active</dt>
+        <dt className="label">सर्वाधिक सक्रिय / Most active category</dt>
         <dd className="m-0 mt-1 flex min-w-0 items-center gap-2 font-display text-xl text-ink">
           {top ? (
             <>

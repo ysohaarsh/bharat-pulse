@@ -43,7 +43,7 @@ export function EventList({
           {filtered ? t("dashEmptyFiltered") : t("dashEmptyTitle")}
         </p>
         <p className="text-xs text-muted">
-          {lang === "hi" ? "No entries yet" : "बही में अभी कोई प्रविष्टि नहीं"}
+          {lang === "hi" ? "No entries in the register yet" : "बही में अभी कोई प्रविष्टि नहीं"}
         </p>
         <p className="max-w-xs text-xs leading-relaxed text-ink-soft">{t("dashEmptyHint")}</p>
         {filtered && (

@@ -41,10 +41,10 @@ export default async function BriefPage({
             <span aria-hidden>·</span>
             <time dateTime={periodEnd}>{formatIstDate(periodEnd)} IST</time>
           </p>
-          <h1 className="mt-1 font-display text-2xl uppercase tracking-[0.08em] text-maroon sm:text-4xl">
+          <p className="mt-1 font-display text-2xl uppercase tracking-[0.08em] text-maroon sm:text-4xl">
             Bharat Pulse <span className="normal-case tracking-normal">· भारत पल्स</span>
-          </h1>
-          <p className="font-display text-lg text-ink">India Brief</p>
+          </p>
+          <h1 className="font-display text-lg text-ink">India Brief</h1>
           <div className="mx-auto mt-2 flex max-w-md items-center gap-3 text-gold" aria-hidden>
             <span className="h-px flex-1 bg-gold" />
             <Chakra className="h-6 w-6" />
@@ -123,8 +123,8 @@ export default async function BriefPage({
             selectedId === null && (
               <section className="ledger-panel px-5 py-6 text-center">
                 <div aria-hidden className="ornament-divider mx-auto w-48 max-w-full" />
-                <h2 className="font-display text-base text-maroon">इस बही में अभी कोई प्रविष्टि नहीं</h2>
-                <p className="label mt-1 !normal-case !tracking-normal">No entries in this register yet</p>
+                <h2 className="font-display text-base text-maroon">No brief yet</h2>
+                <p className="label mt-1 !normal-case !tracking-normal">इस बही में अभी कोई प्रविष्टि नहीं</p>
                 <p className="mx-auto mt-3 max-w-[60ch] text-sm text-ink-soft">
                   An India Brief is generated once a day from the latest events — written by an AI model when one is
                   configured, otherwise as an automatic digest of the top stories. The first brief will appear here
@@ -156,7 +156,7 @@ export default async function BriefPage({
         <aside aria-labelledby="archive-title" className="ledger-panel h-fit lg:mt-0">
           <header className="ledger-header">
             <h2 id="archive-title" className="ledger-title !whitespace-normal">
-              <span className="acct">खाता 03 ·</span>Previous
+              <span className="acct">खाता 03 ·</span>Previous briefs
             </h2>
           </header>
           {archive.length === 0 ? (
