@@ -102,7 +102,7 @@ async function runJob(job: Job | "translate", db: Admin, payload?: unknown): Pro
       return { source: job, fetched: positions.value, metrics: counts.length + 1 };
     }
     case "mandi": {
-      const rows = (await fetchMandi()).flatMap(({ commodity, records }) => mandiMetrics(commodity, records));
+      const rows = (await fetchMandi()).flatMap(({ commodity, records, prev }) => mandiMetrics(commodity, records, prev));
       await upsertMetrics(db, rows, { history: true });
       return { source: job, fetched: 0, metrics: rows.length };
     }

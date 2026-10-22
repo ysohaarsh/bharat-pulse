@@ -4,7 +4,8 @@ import type { MetricRow } from "@/lib/types";
 export interface Vitals {
   power: { demand: number | null; demandYesterday: number | null; price: number | null; observedAt: string | null; history: number[] };
   worstAir: { city: string; state: string | null; aqi: number; modelled: boolean }[];
-  mandi: { commodity: string; price: number; observedAt: string }[];
+  /** `wowPct`: like-for-like week-on-week change of the median modal price (null when unknown); `history`: daily national medians, oldest first. */
+  mandi: { commodity: string; price: number; observedAt: string; wowPct: number | null; history: number[] }[];
   /** Aircraft in the India airspace box (OpenSky snapshot), null when no counts exist yet. */
   flights: { total: number; airborne: number; ground: number; observedAt: string } | null;
 }
@@ -19,7 +20,12 @@ export const EMPTY_VITALS: Vitals = {
 type Row = Pick<MetricRow, "key" | "region" | "label" | "value" | "state" | "observed_at"> & { meta?: unknown };
 
 /** Pure: metric rows + demand history → vitals. Stale power readings (>2h) are dropped. */
-export function buildVitals(rows: readonly Row[], history: readonly { value: number }[], now = Date.now()): Vitals {
+export function buildVitals(
+  rows: readonly Row[],
+  history: readonly { value: number }[],
+  now = Date.now(),
+  mandiHistory: readonly { key: string; value: number; observed_at: string }[] = [],
+): Vitals {
   const national = (key: string) => rows.find((r) => r.key === key && r.region === "IN");
   const demand = national("power.demand");
   const fresh = demand && now - Date.parse(demand.observed_at) < 2 * 3600_000;
@@ -49,7 +55,19 @@ export function buildVitals(rows: readonly Row[], history: readonly { value: num
     worstAir: [...byCity.values()].sort((a, b) => b.aqi - a.aqi).slice(0, 5),
     mandi: rows
       .filter((r) => r.key.startsWith("mandi:") && r.region === "IN")
-      .map((r) => ({ commodity: r.key.slice("mandi:".length), price: Math.round(r.value), observedAt: r.observed_at }))
+      .map((r) => {
+        const wow = (r.meta as { wow_pct?: unknown } | null | undefined)?.wow_pct;
+        return {
+          commodity: r.key.slice("mandi:".length),
+          price: Math.round(r.value),
+          observedAt: r.observed_at,
+          wowPct: typeof wow === "number" && Number.isFinite(wow) ? wow : null,
+          history: mandiHistory
+            .filter((h) => h.key === r.key)
+            .sort((a, b) => a.observed_at.localeCompare(b.observed_at))
+            .map((h) => h.value),
+        };
+      })
       .sort((a, b) => a.commodity.localeCompare(b.commodity)),
     flights:
       fTotal && fAir && fGround

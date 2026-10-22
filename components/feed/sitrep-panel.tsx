@@ -68,6 +68,32 @@ function Sparkline({ values, label }: { values: number[]; label: string }) {
   );
 }
 
+/** Week-on-week change for a food price: rising is bad (kumkum red), falling is good (neem green). */
+function MandiWow({ pct, title }: { pct: number | null; title: string }) {
+  if (pct == null) return <span className="text-muted">—</span>;
+  if (pct === 0) return <span className="text-muted" title={title}>0.0%</span>;
+  const up = pct > 0;
+  return (
+    <span className={`font-semibold ${up ? "text-danger" : "text-ok"}`} title={title}>
+      <span aria-hidden>{up ? "▲" : "▼"}</span>
+      <span className="sr-only">{up ? "up" : "down"}</span> {Math.abs(pct).toFixed(1)}%
+    </span>
+  );
+}
+
+/** Inline sparkline sized for a table cell; renders nothing until two daily points exist. */
+function MiniSpark({ values, label }: { values: number[]; label: string }) {
+  if (values.length < 2) return null;
+  const min = Math.min(...values);
+  const span = Math.max(...values) - min || 1;
+  const points = values.map((v, i) => `${(i / (values.length - 1)) * 40},${11 - ((v - min) / span) * 10}`).join(" ");
+  return (
+    <svg viewBox="0 0 40 12" role="img" aria-label={label} className="inline-block h-3 w-10 align-middle">
+      <polyline points={points} fill="none" stroke="var(--maroon)" strokeWidth="1.25" vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
 function VitalsSection({ vitals }: { vitals: Vitals }) {
   const { t, lang } = useLang();
   const { power, worstAir, mandi, flights } = vitals;
@@ -142,7 +168,13 @@ function VitalsSection({ vitals }: { vitals: Vitals }) {
           <thead>
             <tr>
               <th>{t("dashCommodity")}</th>
-              <th className="num">{t("dashRate")}</th>
+              <th className="num" title={t("mandiMedian")}>
+                {t("mandiMedian")}
+              </th>
+              <th className="num" title={t("mandiWowTitle")}>
+                {t("mandiWow")}
+              </th>
+              <th className="num">{t("mandiTrend")}</th>
             </tr>
           </thead>
           <tbody>
@@ -150,6 +182,12 @@ function VitalsSection({ vitals }: { vitals: Vitals }) {
               <tr key={m.commodity}>
                 <td className="!py-1">{m.commodity}</td>
                 <td className="num !py-1">₹{m.price.toLocaleString("en-IN")}</td>
+                <td className="num !py-1">
+                  <MandiWow pct={m.wowPct} title={t("mandiWowTitle")} />
+                </td>
+                <td className="num !py-1">
+                  <MiniSpark values={m.history} label={`${m.commodity}, ${t("mandiTrendLabel")}`} />
+                </td>
               </tr>
             ))}
           </tbody>
