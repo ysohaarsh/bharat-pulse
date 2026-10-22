@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { ASSEMBLIES, htmlText, isVacated, membersSectionIndex, mlasFromWikipedia, tableGrid, type AcBoundary, type Assembly } from "./mla";
+import { ASSEMBLIES, MAX_RETRY_AFTER_MS, WIKI_USER_AGENT, htmlText, isVacated, membersSectionIndex, mlasFromWikipedia, retryAfterMs, tableGrid, type AcBoundary, type Assembly } from "./mla";
 
 const acs: AcBoundary[] = JSON.parse(readFileSync(join(process.cwd(), "public", "geo", "ac.geojson"), "utf8")).features.map(
   (f: { properties: AcBoundary }) => ({ code: f.properties.code, name: f.properties.name, state_code: f.properties.state_code }),
@@ -208,5 +208,19 @@ describe("mla from wikipedia", () => {
   it("returns nothing for a malformed payload", () => {
     expect(mlasFromWikipedia({ error: { code: "missingtitle" } }, assembly("IN-KA"), acs)).toEqual([]);
     expect(mlasFromWikipedia({ parse: { title: "T", text: "<p>no table</p>" } }, assembly("IN-KA"), acs)).toEqual([]);
+  });
+});
+
+describe("wikipedia etiquette", () => {
+  it("identifies the bot with a URL, not a personal email", () => {
+    expect(WIKI_USER_AGENT).toContain("https://github.com/ysohaarsh/bharat-pulse");
+    expect(WIKI_USER_AGENT).not.toContain("@");
+  });
+
+  it("caps Retry-After at 5 s and defaults when missing", () => {
+    expect(retryAfterMs("2")).toBe(2_000);
+    expect(retryAfterMs("120")).toBe(MAX_RETRY_AFTER_MS);
+    expect(retryAfterMs(null)).toBe(2_000);
+    expect(retryAfterMs("garbage")).toBe(2_000);
   });
 });

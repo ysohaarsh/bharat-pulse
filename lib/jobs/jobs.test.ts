@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { STATES } from "@/lib/india/states";
 import { jsonFixture } from "@/lib/test/fixtures";
 import { mandiMetrics, median } from "./mandi";
-import { overpassQuery, projectKind, projectsFromOverpass, statesForRun } from "./osm";
+import { OVERPASS_URLS, overpassQueries, overpassQuery, projectKind, projectsFromOverpass, statesForRun } from "./osm";
 import { numberFromHtml, powerMetrics } from "./power";
 import { representativesFromSansad, seatKey, type PcBoundary } from "./sansad";
 
@@ -93,6 +93,22 @@ describe("osm", () => {
     for (let h = 0; h < 6; h++) for (const s of statesForRun(new Date(h * 3_600_000))) seen.add(s);
     expect(seen.size).toBe(STATES.length);
     expect(overpassQuery("IN-KA")).toContain('area["ISO3166-2"="IN-KA"]');
+  });
+
+  it("keeps queries small: server timeout, trunk-and-up roads, bbox halves for big states", () => {
+    const q = overpassQuery("IN-NL");
+    expect(q).toContain("[timeout:25]");
+    expect(q).toContain("out center");
+    expect(q).toContain("motorway|trunk|primary");
+    expect(q).not.toContain("secondary");
+    expect(overpassQueries("IN-NL")).toHaveLength(1);
+    for (const s of ["IN-UP", "IN-MH", "IN-RJ", "IN-MP"]) {
+      const parts = overpassQueries(s);
+      expect(parts).toHaveLength(2);
+      expect(parts[0]).not.toBe(parts[1]);
+      expect(parts[0]).toMatch(/\(area\.a\)\([\d.,]+\)/);
+    }
+    expect(OVERPASS_URLS.length).toBeGreaterThanOrEqual(3);
   });
 
   it("classifies construction tags", () => {

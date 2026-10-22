@@ -12,7 +12,7 @@ import { seatKey } from "@/lib/jobs/sansad";
  * `AC:<state>:<number>` (post-2008 delimitation numbering on both sides); names are a fallback only.
  */
 export const WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php";
-export const WIKI_USER_AGENT = "BharatPulse/0.1 (India situation monitor; MLA list job) fetch";
+export const WIKI_USER_AGENT = "BharatPulse/1.0 (https://bharat-pulse-india.vercel.app; https://github.com/ysohaarsh/bharat-pulse) node-fetch";
 
 export interface Assembly {
   state: string; // ISO 3166-2:IN
@@ -316,15 +316,38 @@ export function mlasFromWikipedia(raw: unknown, assembly: Assembly, acs: readonl
   return out.sort((a, b) => a.external_id.localeCompare(b.external_id, "en", { numeric: true }));
 }
 
-async function wikiApi(params: Record<string, string>): Promise<unknown> {
-  const url = `${WIKIPEDIA_API}?${new URLSearchParams({ format: "json", formatversion: "2", redirects: "1", ...params })}`;
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+/** Longest Retry-After we'll sit through (the run has a shared time budget). */
+export const MAX_RETRY_AFTER_MS = 5_000;
+
+/** Seconds (or HTTP date) from a Retry-After header → ms, capped; a default when absent/garbled. */
+export function retryAfterMs(header: string | null, now = Date.now()): number {
+  if (!header) return 2_000;
+  const secs = Number(header);
+  const ms = Number.isFinite(secs) ? secs * 1000 : Date.parse(header) - now;
+  return Math.min(MAX_RETRY_AFTER_MS, Math.max(500, Number.isFinite(ms) ? ms : 2_000));
+}
+
+/** One 429/503 (or maxlag refusal) per call is retried after Retry-After; `maxlag` makes the API back off when replicas lag. */
+async function wikiApi(params: Record<string, string>, retried = false): Promise<unknown> {
+  const url = `${WIKIPEDIA_API}?${new URLSearchParams({ format: "json", formatversion: "2", redirects: "1", maxlag: "5", ...params })}`;
   const res = await fetch(url, {
     signal: AbortSignal.timeout(30_000),
     cache: "no-store",
     headers: { "User-Agent": WIKI_USER_AGENT, "Api-User-Agent": WIKI_USER_AGENT, Accept: "application/json" },
   });
+  if ((res.status === 429 || res.status === 503) && !retried) {
+    await sleep(retryAfterMs(res.headers.get("retry-after")));
+    return wikiApi(params, true);
+  }
   if (!res.ok) throw new Error(`Wikipedia API ${res.status} for ${params.page}`);
-  return res.json();
+  const body = (await res.json()) as { error?: { code?: string } };
+  if (body?.error?.code === "maxlag" && !retried) {
+    await sleep(MAX_RETRY_AFTER_MS);
+    return wikiApi(params, true);
+  }
+  if (body?.error) throw new Error(`Wikipedia API error ${body.error.code} for ${params.page}`);
+  return body;
 }
 
 /** Fetch the members section of an assembly page (two small API calls instead of the whole page). */
