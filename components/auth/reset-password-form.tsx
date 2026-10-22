@@ -3,6 +3,7 @@
 import { useActionState, useId } from "react";
 import { updatePassword } from "@/app/reset-password/actions";
 import type { ResetField, ResetPasswordState } from "@/app/reset-password/schema";
+import { Notice } from "./notice";
 import { BTN_PRIMARY, FIELD_ERROR, INPUT, LABEL } from "./styles";
 
 const EMPTY: ResetPasswordState = {};
@@ -62,22 +63,18 @@ export function ResetPasswordForm({ next }: { next: string }) {
       <PasswordField
         id={`${idPrefix}-password`}
         name="password"
-        label="New password"
+        label="नया पासवर्ड / New password"
         error={state.fieldErrors?.password}
         hint="8–72 characters."
       />
       <PasswordField
         id={`${idPrefix}-confirm`}
         name="confirm"
-        label="Confirm new password"
+        label="पुष्टि / Confirm new password"
         error={state.fieldErrors?.confirm}
       />
       <div aria-live="polite">
-        {state.error && (
-          <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-sm">
-            {state.error}
-          </p>
-        )}
+        {state.error && <Notice kind="error">{state.error}</Notice>}
       </div>
       <button type="submit" disabled={pending} className={BTN_PRIMARY}>
         {pending ? "Updating…" : "Update password"}

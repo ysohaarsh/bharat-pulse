@@ -44,12 +44,14 @@ export default async function ReportPage({ searchParams }: PageProps<"/report">)
     <div className="min-h-0 flex-1 overflow-y-auto">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6">
         <header>
-          <h1 className="glow text-lg font-bold uppercase tracking-[0.25em] text-accent">{t(lang, "reportTitle")}</h1>
-          <p className="max-w-2xl text-sm text-muted">{t(lang, "reportIntro")}</p>
+          <h1 className="font-display text-2xl uppercase tracking-[0.08em] text-maroon">{t(lang, "reportTitle")}</h1>
+          <p className="max-w-2xl text-sm text-ink-soft">{t(lang, "reportIntro")}</p>
+          <div className="ornament-divider !mb-0 w-full" />
         </header>
         <ReportForm userId={user?.id ?? null} initialPoint={pointFromParams(params.lat, params.lng)} />
         <section aria-labelledby="recent-reports">
-          <h2 id="recent-reports" className="hud-label mb-2 !text-accent">
+          <h2 id="recent-reports" className="ledger-title mb-2">
+            <span className="acct">खाता 02 ·</span>
             {t(lang, "reportRecent")}
           </h2>
           <ReportList reports={reports} userId={user?.id ?? null} votedIds={votedIds} />

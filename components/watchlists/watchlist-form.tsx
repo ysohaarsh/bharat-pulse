@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useActionState, useId } from "react";
 import { createWatchlist, updateWatchlist, type WatchlistFormState } from "@/app/watchlists/actions";
-import { BTN_PRIMARY, BTN_SECONDARY, FIELD_ERROR, INPUT, LABEL } from "@/components/auth/styles";
+import { Notice } from "@/components/auth/notice";
+import { BTN_PRIMARY, BTN_SECONDARY, FIELD_ERROR, HINT, INPUT, LABEL } from "@/components/auth/styles";
 import { CATEGORY_META } from "@/lib/categories";
 import { CATEGORIES } from "@/lib/types";
 import type { WatchlistField, WatchlistFormValues } from "@/lib/watchlists/schema";
@@ -49,7 +50,7 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
     >
       <div>
         <label htmlFor={fid("name")} className={LABEL}>
-          Name
+          नाम / Name
         </label>
         <input
           id={fid("name")}
@@ -66,7 +67,7 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
       </div>
 
       <fieldset aria-describedby={describe("categories", true)}>
-        <legend className={LABEL}>Categories</legend>
+        <legend className={LABEL}>श्रेणी / Categories</legend>
         <p id={`${fid("categories")}-hint`} className="mb-2 text-xs text-muted">
           None selected = all categories.
         </p>
@@ -80,7 +81,7 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
                 defaultChecked={values.categories.includes(c)}
                 className="peer sr-only"
               />
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 px-2 py-0.5 text-xs text-muted opacity-70 transition-colors hover:opacity-100 peer-checked:border-accent/60 peer-checked:bg-surface-2 peer-checked:text-foreground peer-checked:opacity-100 peer-focus-visible:ring-2 peer-focus-visible:ring-accent">
+              <span className="chip peer-checked:!border-maroon-deep peer-checked:!bg-maroon peer-checked:!text-cream peer-focus-visible:outline-2 peer-focus-visible:outline-offset-1 peer-focus-visible:outline-accent">
                 <span aria-hidden className="h-2 w-2 rounded-full" style={{ backgroundColor: CATEGORY_META[c].color }} />
                 {CATEGORY_META[c].label}
               </span>
@@ -90,10 +91,10 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
         <Errors id={`${fid("categories")}-error`} errors={errs.categories} />
       </fieldset>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4">
         <div>
           <label htmlFor={fid("states")} className={LABEL}>
-            States
+            राज्य / States
           </label>
           <input
             id={fid("states")}
@@ -104,9 +105,9 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
             spellCheck={false}
             aria-invalid={errs.states ? true : undefined}
             aria-describedby={describe("states", true)}
-            className={`${INPUT} font-mono`}
+            className={`${INPUT} num`}
           />
-          <p id={`${fid("states")}-hint`} className="mt-1 text-xs text-muted">
+          <p id={`${fid("states")}-hint`} className={HINT}>
             Comma-separated states or UTs (names or codes). Empty = all of India.
           </p>
           <Errors id={`${fid("states")}-error`} errors={errs.states} />
@@ -114,7 +115,7 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
 
         <div>
           <label htmlFor={fid("min_severity")} className={LABEL}>
-            Minimum severity
+            न्यूनतम गंभीरता / Min severity
           </label>
           <select
             id={fid("min_severity")}
@@ -136,7 +137,7 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
 
       <div>
         <label htmlFor={fid("keywords")} className={LABEL}>
-          Keywords
+          कीवर्ड / Keywords
         </label>
         <input
           id={fid("keywords")}
@@ -147,18 +148,14 @@ export function WatchlistForm({ id, initial }: { id?: number; initial?: Watchlis
           aria-describedby={describe("keywords", true)}
           className={INPUT}
         />
-        <p id={`${fid("keywords")}-hint`} className="mt-1 text-xs text-muted">
+        <p id={`${fid("keywords")}-hint`} className={HINT}>
           Comma-separated; matches title or summary, case-insensitive. Empty = any text.
         </p>
         <Errors id={`${fid("keywords")}-error`} errors={errs.keywords} />
       </div>
 
       <div aria-live="polite">
-        {state.error && (
-          <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-sm">
-            {state.error}
-          </p>
-        )}
+        {state.error && <Notice kind="error">{state.error}</Notice>}
       </div>
 
       <div className="flex items-center gap-2">

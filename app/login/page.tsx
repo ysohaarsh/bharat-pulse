@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { AuthShell, FormSlip } from "@/components/auth/form-slip";
+import { Notice } from "@/components/auth/notice";
 import { LoginForm } from "@/components/auth/login-form";
 import { getCurrentUser, hasSupabaseEnv } from "@/components/auth/session";
 import { loginErrorMessage } from "@/app/auth/errors";
@@ -19,22 +21,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   if (await getCurrentUser()) redirect(next);
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto">
-      <div className="mx-auto w-full max-w-sm px-4 py-10">
-        <header className="mb-6">
-          <h1 className="glow text-lg font-bold uppercase tracking-[0.25em] text-accent">Welcome to Bharat Pulse</h1>
-          <p className="text-sm text-muted">Sign in to save watchlists and get alerts for events you care about.</p>
-        </header>
-        <section className="hud-panel p-5">
-          {hasSupabaseEnv() ? (
-            <LoginForm next={next} initialError={error} />
-          ) : (
-            <p role="alert" className="text-sm text-muted">
-              Sign-in is unavailable: Supabase is not configured.
-            </p>
-          )}
-        </section>
-      </div>
-    </div>
+    <AuthShell title="Sign in" intro="Sign in to save watchlists and get alerts for events you care about.">
+      <FormSlip formNo="BP-01" title="Sign in / साइन इन">
+        {hasSupabaseEnv() ? (
+          <LoginForm next={next} initialError={error} />
+        ) : (
+          <Notice kind="warn">Sign-in is unavailable: Supabase is not configured.</Notice>
+        )}
+      </FormSlip>
+    </AuthShell>
   );
 }
