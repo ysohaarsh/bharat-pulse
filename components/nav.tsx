@@ -44,8 +44,9 @@ export async function Nav() {
 
   return (
     <header className="relative z-20 shrink-0">
-      <div className="flex h-11 items-stretch gap-3 whitespace-nowrap bg-maroon pl-3 pr-3 text-xs text-cream sm:gap-5">
-        <Link href="/" className={`flex shrink-0 items-center gap-2 ${NAV_FOCUS}`}>
+      {/* Phones: brand + actions on one row, tabs on a scrollable second row. md+: a single 44px row. */}
+      <div className="flex flex-wrap items-stretch gap-x-3 whitespace-nowrap bg-maroon pl-3 pr-3 text-xs text-cream sm:gap-x-5 md:h-11 md:flex-nowrap">
+        <Link href="/" className={`flex h-11 shrink-0 items-center gap-2 ${NAV_FOCUS}`}>
           <Chakra className="h-6 w-6 text-gold-soft" />
           <span className="font-display text-[19px] leading-none tracking-wide text-gold-soft">Bharat Pulse</span>
           <span className="font-display hidden text-[13px] leading-none text-cream/80 sm:inline" lang="hi">
@@ -54,9 +55,12 @@ export async function Nav() {
           <span className="hidden text-[10px] uppercase tracking-[0.18em] text-cream/60 2xl:inline">{t(lang, "brandTag")}</span>
         </Link>
 
-        <NavTabs tabs={tabs} />
+        <NavTabs
+          tabs={tabs}
+          className="order-last -mx-3 h-9 basis-[calc(100%+1.5rem)] border-t border-maroon-deep px-1 md:order-none md:mx-0 md:h-full md:basis-auto md:border-0 md:px-0"
+        />
 
-        <div className="ml-auto flex shrink-0 items-center gap-4">
+        <div className="ml-auto flex h-11 shrink-0 items-center gap-4">
           <span className="hidden items-center gap-1.5 text-[11px] text-cream/80 xl:flex">
             <span lang="hi">बही खुली</span>
             <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#8fd16a]" />

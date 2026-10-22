@@ -14,10 +14,13 @@ export interface NavTab {
 const FOCUS = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold-soft";
 
 /** Ledger index tabs on the maroon cloth; the current section is lit in gold with a brass underline. */
-export function NavTabs({ tabs }: { tabs: NavTab[] }) {
+export function NavTabs({ tabs, className = "" }: { tabs: NavTab[]; className?: string }) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Main" className="flex h-full min-w-0 items-stretch gap-0.5 overflow-x-auto">
+    <nav
+      aria-label="Main"
+      className={`flex min-w-0 items-stretch gap-0.5 overflow-x-auto [scrollbar-width:none] ${className}`}
+    >
       {tabs.map((t, i) => {
         const active = t.href === "/" ? pathname === "/" : pathname.startsWith(t.href);
         return (
