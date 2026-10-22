@@ -1,0 +1,37 @@
+name: OSM relay
+
+# Overpass mirrors time out from Vercel/AWS, so a GitHub runner runs the queries itself and POSTs the
+# raw results to the app (lib/jobs/osm.ts turns them into projects). Replaces the pg_cron job: same
+# hourly :40 cadence and the same rotation (6 states per hour, all 36 every 6 hours).
+on:
+  schedule:
+    - cron: "40 * * * *"
+  workflow_dispatch:
+    inputs:
+      states:
+        description: "Comma-separated state codes (IN-KA,IN-GA), or 'all'. Empty = this hour's rotation."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: osm-relay
+  cancel-in-progress: false
+
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Query Overpass and hand results to the app
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          OSM_BUDGET_MS: "480000"
+          STATES: ${{ inputs.states }}
+        run: node scripts/osm-relay.mjs ${STATES:+--states="$STATES"}

@@ -4,7 +4,7 @@ import { translatePendingEvents } from "@/lib/i18n/translate";
 import { fetchFlights, flightMetrics } from "@/lib/jobs/flights";
 import { fetchMandi, mandiMetrics } from "@/lib/jobs/mandi";
 import { ASSEMBLIES, fetchAssembly, mlasFromWikipedia } from "@/lib/jobs/mla";
-import { fetchOverpass, MIN_ATTEMPT_MS, projectsFromOverpass, RUN_BUDGET_MS, statesForRun } from "@/lib/jobs/osm";
+import { fetchOverpass, MIN_ATTEMPT_MS, parseOsmPayload, projectsFromOverpass, RUN_BUDGET_MS, statesForRun } from "@/lib/jobs/osm";
 import { fetchPower, powerMetrics } from "@/lib/jobs/power";
 import { fetchSansad, representativesFromSansad } from "@/lib/jobs/sansad";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -177,21 +177,30 @@ async function runJob(job: Job | "translate", db: Admin, payload?: unknown): Pro
       return { source: job, fetched, detail: { loaded, failed, skipped } };
     }
     case "osm": {
-      const states = statesForRun(new Date());
-      const started = Date.now();
-      // Two workers (Overpass gives each IP two concurrent slots) pull states until the run budget
-      // is spent; states left over are retried when the rotation comes round again.
-      const deadline = started + RUN_BUDGET_MS;
-      const queue = [...states];
+      // Overpass times out from Vercel's IPs, so the GitHub "OSM relay" workflow runs the queries and POSTs
+      // the results. Without a payload (local dev / manual call) fall back to fetching directly.
+      const posted = payload === undefined ? null : parseOsmPayload(payload);
+      if (payload !== undefined && !posted) throw new Error("osm: unreadable relay payload");
       const results: { state: string; result: PromiseSettledResult<ReturnType<typeof projectsFromOverpass>> }[] = [];
-      const worker = async () => {
-        while (queue.length && deadline - Date.now() > MIN_ATTEMPT_MS) {
-          const s = queue.shift()!;
-          const [result] = await Promise.allSettled([fetchOverpass(s, deadline).then((raw) => projectsFromOverpass(s, raw))]);
-          results.push({ state: s, result });
+      const queue: string[] = [];
+      if (posted) {
+        for (const [s, raw] of Object.entries(posted)) {
+          results.push({ state: s, result: { status: "fulfilled", value: projectsFromOverpass(s, raw) } });
         }
-      };
-      await Promise.all([worker(), worker()]);
+      } else {
+        queue.push(...statesForRun(new Date()));
+        // Two workers (Overpass gives each IP two concurrent slots) pull states until the run budget
+        // is spent; states left over are retried when the rotation comes round again.
+        const deadline = Date.now() + RUN_BUDGET_MS;
+        const worker = async () => {
+          while (queue.length && deadline - Date.now() > MIN_ATTEMPT_MS) {
+            const s = queue.shift()!;
+            const [result] = await Promise.allSettled([fetchOverpass(s, deadline).then((raw) => projectsFromOverpass(s, raw))]);
+            results.push({ state: s, result });
+          }
+        };
+        await Promise.all([worker(), worker()]);
+      }
       const rows = results.flatMap(({ result: r }) => (r.status === "fulfilled" ? r.value : []));
       if (rows.length) {
         const now = new Date().toISOString();
