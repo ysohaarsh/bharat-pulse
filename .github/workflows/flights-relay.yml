@@ -1,0 +1,28 @@
+name: Flights relay
+
+# OpenSky refuses connections from Vercel/AWS, so a GitHub runner fetches the India box and
+# hands the payload to the app. Step 1 (this version): reachability probe only.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Token + India box from OpenSky
+        env:
+          OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
+          OPENSKY_CLIENT_SECRET: ${{ secrets.OPENSKY_CLIENT_SECRET }}
+        run: |
+          token=$(curl -s -m 30 -X POST "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token" \
+            -d grant_type=client_credentials --data-urlencode "client_id=$OPENSKY_CLIENT_ID" --data-urlencode "client_secret=$OPENSKY_CLIENT_SECRET" \
+            | jq -r '.access_token // empty')
+          echo "token issued: $([ -n "$token" ] && echo yes || echo no)"
+          curl -s -o states.json -m 40 -w 'states/all: HTTP %{http_code}, %{size_download} bytes, %{time_total}s\n' \
+            -H "Authorization: Bearer $token" \
+            "https://opensky-network.org/api/states/all?lamin=6&lomin=68&lamax=37.5&lomax=97.5"
+          echo "aircraft: $(jq '.states | length' states.json 2>/dev/null || echo n/a)"
