@@ -31,82 +31,79 @@ export default async function StatsPage({
     : `Events per ${window === "7d" ? "day" : "hour"} over the ${windowText}, stacked by category. Peak: ${
         s.timeline.reduce((a, b) => (b.total > a.total ? b : a)).label
       } IST.`;
-  const states = s.states.map((c) => ({ code: c.state, name: stateLabel(c.state), count: c.count }));
+  const states = s.states.map((c) => ({
+    code: c.state,
+    name: stateLabel(c.state),
+    count: c.count,
+  }));
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto">
       <div className="mx-auto w-full max-w-7xl px-4 py-6">
-        <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <header className="mb-2 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="glow text-lg font-bold uppercase tracking-[0.25em] text-accent">Stats</h1>
-            <p className="text-sm text-muted">Activity across India over the {windowText}. Times in IST.</p>
+            <h1 className="font-display text-2xl uppercase tracking-[0.08em] text-maroon sm:text-[28px]">
+              Stats <span className="normal-case tracking-normal">· आँकड़े</span>
+            </h1>
+            <p className="mt-1 text-sm text-ink-soft">
+              वार्षिक पंजीका / Register of activity across India over the {windowText}. Times in IST.
+            </p>
           </div>
           <WindowToggle current={window} />
         </header>
+        <div aria-hidden className="ornament-divider !mb-4" />
 
         {error && (
-          <p role="alert" className="mb-4 rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-sm">
+          <p role="alert" className="mb-4 border border-danger/40 border-l-[3px] bg-danger/10 px-3 py-2 text-sm">
             Couldn&apos;t load events: {error}
           </p>
         )}
         {truncated && (
-          <p className="mb-4 rounded-md border border-border bg-surface-2 px-3 py-2 text-sm text-muted">
+          <p className="mb-4 border border-border-strong border-l-[3px] border-l-haldi bg-haldi/15 px-3 py-2 text-sm text-ink-soft">
             Showing the most recent {STATS_EVENT_LIMIT.toLocaleString("en")} events; older events in this window are not
             counted.
           </p>
         )}
         {empty && !error && (
-          <p className="mb-4 rounded-md border border-border bg-surface px-3 py-2 text-sm text-muted">
+          <p className="mb-4 border border-border bg-surface-2 px-3 py-2 text-sm text-ink-soft">
             No events recorded in the {windowText} yet. Data appears here once ingestion has run — check back in a few
-            minutes{window === "24h" ? " or try the 7-day window" : ""}.
+            minutes
+            {window === "24h" ? " or try the 7-day window" : ""}.
           </p>
         )}
 
         <KpiRow kpis={s.kpis} />
 
-        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <Panel
-            title="Events over time"
-            subtitle={`${window === "7d" ? "Daily" : "Hourly"} counts by category (IST)`}
-            className="lg:col-span-2"
-          >
-            {empty ? (
-              <EmptyChart />
-            ) : (
-              <TimelineChart
-                data={s.timeline}
-                categories={s.categories.map((c) => c.category)}
-                ariaLabel={timelineSummary}
-              />
-            )}
-          </Panel>
-
-          <Panel title="By category" subtitle="Share of all events">
-            {empty ? (
-              <EmptyChart />
-            ) : (
-              <CategoryDonut
-                data={s.categories}
-                ariaLabel={`Category breakdown: ${s.categories.map((c) => `${c.label} ${c.count}`).join(", ")}.`}
-              />
-            )}
-          </Panel>
-
-          <Panel title="Top states" subtitle="Events with a known state" className="lg:col-span-2">
-            {states.length === 0 ? (
-              <EmptyChart message={empty ? undefined : "No events in this window have a state attached."} />
-            ) : (
-              <StatesChart
-                data={states}
-                ariaLabel={`Top ${states.length} states by event count: ${states
-                  .map((c) => `${c.name} ${c.count}`)
-                  .join(", ")}.`}
-              />
-            )}
-          </Panel>
-
-          <div className="flex flex-col gap-4">
-            <Panel title="Sources" subtitle="Where events came from">
+        <div className="mt-4 grid grid-cols-1 items-start gap-4 lg:grid-cols-3">
+          <div className="flex min-w-0 flex-col gap-4 lg:col-span-2">
+            <Panel
+              code="01"
+              title="Events over time"
+              subtitle={`${window === "7d" ? "Daily" : "Hourly"} counts by category (IST)`}
+            >
+              {empty ? (
+                <EmptyChart />
+              ) : (
+                <TimelineChart
+                  data={s.timeline}
+                  categories={s.categories.map((c) => c.category)}
+                  ariaLabel={timelineSummary}
+                />
+              )}
+            </Panel>
+            <Panel code="02" title="Top states" subtitle="Events with a known state">
+              {states.length === 0 ? (
+                <EmptyChart message={empty ? undefined : "No events in this window have a state attached."} />
+              ) : (
+                <StatesChart
+                  data={states}
+                  ariaLabel={`Top ${states.length} states by event count: ${states
+                    .map((c) => `${c.name} ${c.count}`)
+                    .join(", ")}.`}
+                />
+              )}
+            </Panel>
+            <Panel code="03" title="Sources" subtitle="Where events came from">
               <BarList
                 ariaLabel="Events per source"
                 items={s.sources.map((x) => ({
@@ -116,14 +113,26 @@ export default async function StatsPage({
                 }))}
               />
             </Panel>
-            <Panel title="Severity" subtitle="1 = minor, 5 = severe">
+          </div>
+          <div className="flex min-w-0 flex-col gap-4">
+            <Panel code="04" title="By category" subtitle="Share of all events">
+              {empty ? (
+                <EmptyChart />
+              ) : (
+                <CategoryDonut
+                  data={s.categories}
+                  ariaLabel={`Category breakdown: ${s.categories.map((c) => `${c.label} ${c.count}`).join(", ")}.`}
+                />
+              )}
+            </Panel>
+            <Panel code="05" title="Severity" subtitle="1 = minor, 5 = severe">
               <BarList
                 ariaLabel="Events per severity level"
                 items={s.severity.map((x) => ({
                   key: String(x.severity),
                   label: `${x.severity} · ${SEVERITY_LABELS[x.severity - 1]}`,
                   count: x.count,
-                  color: x.severity >= 4 ? "var(--danger)" : undefined,
+                  color: x.severity >= 4 ? "var(--danger)" : x.severity === 3 ? "var(--warn)" : "var(--teal)",
                 }))}
               />
             </Panel>
