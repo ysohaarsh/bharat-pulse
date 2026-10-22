@@ -31,13 +31,14 @@ export function Ticker({ events, onSelect }: { events: EventRow[]; onSelect: (id
           type="button"
           tabIndex={copy ? -1 : undefined}
           onClick={() => onSelect(e.id)}
-          className="flex shrink-0 items-center gap-2 px-5 text-[11px] hover:text-accent focus-visible:text-accent focus-visible:outline-none"
+          className="flex shrink-0 items-center gap-2 px-4 text-[12px] hover:text-accent focus-visible:text-accent focus-visible:outline-none"
         >
-          <span style={{ color: meta.color }}>▲ {lang === "hi" ? meta.hi : meta.label.toUpperCase()}</span>
-          {e.state && <span className="text-muted">[{stateShort(e.state)}]</span>}
-          <span className="font-sans text-foreground">{displayTitle(e, lang)}</span>
-          <span aria-hidden className="pl-3 text-border-strong">
-            {"///"}
+          <span className="record-id">#{String(e.id).padStart(4, "0")}</span>
+          <span aria-hidden className="h-2 w-2 rounded-sm border border-ink/25" style={{ backgroundColor: meta.color }} />
+          {e.state && <span className="num text-[11px] text-muted">{stateShort(e.state)}</span>}
+          <span className="text-ink">{displayTitle(e, lang)}</span>
+          <span aria-hidden className="pl-3 text-gold">
+            ◆
           </span>
         </button>
       );
@@ -47,9 +48,11 @@ export function Ticker({ events, onSelect }: { events: EventRow[]; onSelect: (id
     <div
       role="region"
       aria-label="Headline ticker"
-      className="hud-panel flex h-8 shrink-0 items-stretch overflow-hidden"
+      className="ledger-panel flex h-9 shrink-0 items-stretch overflow-hidden"
     >
-      <span className="hud-tab z-10 shrink-0 !py-0">{lang === "hi" ? "ताज़ा" : "Flash"}</span>
+      <span className="ledger-title z-10 shrink-0 items-center border-r border-border-strong bg-surface-2 px-3 !text-[13px]">
+        {lang === "hi" ? "ताज़ा ख़बर" : "Flash / ताज़ा"}
+      </span>
       <div className="relative min-w-0 flex-1 overflow-hidden">
         <div
           className="ticker-track flex h-full w-max items-center"
@@ -60,7 +63,6 @@ export function Ticker({ events, onSelect }: { events: EventRow[]; onSelect: (id
             {row(true)}
           </div>
         </div>
-        <span aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-surface to-transparent" />
       </div>
     </div>
   );

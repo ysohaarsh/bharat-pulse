@@ -227,7 +227,7 @@ function addEventLayers(map: MapLibreMap) {
     paint: {
       "circle-color": CLUSTER_COLOR,
       "circle-opacity": 0.14,
-      "circle-blur": 0.6,
+      "circle-blur": 0,
       "circle-radius": ["step", ["get", "point_count"], 22, 10, 27, 50, 34],
     },
   });
@@ -262,7 +262,7 @@ function addEventLayers(map: MapLibreMap) {
     type: "circle",
     source: "events",
     filter: single,
-    paint: { "circle-color": ["get", "color"], "circle-radius": ["+", RADIUS, 5], "circle-opacity": 0.22, "circle-blur": 1 },
+    paint: { "circle-color": ["get", "color"], "circle-radius": ["+", RADIUS, 5], "circle-opacity": 0.16, "circle-blur": 0 },
   });
   map.addLayer({
     id: "events-points",
@@ -271,7 +271,7 @@ function addEventLayers(map: MapLibreMap) {
     filter: single,
     paint: {
       "circle-color": ["get", "color"],
-      "circle-opacity": 0.5,
+      "circle-opacity": 0.72,
       "circle-radius": RADIUS,
       "circle-stroke-color": ["get", "color"],
       "circle-stroke-width": 1.5,
@@ -294,7 +294,7 @@ function addEventLayers(map: MapLibreMap) {
     id: "selected-halo",
     type: "circle",
     source: "selected",
-    paint: { "circle-color": ACCENT, "circle-opacity": 0.25, "circle-blur": 0.8, "circle-radius": ["+", RADIUS, 12] },
+    paint: { "circle-color": ACCENT, "circle-opacity": 0.2, "circle-blur": 0, "circle-radius": ["+", RADIUS, 12] },
   });
   map.addLayer({
     id: "selected-ring",
@@ -530,7 +530,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
   if (failed) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-background text-center">
-        <span className="blink text-sm font-bold tracking-[0.4em] text-danger">NO SIGNAL</span>
+        <span className="stamp stamp-danger !text-sm">NO SIGNAL</span>
         <span className="max-w-xs text-[11px] text-muted">
           This device can&apos;t render the map (WebGL2 unavailable). The live feed and India Now panel still work.
         </span>
@@ -544,7 +544,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
       <div ref={containerRef} className="h-full w-full" />
       <div
         aria-hidden
-        className="pointer-events-none absolute right-2 top-2 z-10 hidden border border-border-strong bg-surface/90 px-2 py-1 font-mono text-[10px] tracking-wider text-maroon sm:block"
+        className="pointer-events-none absolute right-2 top-2 z-10 hidden border border-border-strong bg-surface/95 px-2 py-1 font-mono text-[10.5px] tracking-wider text-maroon sm:block"
       >
         {cursor
           ? `LAT ${formatCoord(cursor.lat, "N", "S")}  LON ${formatCoord(cursor.lng, "E", "W")}`
