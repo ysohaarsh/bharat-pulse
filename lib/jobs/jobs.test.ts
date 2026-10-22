@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { STATES } from "@/lib/india/states";
 import { jsonFixture } from "@/lib/test/fixtures";
-import { mandiMetrics, median } from "./mandi";
+import { fetchMandiPrev, latestArrival, mandiHistoryUrl, mandiMetrics, median, shiftArrival } from "./mandi";
 import { OVERPASS_URLS, overpassQueries, overpassQuery, projectKind, projectsFromOverpass, statesForRun } from "./osm";
 import { numberFromHtml, powerMetrics } from "./power";
 import { representativesFromSansad, seatKey, type PcBoundary } from "./sansad";
@@ -58,6 +58,63 @@ describe("mandi", () => {
       c,
     ]);
     expect(rows.find((r) => r.region === "IN")).toMatchObject({ value: c.modal_price, meta: { markets: 1 } });
+  });
+});
+
+// mandi.onion.current.json / mandi.onion.history.json: trimmed real rows from the live feeds (current 22/10/2026,
+// history resource filtered Commodity=Onion&Arrival_Date=15/10/2026), fetched 2026-10-22.
+describe("mandi week-on-week", () => {
+  const current = jsonFixture<{ records: unknown[] }>("mandi.onion.current.json").records;
+  const history = jsonFixture<{ records: unknown[] }>("mandi.onion.history.json").records;
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it("compares only markets present on both days", () => {
+    const national = mandiMetrics("Onion", current, { date: "15/10/2026", records: history }).find((r) => r.region === "IN")!;
+    const meta = national.meta as Record<string, unknown>;
+    expect(meta.prev_date).toBe("2026-10-15");
+    expect(meta.matched).toBe(14);
+    expect(meta.markets).toBe(17);
+    expect(typeof meta.wow_pct).toBe("number");
+    expect(meta.prev).toBeGreaterThan(0);
+    expect(Math.abs(meta.wow_pct as number)).toBeLessThan(100);
+  });
+
+  it("omits the change when too few markets match, and without a comparison day", () => {
+    const few = mandiMetrics("Onion", current, { date: "15/10/2026", records: history.slice(0, 2) }).find((r) => r.region === "IN")!;
+    expect(few.meta).toMatchObject({ prev_date: "2026-10-15" });
+    expect(few.meta).not.toHaveProperty("wow_pct");
+    const none = mandiMetrics("Onion", current).find((r) => r.region === "IN")!;
+    expect(none.meta).toEqual({ markets: 17 });
+  });
+
+  it("does dd/mm/yyyy date maths", () => {
+    expect(shiftArrival("22/10/2026", 7)).toBe("15/10/2026");
+    expect(shiftArrival("03/03/2027", 7)).toBe("24/02/2027");
+    expect(latestArrival(current)).toBe("22/10/2026");
+    expect(latestArrival([])).toBeNull();
+    expect(mandiHistoryUrl("k", "Onion", "15/10/2026")).toContain("filters%5BArrival_Date%5D=15%2F10%2F2026");
+  });
+
+  it("falls back to an earlier day when the target day has no rows", async () => {
+    const asked: string[] = [];
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => {
+      const date = decodeURIComponent(new URL(String(url)).searchParams.get("filters[Arrival_Date]") ?? "");
+      asked.push(date);
+      const records = date === "13/10/2026" ? history : [];
+      return new Response(JSON.stringify({ total: records.length, records }));
+    });
+    const prev = await fetchMandiPrev("k", "Onion", "22/10/2026");
+    expect(asked).toEqual(["15/10/2026", "14/10/2026", "13/10/2026"]);
+    expect(prev?.date).toBe("13/10/2026");
+  });
+
+  it("gives up quietly after the fallback window or on errors", async () => {
+    const spy = vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response(JSON.stringify({ total: 0, records: [] })));
+    expect(await fetchMandiPrev("k", "Onion", "22/10/2026")).toBeNull();
+    expect(spy).toHaveBeenCalledTimes(4);
+    spy.mockImplementation(async () => new Response("no", { status: 500 }));
+    expect(await fetchMandiPrev("k", "Onion", "22/10/2026")).toBeNull();
   });
 });
 

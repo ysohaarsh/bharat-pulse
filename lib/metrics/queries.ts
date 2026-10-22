@@ -7,7 +7,8 @@ export async function loadVitals(): Promise<Vitals> {
   try {
     const supabase = await createClient();
     const since = new Date(Date.now() - 24 * 3600_000).toISOString();
-    const [rows, history] = await Promise.all([
+    const mandiSince = new Date(Date.now() - 30 * 24 * 3600_000).toISOString();
+    const [rows, history, mandiHistory] = await Promise.all([
       supabase
         .from("metrics")
         .select("key, region, label, value, state, observed_at, meta")
@@ -22,9 +23,17 @@ export async function loadVitals(): Promise<Vitals> {
         .gte("observed_at", since)
         .order("observed_at", { ascending: true })
         .limit(200),
+      supabase
+        .from("metric_history")
+        .select("key, value, observed_at")
+        .like("key", "mandi:%")
+        .eq("region", "IN")
+        .gte("observed_at", mandiSince)
+        .order("observed_at", { ascending: true })
+        .limit(300),
     ]);
     if (rows.error) throw new Error(rows.error.message);
-    return buildVitals(rows.data ?? [], history.data ?? []);
+    return buildVitals(rows.data ?? [], history.data ?? [], Date.now(), mandiHistory.data ?? []);
   } catch (err) {
     console.error("[vitals] load failed:", err);
     return EMPTY_VITALS;

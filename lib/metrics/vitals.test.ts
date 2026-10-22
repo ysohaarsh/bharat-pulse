@@ -30,6 +30,18 @@ describe("buildVitals", () => {
     ]);
   });
 
+  it("adds week-on-week change and the daily history to each mandi row", () => {
+    const withMeta = rows.map((r) => (r.key === "mandi:Onion" && r.region === "IN" ? { ...r, meta: { wow_pct: -3.2 } } : r));
+    const hist = [
+      { key: "mandi:Onion", value: 2600, observed_at: "2026-10-04T06:30:00Z" },
+      { key: "mandi:Onion", value: 2500, observed_at: "2026-10-03T06:30:00Z" },
+      { key: "mandi:Tomato", value: 1700, observed_at: "2026-10-04T06:30:00Z" },
+    ];
+    const v = buildVitals(withMeta, [], NOW, hist);
+    expect(v.mandi[0]).toMatchObject({ commodity: "Onion", wowPct: -3.2, history: [2500, 2600] });
+    expect(v.mandi[1]).toMatchObject({ commodity: "Tomato", wowPct: null, history: [1700] });
+  });
+
   it("hides a stale power reading", () => {
     const stale = rows.map((r) => (r.key.startsWith("power") ? { ...r, observed_at: at(300) } : r));
     expect(buildVitals(stale, [], NOW).power.demand).toBeNull();
