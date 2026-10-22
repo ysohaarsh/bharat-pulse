@@ -1,24 +1,24 @@
-/* MapLibre map of India in the green-on-black control-room theme. Scoped to .pulse-map. */
+/* MapLibre map of India in the Bahi-Khata parchment theme. Scoped to .pulse-map. */
 
 .pulse-map {
-  background: radial-gradient(ellipse at center, #02100a 0%, #010503 70%);
-  font-family: var(--font-mono);
+  background: var(--map-land);
+  font-family: var(--font-sans);
 }
 
-/* Center crosshair, above the canvas but below the controls. */
+/* Cartographic neat-line: a double brass frame inset from the edge, above the canvas, below controls. */
 .pulse-map::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 5px;
   z-index: 2;
   pointer-events: none;
-  background:
-    linear-gradient(rgb(0 255 136 / 0.1), rgb(0 255 136 / 0.1)) center / 1px 100% no-repeat,
-    linear-gradient(rgb(0 255 136 / 0.1), rgb(0 255 136 / 0.1)) center / 100% 1px no-repeat;
+  border: 1px solid var(--gold);
+  outline: 1px solid rgb(184 134 43 / 0.45);
+  outline-offset: 2px;
 }
 
 .pulse-map .maplibregl-map {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
 }
 .pulse-map .maplibregl-canvas-container,
 .pulse-map .maplibregl-canvas {
@@ -29,16 +29,16 @@
   z-index: 3;
 }
 .pulse-map .maplibregl-canvas:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: -1px;
+  outline: 2px solid var(--teal);
+  outline-offset: -2px;
 }
 
-/* Zoom / compass controls. */
+/* Zoom / compass controls: small ledger tabs. */
 .pulse-map .maplibregl-ctrl-group {
-  background: var(--background);
+  background: var(--surface);
   border: 1px solid var(--border-strong);
-  border-radius: 0;
-  box-shadow: 0 0 10px rgb(0 255 136 / 0.12);
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 rgb(122 30 30 / 0.15);
 }
 .pulse-map .maplibregl-ctrl-group button + button {
   border-top-color: var(--border);
@@ -47,55 +47,53 @@
   background: var(--surface-2);
 }
 .pulse-map .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
-  /* Recolor the built-in dark SVG icons to phosphor green. */
-  filter: invert(1) sepia(1) hue-rotate(90deg) saturate(6) brightness(1.1);
+  /* Built-in icons are dark grey SVGs; warm them toward maroon. */
+  filter: sepia(1) saturate(3) hue-rotate(-20deg) brightness(0.55);
 }
 
 /* Attribution (required by OpenFreeMap / OpenMapTiles / OSM). */
 .pulse-map .maplibregl-ctrl-attrib {
-  background: rgb(1 5 3 / 0.8);
+  background: rgb(251 246 234 / 0.88);
   color: var(--muted);
   font-size: 9px;
 }
 .pulse-map .maplibregl-ctrl-attrib a {
-  color: var(--accent-dim);
-}
-.pulse-map .maplibregl-ctrl-attrib-button {
-  filter: invert(1) sepia(1) hue-rotate(90deg) saturate(4);
-  background-color: transparent;
+  color: var(--accent);
 }
 .pulse-map .maplibregl-ctrl-attrib.maplibregl-compact {
-  background: rgb(1 5 3 / 0.85);
+  background: rgb(251 246 234 / 0.92);
 }
 
-/* Hover tooltip. */
+/* Hover tooltip / ledger slip. */
 .pulse-tip .maplibregl-popup-content {
-  background: var(--background);
-  color: var(--foreground);
+  background: #fffaf0;
+  color: var(--ink);
   border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--maroon);
   border-radius: 0;
-  box-shadow: 0 0 12px rgb(0 255 136 / 0.18);
+  box-shadow: 3px 3px 0 rgb(122 30 30 / 0.18);
   padding: 6px 8px;
   max-width: 280px;
   font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: 12.5px;
   line-height: 1.35;
+  background-image: repeating-linear-gradient(to bottom, transparent 0 17px, rgb(29 37 80 / 0.05) 17px 18px);
 }
 .pulse-tip.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
 .pulse-tip.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
 .pulse-tip.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
-  border-top-color: var(--border-strong);
+  border-top-color: #fffaf0;
 }
 .pulse-tip.maplibregl-popup-anchor-top .maplibregl-popup-tip,
 .pulse-tip.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
 .pulse-tip.maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
-  border-bottom-color: var(--border-strong);
+  border-bottom-color: #fffaf0;
 }
 .pulse-tip.maplibregl-popup-anchor-left .maplibregl-popup-tip {
-  border-right-color: var(--border-strong);
+  border-right-color: #fffaf0;
 }
 .pulse-tip.maplibregl-popup-anchor-right .maplibregl-popup-tip {
-  border-left-color: var(--border-strong);
+  border-left-color: #fffaf0;
 }
 
 /* Click-to-open info popups (projects, reports, AQI stations). */
@@ -105,8 +103,10 @@
   gap: 2px;
 }
 .pulse-info .maplibregl-popup-content .font-bold {
-  font-weight: 600;
-  color: var(--accent);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--maroon);
 }
 .pulse-info .maplibregl-popup-content a {
   color: var(--accent);
@@ -115,4 +115,8 @@
 .pulse-info .maplibregl-popup-close-button {
   color: var(--muted);
   font-size: 16px;
+}
+.pulse-info .maplibregl-popup-close-button:hover {
+  background: transparent;
+  color: var(--maroon);
 }

@@ -157,7 +157,7 @@ export function EventDrawer({ event, onClose }: { event: EventRow; onClose: () =
             href={sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`mt-5 inline-flex items-center gap-1 border border-accent px-3 py-1.5 text-xs uppercase tracking-widest text-accent hover:bg-accent hover:text-black ${FOCUS_RING}`}
+            className={`mt-5 inline-flex items-center gap-1 border border-accent px-3 py-1.5 text-xs uppercase tracking-widest text-accent hover:bg-accent hover:text-cream ${FOCUS_RING}`}
           >
             Open source <span aria-hidden>↗</span>
             <span className="sr-only">(opens in a new tab)</span>

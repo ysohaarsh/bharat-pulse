@@ -1,21 +1,48 @@
 @import "tailwindcss";
 
 /*
- * Bharat Pulse — "control room" theme: phosphor green on black.
- * Use these tokens (bg-surface, border-border, text-accent…) instead of raw colors.
+ * Bharat Pulse — "Bahi-Khata" theme: the red-cloth Indian merchant ledger as a database console.
+ * Paper-first, light. Use tokens (bg-surface, border-border, text-ink, text-maroon…), never raw hex.
+ * Full spec: docs/DESIGN.md
  */
 :root {
-  --background: #010503;
-  --surface: #040c07;
-  --surface-2: #08170e;
-  --border: #113a24;
-  --border-strong: #1e6a42;
-  --foreground: #d3fbe4;
-  --muted: #5f9e7b;
-  --accent: #00ff88;
-  --accent-dim: #00a85a;
-  --warn: #ffb020;
-  --danger: #ff3355;
+  /* Legacy names (kept so existing classes re-skin automatically). */
+  --background: #f6efe0; /* handmade paper page */
+  --surface: #fbf6ea; /* ledger page */
+  --surface-2: #efe5cd; /* header strips, zebra rows, wells */
+  --border: #d8c9a6; /* ruled lines, hairlines */
+  --border-strong: #a8915a; /* panel outlines, input borders */
+  --foreground: #1d2550; /* indigo ink */
+  --muted: #565b78; /* secondary ink (AA on paper and surface) */
+  --accent: #0f6e6e; /* peacock teal: links, active, figures */
+  --accent-dim: #0a5555;
+  --warn: #8f5a00; /* haldi, dark enough for text */
+  --danger: #b0231c; /* kumkum red */
+
+  /* New tokens. */
+  --paper: #f6efe0;
+  --paper-2: #efe5cd;
+  --ink: #1d2550;
+  --ink-soft: #3a4170;
+  --maroon: #7a1e1e; /* kumkum cloth chrome */
+  --maroon-deep: #5a1414;
+  --gold: #b8862b; /* brass hairlines (decorative; not for small text on paper) */
+  --gold-soft: #e6bf68; /* gold text on maroon */
+  --haldi: #d99a1e; /* turmeric fills, highlights */
+  --teal: #0f6e6e;
+  --rule: #e3d7b8; /* faint row rules */
+  --ok: #346c25; /* neem leaf green */
+  --cream: #f6efe0; /* text on maroon */
+  --map-land: #e9dcbc;
+  --map-india: #f8f1dc;
+  --map-water: #c6d1e6;
+
+  /* Motifs (inline SVG, a few hundred bytes each). */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .3 0 0 0 0 .15 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  --jaali: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' fill='none' stroke='%237a1e1e' stroke-opacity='.09'%3E%3Cpath d='M24 2 46 24 24 46 2 24Z'/%3E%3Cpath d='M24 12 36 24 24 36 12 24Z'/%3E%3Cpath d='M0 0 12 12M48 0 36 12M0 48 12 36M48 48 36 36'/%3E%3Ccircle cx='24' cy='24' r='2' fill='%237a1e1e' fill-opacity='.1'/%3E%3C/svg%3E");
+  --print-band: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='10'%3E%3Cpath d='M12 1.5 17.5 5 12 8.5 6.5 5Z' fill='none' stroke='%23e6bf68' stroke-width='1'/%3E%3Ccircle cx='12' cy='5' r='1.5' fill='%23e6bf68'/%3E%3Cpath d='M0 5h4.5M19.5 5H24' stroke='%23b8862b' stroke-width='1'/%3E%3Ccircle cx='0' cy='5' r='1' fill='%23e6bf68'/%3E%3C/svg%3E");
+  --toran: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10'%3E%3Cpath d='M0 0A10 8 0 0 0 20 0Z' fill='%237a1e1e'/%3E%3Cpath d='M1 0A9 7 0 0 0 19 0' fill='none' stroke='%23e6bf68' stroke-width='1'/%3E%3Ccircle cx='10' cy='8.6' r='1.4' fill='%23d99a1e'/%3E%3C/svg%3E");
+  --lotus: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='14' viewBox='0 0 26 14'%3E%3Cg fill='%23b8862b'%3E%3Cpath d='M13 1C10.5 4 10.5 8 13 11 15.5 8 15.5 4 13 1Z'/%3E%3Cpath d='M12 11C8.5 10.5 6 8 5.5 5 8.5 5 11 7 12 11ZM14 11C17.5 10.5 20 8 20.5 5 17.5 5 15 7 14 11Z' opacity='.8'/%3E%3Cpath d='M11 12C6 12.5 2.5 11 .5 8 4 7.5 8.5 9 11 12ZM15 12C20 12.5 23.5 11 25.5 8 22 7.5 17.5 9 15 12Z' opacity='.6'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 @theme inline {
@@ -30,126 +57,377 @@
   --color-accent-dim: var(--accent-dim);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
-  --font-sans: var(--font-geist-sans), var(--font-devanagari), sans-serif;
-  --font-mono: var(--font-jetbrains-mono), var(--font-devanagari), monospace;
 
-  /* Hard-edged consoles: near-square corners everywhere except true circles. */
-  --radius-sm: 1px;
-  --radius-md: 2px;
-  --radius-lg: 3px;
-  --radius-xl: 4px;
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-maroon: var(--maroon);
+  --color-maroon-deep: var(--maroon-deep);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-haldi: var(--haldi);
+  --color-teal: var(--teal);
+  --color-rule: var(--rule);
+  --color-ok: var(--ok);
+  --color-cream: var(--cream);
+
+  --font-sans: var(--font-mukta), sans-serif;
+  --font-display: var(--font-rozha), var(--font-mukta), serif;
+  --font-mono: var(--font-plex-mono), var(--font-mukta), monospace;
+
+  /* Ledger corners: barely rounded. */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   background-color: var(--background);
-  background-image:
-    radial-gradient(ellipse at 50% -20%, rgb(0 255 136 / 0.07), transparent 60%),
-    linear-gradient(rgb(0 255 136 / 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(0 255 136 / 0.025) 1px, transparent 1px);
-  background-size: 100% 100%, 32px 32px, 32px 32px;
+  background-image: var(--grain), var(--jaali);
+  background-size: 160px 160px, 48px 48px;
   color: var(--foreground);
-}
-
-/* CRT scanlines over the whole UI. Purely decorative. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  background: repeating-linear-gradient(to bottom, transparent 0 2px, rgb(0 0 0 / 0.18) 2px 3px);
-  mix-blend-mode: multiply;
+  font-family: var(--font-sans);
 }
 
 ::selection {
-  background: rgb(0 255 136 / 0.3);
-  color: #fff;
+  background: rgb(217 154 30 / 0.45);
+  color: var(--ink);
 }
 
-/* Thin green scrollbars. */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;
 }
 
 @layer components {
-  /* Glowing phosphor text. */
+  /* ---------- Type helpers ---------- */
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+  /* Data: ids, timestamps, figures. */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Small-caps column / field label. (.hud-label is the legacy alias.) */
+  .label,
+  .hud-label {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  /* Legacy "glow" heading class: now just the display face, no glow. */
   .glow {
-    text-shadow: 0 0 6px rgb(0 255 136 / 0.55), 0 0 18px rgb(0 255 136 / 0.25);
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-shadow: none;
   }
 
-  /* A console panel: thin border, faint inner light, bracketed corners. */
+  /* ---------- Ledger page (panel) ---------- */
+  .ledger-panel,
   .hud-panel {
     position: relative;
-    border: 1px solid var(--border);
-    background: linear-gradient(180deg, rgb(0 255 136 / 0.035), transparent 120px), var(--surface);
-  }
-  .hud-panel::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    pointer-events: none;
-    --c: var(--accent);
-    --l: 10px;
-    background:
-      linear-gradient(var(--c), var(--c)) top left / var(--l) 1px,
-      linear-gradient(var(--c), var(--c)) top left / 1px var(--l),
-      linear-gradient(var(--c), var(--c)) top right / var(--l) 1px,
-      linear-gradient(var(--c), var(--c)) top right / 1px var(--l),
-      linear-gradient(var(--c), var(--c)) bottom left / var(--l) 1px,
-      linear-gradient(var(--c), var(--c)) bottom left / 1px var(--l),
-      linear-gradient(var(--c), var(--c)) bottom right / var(--l) 1px,
-      linear-gradient(var(--c), var(--c)) bottom right / 1px var(--l);
-    background-repeat: no-repeat;
-    opacity: 0.7;
-    z-index: 1;
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--maroon);
+    background-color: var(--surface);
+    background-image: repeating-linear-gradient(to bottom, transparent 0 27px, rgb(29 37 80 / 0.045) 27px 28px);
+    box-shadow: 2px 2px 0 rgb(122 30 30 / 0.12);
   }
 
-  /* Angled tab label used in panel headers. */
-  .hud-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.2rem 1.1rem 0.2rem 0.6rem;
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
-    background: var(--accent);
-    color: #001a0c;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-  }
-
-  /* Header strip a .hud-tab sits on. */
+  /* Header strip: sits on top of a ledger-panel. Maroon double rule below, like a ruled account head. */
+  .ledger-header,
   .hud-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    border-bottom: 1px solid var(--border-strong);
-    background: linear-gradient(90deg, rgb(0 255 136 / 0.08), transparent 70%);
-    padding-right: 0.5rem;
-    min-height: 1.75rem;
+    min-height: 2rem;
+    padding: 0.25rem 0.6rem;
+    background-color: var(--surface-2);
+    border-bottom: 3px double var(--maroon);
+  }
+  /* Cloth variant: maroon band with gold hairline (use for the one hero panel per page). */
+  .ledger-header--cloth {
+    background-color: var(--maroon);
+    color: var(--cream);
+    border-bottom: 1px solid var(--gold);
+    box-shadow: inset 0 -3px 0 var(--maroon-deep);
+  }
+  .ledger-header--cloth .ledger-title {
+    color: var(--gold-soft);
+  }
+  .ledger-header--cloth .label,
+  .ledger-header--cloth .hud-label {
+    color: var(--cream);
   }
 
-  /* Small uppercase section label. */
-  .hud-label {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.16em;
+  /* Heading inside a header: "खाता 02 · THEATER". */
+  .ledger-title,
+  .hud-tab {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
+    color: var(--maroon);
+    white-space: nowrap;
+  }
+  .ledger-title .acct {
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--warn);
+  }
+  .ledger-header--cloth .ledger-title .acct {
+    color: var(--haldi);
+  }
+
+  /* ---------- Tables / registers ---------- */
+  .ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+  .ledger-table th {
+    padding: 0.35rem 0.6rem;
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--maroon);
+    background: var(--surface-2);
+    border-bottom: 2px solid var(--maroon);
+    white-space: nowrap;
+  }
+  .ledger-table td {
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  .ledger-table tbody tr:hover td {
+    background: rgb(217 154 30 / 0.1);
+  }
+  .ledger-table td.num,
+  .ledger-table th.num {
+    text-align: right;
+  }
+  .ledger-table tfoot td {
+    font-weight: 700;
+    border-top: 3px double var(--maroon);
+    border-bottom: 0;
+    background: var(--surface-2);
+  }
+
+  /* Div-based row (feeds, lists): padding + ruled bottom line. Selected: .is-selected or aria-selected="true". */
+  .ledger-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .ledger-row:hover {
+    background: rgb(217 154 30 / 0.1);
+  }
+  .ledger-row.is-selected,
+  .ledger-row[aria-selected="true"] {
+    background: rgb(15 110 110 / 0.09);
+    box-shadow: inset 3px 0 0 var(--teal);
+  }
+  .ledger-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding: 0.4rem 0.6rem;
+    border-top: 3px double var(--maroon);
+    background: var(--surface-2);
+    font-weight: 700;
+  }
+
+  /* "#0042" record id. */
+  .record-id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: var(--maroon);
+    white-space: nowrap;
+  }
+
+  /* ---------- Rubber stamp badge ---------- */
+  .stamp {
+    --stamp: var(--maroon);
+    display: inline-block;
+    padding: 0.05rem 0.4rem;
+    border: 2px double var(--stamp);
+    border-radius: 2px;
+    color: var(--stamp);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    transform: rotate(-2deg);
+    white-space: nowrap;
+  }
+  .stamp-ok {
+    --stamp: var(--ok);
+  }
+  .stamp-warn {
+    --stamp: var(--warn);
+  }
+  .stamp-danger {
+    --stamp: var(--danger);
+  }
+  .stamp-teal {
+    --stamp: var(--teal);
+  }
+  .stamp-flat {
+    transform: none;
+  }
+
+  /* ---------- Ornaments ---------- */
+  /* Gold hairlines either side of a small lotus. Height only; width is the container's. */
+  .ornament-divider {
+    height: 14px;
+    margin: 0.5rem 0;
+    background:
+      var(--lotus) center / 26px 14px no-repeat,
+      linear-gradient(var(--gold), var(--gold)) left center / calc(50% - 22px) 1px no-repeat,
+      linear-gradient(var(--gold), var(--gold)) right center / calc(50% - 22px) 1px no-repeat;
+    opacity: 0.9;
+  }
+  /* Block-print border band (gold chain on deep maroon). Use on chrome edges only. */
+  .band-print {
+    height: 10px;
+    background: var(--maroon-deep) var(--print-band) repeat-x center / 24px 10px;
+    border-top: 1px solid var(--gold);
+  }
+  .band-print--thin {
+    height: 7px;
+  }
+  /* Scalloped toran fringe; place absolutely under a maroon band. */
+  .toran {
+    height: 10px;
+    background: var(--toran) repeat-x left top / 20px 10px;
+    pointer-events: none;
+  }
+
+  /* ---------- Controls ---------- */
+  .btn-primary,
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 3px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background-color 120ms, color 120ms, border-color 120ms;
+  }
+  .btn-primary {
+    background: var(--maroon);
+    color: var(--cream);
+    border: 1px solid var(--maroon-deep);
+    box-shadow: inset 0 0 0 1px rgb(230 191 104 / 0.55);
+  }
+  .btn-primary:hover {
+    background: var(--maroon-deep);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--maroon);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-ghost:hover {
+    background: var(--surface-2);
+    border-color: var(--maroon);
+  }
+  .btn-primary:disabled,
+  .btn-ghost:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-primary:focus-visible,
+  .btn-ghost:focus-visible,
+  .chip:focus-visible,
+  .input:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 1px;
+  }
+
+  /* Filter / tag pill. Selected: add aria-pressed="true" or .is-on. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.1rem 0.5rem;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .chip:hover {
+    border-color: var(--maroon);
+    color: var(--maroon);
+  }
+  .chip.is-on,
+  .chip[aria-pressed="true"] {
+    background: var(--maroon);
+    border-color: var(--maroon-deep);
+    color: var(--cream);
+  }
+
+  /* Text field: paper-white, ruled bottom edge. */
+  .input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--border-strong);
+    border-bottom: 2px solid var(--maroon);
+    border-radius: 2px;
+    background: #fffdf6;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .input::placeholder {
     color: var(--muted);
+    opacity: 0.75;
+  }
+  .input[aria-invalid="true"] {
+    border-color: var(--danger);
   }
 }
 
 @keyframes blink {
   50% {
-    opacity: 0.25;
+    opacity: 0.35;
   }
 }
 .blink {
@@ -181,6 +459,9 @@ body::after {
 /* Letter-spacing splits Devanagari conjuncts and matras apart; keep Hindi text tight. */
 html:lang(hi) [class*="tracking-"],
 html:lang(hi) .hud-label,
-html:lang(hi) .hud-tab {
+html:lang(hi) .label,
+html:lang(hi) .hud-tab,
+html:lang(hi) .ledger-title,
+html:lang(hi) .ledger-table th {
   letter-spacing: 0.01em;
 }

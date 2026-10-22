@@ -1,25 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, JetBrains_Mono, Noto_Sans_Devanagari } from "next/font/google";
+import { IBM_Plex_Mono, Mukta, Rozha_One } from "next/font/google";
 import { Nav } from "@/components/nav";
 import { LangProvider } from "@/components/i18n/lang-provider";
 import { getLang } from "@/lib/i18n/server";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Body: humanist sans with Devanagari (Hindi UI and Hindi/Marathi content).
+const mukta = Mukta({
+  variable: "--font-mukta",
+  subsets: ["latin", "devanagari"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
+// Display: classical high-contrast face for headings and the wordmark (Latin + Devanagari).
+const rozha = Rozha_One({
+  variable: "--font-rozha",
+  subsets: ["latin", "devanagari"],
+  weight: "400",
 });
 
-// Hindi UI and Hindi/Marathi content; other Indic scripts fall back to system fonts.
-const devanagari = Noto_Sans_Devanagari({
-  variable: "--font-devanagari",
-  subsets: ["devanagari"],
-  weight: ["400", "600"],
+// Data: ids, timestamps, figures.
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -33,12 +37,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={lang}
-      className={`${geistSans.variable} ${jetbrainsMono.variable} ${devanagari.variable} h-full antialiased`}
+      className={`${mukta.variable} ${rozha.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="flex h-full flex-col font-mono">
+      <body className="flex h-full flex-col font-sans text-foreground">
         <LangProvider lang={lang}>
           <Nav />
           <main className="flex min-h-0 flex-1 flex-col">{children}</main>
+          <div aria-hidden className="band-print band-print--thin shrink-0" />
         </LangProvider>
       </body>
     </html>

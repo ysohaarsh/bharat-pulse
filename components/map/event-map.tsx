@@ -49,9 +49,9 @@ export interface EventMapProps {
   lang: UiLang;
 }
 
-const ACCENT = "#00ff88";
-const WARN = "#ffb020";
-const DANGER = "#ff3355";
+const ACCENT = "#0f6e6e";
+const WARN = "#c77d00";
+const DANGER = "#b0231c";
 const EMPTY: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 /** Marker radius in px for a severity 1–5 (same scale the legend describes). */
 const RADIUS: ExpressionSpecification = ["+", 4, ["*", 2, ["get", "severity"]]];
@@ -129,7 +129,7 @@ function addOverlayLayers(map: MapLibreMap) {
     type: "line",
     source: "pc",
     layout: { visibility: "none" },
-    paint: { "line-color": "#2fe0ff", "line-opacity": 0.55, "line-width": ["interpolate", ["linear"], ["zoom"], 4, 0.4, 9, 1.4] },
+    paint: { "line-color": "#0e8aa6", "line-opacity": 0.55, "line-width": ["interpolate", ["linear"], ["zoom"], 4, 0.4, 9, 1.4] },
   });
   map.addLayer({
     id: "wards-fill",
@@ -137,7 +137,7 @@ function addOverlayLayers(map: MapLibreMap) {
     source: "wards",
     minzoom: WARDS_MINZOOM,
     layout: { visibility: "none" },
-    paint: { "fill-color": "#ffd23f", "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.18, 0.02] },
+    paint: { "fill-color": "#b8862b", "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.18, 0.02] },
   });
   map.addLayer({
     id: "wards-line",
@@ -145,7 +145,7 @@ function addOverlayLayers(map: MapLibreMap) {
     source: "wards",
     minzoom: WARDS_MINZOOM,
     layout: { visibility: "none" },
-    paint: { "line-color": "#ffd23f", "line-opacity": 0.6, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.5, 14, 1.5] },
+    paint: { "line-color": "#b8862b", "line-opacity": 0.6, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.5, 14, 1.5] },
   });
   map.addLayer({
     id: "wards-label",
@@ -153,7 +153,7 @@ function addOverlayLayers(map: MapLibreMap) {
     source: "wards",
     minzoom: 12.5,
     layout: { visibility: "none", "text-field": ["to-string", ["get", "number"]], "text-font": ["Noto Sans Regular"], "text-size": 11 },
-    paint: { "text-color": "#ffd23f", "text-halo-color": "#000000", "text-halo-width": 1.2 },
+    paint: { "text-color": "#7a1e1e", "text-halo-color": "#f6efe0", "text-halo-width": 1.2 },
   });
   map.addLayer({
     id: "ac-line",
@@ -161,7 +161,7 @@ function addOverlayLayers(map: MapLibreMap) {
     source: "ac",
     minzoom: 5,
     layout: { visibility: "none" },
-    paint: { "line-color": "#b388ff", "line-opacity": 0.45, "line-dasharray": [1, 1], "line-width": 0.7 },
+    paint: { "line-color": "#7a1e1e", "line-opacity": 0.45, "line-dasharray": [1, 1], "line-width": 0.7 },
   });
   map.addLayer({
     id: "aqi",
@@ -172,7 +172,7 @@ function addOverlayLayers(map: MapLibreMap) {
       "circle-color": ["get", "color"],
       "circle-opacity": 0.75,
       "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 4, 8, 9],
-      "circle-stroke-color": "#000",
+      "circle-stroke-color": "#fbf6ea",
       "circle-stroke-width": 0.8,
     },
   });
@@ -182,10 +182,10 @@ function addOverlayLayers(map: MapLibreMap) {
     source: "projects",
     layout: { visibility: "none" },
     paint: {
-      "circle-color": ["match", ["get", "kind"], "metro", "#ff7ad9", "railway", "#ffd23f", "highway", "#2fe0ff", "#8aa898"],
+      "circle-color": ["match", ["get", "kind"], "metro", "#c2308f", "railway", "#a8650a", "highway", "#0e8aa6", "#8a8576"],
       "circle-opacity": 0.85,
       "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 2.5, 9, 6],
-      "circle-stroke-color": "#000",
+      "circle-stroke-color": "#fbf6ea",
       "circle-stroke-width": 0.6,
     },
   });
@@ -195,10 +195,10 @@ function addOverlayLayers(map: MapLibreMap) {
     source: "reports",
     layout: { visibility: "none" },
     paint: {
-      "circle-color": ["case", ["==", ["get", "status"], "resolved"], "#5f9e7b", "#f5e663"],
+      "circle-color": ["case", ["==", ["get", "status"], "resolved"], "#346c25", "#c99700"],
       "circle-opacity": 0.9,
       "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, ["+", 3, ["min", ["get", "upvotes"], 6]], 10, 9],
-      "circle-stroke-color": "#000",
+      "circle-stroke-color": "#fbf6ea",
       "circle-stroke-width": 1,
     },
   });
@@ -237,7 +237,7 @@ function addEventLayers(map: MapLibreMap) {
     source: "events",
     filter: clustered,
     paint: {
-      "circle-color": "#010805",
+      "circle-color": "#fbf6ea",
       "circle-opacity": 0.85,
       "circle-stroke-color": CLUSTER_COLOR,
       "circle-stroke-width": 1.5,
@@ -255,7 +255,7 @@ function addEventLayers(map: MapLibreMap) {
       "text-size": 11,
       "text-allow-overlap": true,
     },
-    paint: { "text-color": CLUSTER_COLOR, "text-halo-color": "#000", "text-halo-width": 0.6 },
+    paint: { "text-color": CLUSTER_COLOR, "text-halo-color": "#fbf6ea", "text-halo-width": 0.6 },
   });
   map.addLayer({
     id: "events-glow",
@@ -544,7 +544,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
       <div ref={containerRef} className="h-full w-full" />
       <div
         aria-hidden
-        className="pointer-events-none absolute right-2 top-2 z-10 hidden border border-border-strong bg-background/80 px-2 py-1 font-mono text-[10px] tracking-wider text-accent sm:block"
+        className="pointer-events-none absolute right-2 top-2 z-10 hidden border border-border-strong bg-surface/90 px-2 py-1 font-mono text-[10px] tracking-wider text-maroon sm:block"
       >
         {cursor
           ? `LAT ${formatCoord(cursor.lat, "N", "S")}  LON ${formatCoord(cursor.lng, "E", "W")}`

@@ -236,7 +236,7 @@ export function WhoisPanel({
             <div className="px-3 py-2">
               <Link
                 href={`/report?lat=${w.lat.toFixed(5)}&lng=${w.lng.toFixed(5)}`}
-                className={`inline-block border border-border-strong px-2 py-1 text-[11px] uppercase tracking-wider text-accent hover:bg-accent hover:text-black ${FOCUS_RING}`}
+                className={`inline-block border border-border-strong px-2 py-1 text-[11px] uppercase tracking-wider text-accent hover:bg-accent hover:text-cream ${FOCUS_RING}`}
               >
                 + {t("whoReportHere")}
               </Link>

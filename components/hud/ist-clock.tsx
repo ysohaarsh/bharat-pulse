@@ -17,10 +17,10 @@ export function IstClock({ showDate = false, className = "" }: { showDate?: bool
   const second = useSyncExternalStore(subscribe, getSecond, getServerSecond);
   const iso = second == null ? null : toIst(second);
   return (
-    <span className={`tabular-nums ${className}`}>
-      {showDate && <span className="mr-2 text-muted">{iso ? iso.slice(0, 10) : "----------"}</span>}
+    <span className={`num ${className}`}>
+      {showDate && <span className="mr-2 opacity-70">{iso ? iso.slice(0, 10) : "----------"}</span>}
       <time dateTime={second == null ? undefined : new Date(second * 1000).toISOString()}>{iso ? iso.slice(11, 19) : "--:--:--"}</time>
-      <span className="ml-1 text-muted">IST</span>
+      <span className="ml-1 opacity-70">IST</span>
     </span>
   );
 }
@@ -28,5 +28,5 @@ export function IstClock({ showDate = false, className = "" }: { showDate?: bool
 /** Current IST date (YYYY-MM-DD). */
 export function IstDate({ className = "" }: { className?: string }) {
   const second = useSyncExternalStore(subscribe, getSecond, getServerSecond);
-  return <span className={`tabular-nums ${className}`}>{second == null ? "----------" : toIst(second).slice(0, 10)}</span>;
+  return <span className={`num ${className}`}>{second == null ? "----------" : toIst(second).slice(0, 10)}</span>;
 }

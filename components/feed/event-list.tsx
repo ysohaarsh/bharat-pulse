@@ -47,7 +47,7 @@ export function EventList({
           <button
             type="button"
             onClick={onResetFilters}
-            className={`border border-accent px-3 py-1 text-xs uppercase tracking-widest text-accent hover:bg-accent hover:text-black ${FOCUS_RING}`}
+            className={`border border-accent px-3 py-1 text-xs uppercase tracking-widest text-accent hover:bg-accent hover:text-cream ${FOCUS_RING}`}
           >
             Reset filters
           </button>
