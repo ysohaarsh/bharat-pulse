@@ -13,6 +13,7 @@
     "prebuild": "node ./scripts/copy-maplibre-worker.mjs",
     "predev": "node ./scripts/copy-maplibre-worker.mjs",
     "geo:build": "node scripts/build-geo.mjs",
+    "nfhs:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/build-nfhs.mjs",
     "geo:load": "node --env-file=.env.local scripts/load-boundaries.mjs",
     "db:check": "node scripts/db-check.mjs"
   },

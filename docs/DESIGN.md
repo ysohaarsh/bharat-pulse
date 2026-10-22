@@ -151,6 +151,7 @@ Colours must come from tokens or `lib/categories.ts`; `components/stats/chart-th
 - Basemap (`india-style.ts`): parchment land `#e9dcbc` outside India, vellum `#f8f1dc` inside (india-fill sits just above the background so water draws over it), pale indigo water `#c6d1e6`, sepia roads, kumkum maroon India outline, brass dashed state lines, maroon/sepia uppercase labels with a vellum halo. OSM boundary layers stay omitted.
 - `map.css`: parchment container with a double brass neat-line frame (`.pulse-map::before`), ledger-style controls, popups as ledger slips (`.pulse-tip`, `.pulse-info`: cream slip, maroon left rule, display-face title).
 - Marker colours: `CATEGORY_META` (re-tuned for light backgrounds, markers outlined in `#fbf6ea`). Cluster colour by max severity: teal (S1-2), `#c77d00` (S3), `#b0231c` (S4+). Overlay layers use maroon (pincodes/seats), brass (wards), cyan/magenta/ochre for infra kinds.
+- NFHS-5 choropleth (`lib/india/nfhs.ts`): 5-class sequential ramps from tokens, paper-2 to haldi to danger to maroon-deep where high is bad, paper-2 to teal where high is good; no-data districts hatched in `muted`; legend + dropdown live in the layers box.
 - Overlays on the map (layer toggles, legend, who-represents panel) use `bg-surface/95` + `border-border-strong`, or `.ledger-panel`. No `backdrop-blur`.
 
 ## 8. Do / Don't
