@@ -39,7 +39,7 @@ grant all on storage.objects to authenticated;
 create function storage.foldername(name text) returns text[] language sql immutable as $$ select string_to_array(name, '/') $$;
 create publication supabase_realtime;
 create schema vault; create view vault.decrypted_secrets as select 'x'::text as name, 'y'::text as decrypted_secret;
-create schema cron; create function cron.schedule(name text, sched text, cmd text) returns bigint language sql as $$ select 1::bigint $$;
+create schema cron; create function cron.schedule(name text, sched text, cmd text) returns bigint language sql as $$ select 1::bigint $$; create function cron.unschedule(name text) returns boolean language sql as $$ select true $$;
 create schema net; create function net.http_post(url text, headers jsonb, body jsonb, timeout_milliseconds int) returns bigint language sql as $$ select 1::bigint $$;
 `);
 

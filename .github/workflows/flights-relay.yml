@@ -1,28 +1,44 @@
 name: Flights relay
 
-# OpenSky refuses connections from Vercel/AWS, so a GitHub runner fetches the India box and
-# hands the payload to the app. Step 1 (this version): reachability probe only.
+# OpenSky refuses connections from Vercel/AWS, but answers GitHub runners. Every 30 minutes a
+# runner fetches the India box with the OpenSky API client and POSTs the JSON to the app, which
+# stores it exactly like a fetched payload (lib/jobs/flights.ts). Replaces the pg_cron job.
+# Authenticated quota: 4000 credits/day; the India box costs 4 → 48 runs = 192/day.
 on:
+  schedule:
+    - cron: "12,42 * * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: flights-relay
+  cancel-in-progress: false
+
 jobs:
-  probe:
+  relay:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Token + India box from OpenSky
+      - name: Fetch India box from OpenSky
         env:
           OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
           OPENSKY_CLIENT_SECRET: ${{ secrets.OPENSKY_CLIENT_SECRET }}
         run: |
-          token=$(curl -s -m 30 -X POST "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token" \
+          token=$(curl -sf -m 30 -X POST "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token" \
             -d grant_type=client_credentials --data-urlencode "client_id=$OPENSKY_CLIENT_ID" --data-urlencode "client_secret=$OPENSKY_CLIENT_SECRET" \
             | jq -r '.access_token // empty')
-          echo "token issued: $([ -n "$token" ] && echo yes || echo no)"
-          curl -s -o states.json -m 40 -w 'states/all: HTTP %{http_code}, %{size_download} bytes, %{time_total}s\n' \
-            -H "Authorization: Bearer $token" \
-            "https://opensky-network.org/api/states/all?lamin=6&lomin=68&lamax=37.5&lomax=97.5"
-          echo "aircraft: $(jq '.states | length' states.json 2>/dev/null || echo n/a)"
+          [ -n "$token" ] || { echo "::error::OpenSky token request failed"; exit 1; }
+          code=$(curl -s -o states.json -m 40 -w '%{http_code}' -H "Authorization: Bearer $token" \
+            "https://opensky-network.org/api/states/all?lamin=6&lomin=68&lamax=37.5&lomax=97.5")
+          [ "$code" = "200" ] || { echo "::error::OpenSky states/all HTTP $code"; exit 1; }
+          echo "aircraft: $(jq '.states | length' states.json)"
+
+      - name: Hand payload to the app
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sf -m 60 -X POST "https://bharat-pulse-india.vercel.app/api/ingest?source=flights" \
+            -H "Authorization: Bearer $CRON_SECRET" -H "Content-Type: application/json" \
+            --data-binary @states.json | jq -c '.results[0]'

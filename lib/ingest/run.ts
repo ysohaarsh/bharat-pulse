@@ -67,7 +67,7 @@ async function runIngester(source: Source, db: Admin): Promise<IngestResult> {
   return { source, fetched: events.length, metrics: metrics.length };
 }
 
-async function runJob(job: Job | "translate", db: Admin): Promise<IngestResult> {
+async function runJob(job: Job | "translate", db: Admin, payload?: unknown): Promise<IngestResult> {
   switch (job) {
     case "power": {
       const rows = powerMetrics(await fetchPower(), new Date().toISOString());
@@ -75,7 +75,8 @@ async function runJob(job: Job | "translate", db: Admin): Promise<IngestResult> 
       return { source: job, fetched: 0, metrics: rows.length };
     }
     case "flights": {
-      const { counts, positions } = flightMetrics(await fetchFlights(), new Date().toISOString());
+      // OpenSky refuses Vercel's IPs, so the GitHub "Flights relay" workflow fetches and POSTs the payload.
+      const { counts, positions } = flightMetrics(payload ?? (await fetchFlights()), new Date().toISOString());
       if (!positions) throw new Error("OpenSky returned an unreadable payload");
       await upsertMetrics(db, counts, { history: true });
       await upsertMetrics(db, [positions]);
@@ -185,11 +186,12 @@ async function runJob(job: Job | "translate", db: Admin): Promise<IngestResult> 
   }
 }
 
-export async function runSource(name: Runnable): Promise<IngestResult> {
+/** `payload` lets a caller hand over data it fetched itself (the GitHub flights relay). */
+export async function runSource(name: Runnable, payload?: unknown): Promise<IngestResult> {
   try {
     const db = createAdminClient();
     if ((SOURCES as readonly string[]).includes(name)) return await runIngester(name as Source, db);
-    return await runJob(name as Job | "translate", db);
+    return await runJob(name as Job | "translate", db, payload);
   } catch (err) {
     return { source: name, fetched: 0, error: err instanceof Error ? err.message : String(err) };
   }
