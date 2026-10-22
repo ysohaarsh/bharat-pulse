@@ -31,7 +31,7 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
   `bharat_cron_secret` (see `supabase/migrations/20261005130000_cron_jobs.sql`); set Supabase Auth
   site URL / redirect URLs to the Vercel domain.
 - **Done when:** `cron.job_run_details` shows successful runs; events keep arriving without manual curls.
-- **Status:** todo
+- **Status:** in progress — 2026-10-22: Vercel project `bharat-pulse-india` (team yadavharsh715-7698s-projects) created via `npx vercel link` and deployed with NO env vars → https://bharat-pulse-india.vercel.app (pages load, no data). `bharat-pulse.vercel.app` belongs to someone else. `.vercelignore` keeps `.env*`, `data/`, `.claude/` out of uploads. Still todo: env vars (after T1), Vault secrets, Supabase Auth URLs, cron check.
 
 ### T3 · Verify data.gov.in (AQI + mandi) with a real key
 - **Needs:** `DATA_GOV_IN_API_KEY`.
