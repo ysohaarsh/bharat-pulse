@@ -1,6 +1,7 @@
 import "server-only";
 import type { Json } from "@/lib/database.types";
 import { translatePendingEvents } from "@/lib/i18n/translate";
+import { fetchFlights, flightMetrics } from "@/lib/jobs/flights";
 import { fetchMandi, mandiMetrics } from "@/lib/jobs/mandi";
 import { ASSEMBLIES, fetchAssembly, mlasFromWikipedia } from "@/lib/jobs/mla";
 import { fetchOverpass, OVERPASS_TIMEOUT_MS, projectsFromOverpass, RUN_BUDGET_MS, statesForRun } from "@/lib/jobs/osm";
@@ -72,6 +73,13 @@ async function runJob(job: Job | "translate", db: Admin): Promise<IngestResult> 
       const rows = powerMetrics(await fetchPower(), new Date().toISOString());
       await upsertMetrics(db, rows, { history: true });
       return { source: job, fetched: 0, metrics: rows.length };
+    }
+    case "flights": {
+      const { counts, positions } = flightMetrics(await fetchFlights(), new Date().toISOString());
+      if (!positions) throw new Error("OpenSky returned an unreadable payload");
+      await upsertMetrics(db, counts, { history: true });
+      await upsertMetrics(db, [positions]);
+      return { source: job, fetched: positions.value, metrics: counts.length + 1 };
     }
     case "mandi": {
       const rows = (await fetchMandi()).flatMap(({ commodity, records }) => mandiMetrics(commodity, records));
