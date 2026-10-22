@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { EventRow } from "@/lib/types";
 import { EventCard } from "./event-card";
-import { FOCUS_RING } from "./labels";
+import { useLang } from "@/components/i18n/lang-provider";
 
 export function EventList({
   events,
@@ -25,6 +25,7 @@ export function EventList({
   filtered: boolean;
   onResetFilters: () => void;
 }) {
+  const { t, lang } = useLang();
   const listRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
@@ -36,27 +37,27 @@ export function EventList({
 
   if (events.length === 0) {
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-10 text-center">
-        <span aria-hidden className="h-2 w-2 animate-pulse rounded-full bg-accent" />
-        <p className="text-sm uppercase tracking-widest text-accent">No events {filtered ? "match these filters" : "yet"}.</p>
-        <p className="text-xs leading-relaxed text-muted">
-          Bharat Pulse ingests NDMA SACHET disaster alerts, NCS earthquakes, satellite fire detections, air quality,
-          PIB releases and Indian news every few minutes. New events appear here automatically — no need to refresh.
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-8 text-center">
+        <div aria-hidden className="ornament-divider w-40" />
+        <p className="font-display text-base uppercase tracking-[0.06em] text-maroon">
+          {filtered ? t("dashEmptyFiltered") : t("dashEmptyTitle")}
         </p>
+        <p className="text-xs text-muted">
+          {lang === "hi" ? "No entries yet" : "बही में अभी कोई प्रविष्टि नहीं"}
+        </p>
+        <p className="max-w-xs text-xs leading-relaxed text-ink-soft">{t("dashEmptyHint")}</p>
         {filtered && (
-          <button
-            type="button"
-            onClick={onResetFilters}
-            className={`border border-accent px-3 py-1 text-xs uppercase tracking-widest text-accent hover:bg-accent hover:text-cream ${FOCUS_RING}`}
-          >
-            Reset filters
+          <button type="button" onClick={onResetFilters} className="btn-ghost mt-1">
+            {t("dashReset")}
           </button>
         )}
+        <div aria-hidden className="ornament-divider w-40" />
       </div>
     );
   }
 
   return (
+    <div className="flex min-h-0 flex-1 flex-col">
     <ul ref={listRef} aria-label="Event feed" className="min-h-0 flex-1 overflow-y-auto">
       {events.map((e) => (
         <li key={e.id}>
@@ -70,5 +71,10 @@ export function EventList({
         </li>
       ))}
     </ul>
+    <div className="ledger-total shrink-0 text-xs">
+      <span>{lang === "hi" ? "कुल / Total" : "Total / कुल"}</span>
+      <span className="num">{events.length}</span>
+    </div>
+    </div>
   );
 }

@@ -50,13 +50,13 @@ export default function PickMap({ value, onChange }: PickMapProps) {
         id: "pin-halo",
         type: "circle",
         source: "pin",
-        paint: { "circle-color": "#f5e663", "circle-opacity": 0.25, "circle-radius": 16, "circle-blur": 0.6 },
+        paint: { "circle-color": "#d99a1e", "circle-opacity": 0.3, "circle-radius": 14 },
       });
       map.addLayer({
         id: "pin",
         type: "circle",
         source: "pin",
-        paint: { "circle-color": "#f5e663", "circle-radius": 6, "circle-stroke-color": "#000", "circle-stroke-width": 2 },
+        paint: { "circle-color": "#7a1e1e", "circle-radius": 6, "circle-stroke-color": "#fbf6ea", "circle-stroke-width": 2 },
       });
       readyRef.current = true;
     });

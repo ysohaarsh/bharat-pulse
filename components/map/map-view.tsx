@@ -17,8 +17,8 @@ import { useOverlays } from "./use-overlays";
 const EventMap = dynamic(() => import("./event-map"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-background text-xs tracking-[0.3em] text-accent">
-      <span className="blink">ACQUIRING MAP…</span>
+    <div className="flex h-full w-full items-center justify-center bg-background text-xs uppercase tracking-[0.3em] text-maroon">
+      <span className="animate-pulse">Opening map… / नक्शा खुल रहा है</span>
     </div>
   ),
 });
@@ -34,13 +34,13 @@ export interface MapViewProps {
 function LayerToggles({ layers, onToggle }: { layers: Record<LayerKey, boolean>; onToggle: (k: LayerKey) => void }) {
   const { t } = useLang();
   return (
-    <fieldset className="pointer-events-auto border border-border-strong bg-surface/95 px-2 py-1.5 text-[10px]">
-      <legend className="hud-label px-1 !text-accent">{t("layers")}</legend>
-      <ul className="space-y-0.5">
+    <fieldset className="pointer-events-auto border border-border-strong border-l-[3px] border-l-maroon bg-surface/95 px-2 py-1.5 text-[11px] shadow-[2px_2px_0_rgb(122_30_30/0.12)]">
+      <legend className="label px-1 !text-maroon">{t("layers")}</legend>
+      <ul className="grid grid-cols-2 gap-x-3 sm:block sm:space-y-0.5">
         {LAYER_KEYS.map((k) => (
           <li key={k}>
-            <label className={`flex cursor-pointer items-center gap-1.5 uppercase tracking-wider text-muted hover:text-foreground ${FOCUS_RING}`}>
-              <input type="checkbox" checked={layers[k]} onChange={() => onToggle(k)} className="accent-[var(--accent)]" />
+            <label className={`flex min-h-6 cursor-pointer items-center gap-1.5 text-ink-soft hover:text-maroon ${FOCUS_RING}`}>
+              <input type="checkbox" checked={layers[k]} onChange={() => onToggle(k)} className="accent-[var(--maroon)]" />
               {t(LAYER_LABEL[k])}
             </label>
           </li>
@@ -82,20 +82,20 @@ export function MapView({ events, selected, flyTarget, onSelect, className = "" 
       className={className}
       bodyClassName="relative isolate"
       right={
-        <span className="hud-label flex items-center gap-3">
+        <span className="label flex items-center gap-3">
           <span>
-            {t("plotted")} <span className="text-accent">{geo.length}</span>
+            {t("plotted")} <span className="num text-accent">{geo.length}</span>
           </span>
           {unlocated > 0 && (
             <span title="Events without a location appear in the feed only">
-              {t("unlocated")} <span className="text-warn">{unlocated}</span>
+              {t("unlocated")} <span className="num text-warn">{unlocated}</span>
             </span>
           )}
           {!whoisOpen && (
             <button
               type="button"
               onClick={() => setWhoisOpen(true)}
-              className={`border border-border-strong px-1.5 py-0.5 text-accent hover:bg-accent hover:text-cream ${FOCUS_RING}`}
+              className="btn-ghost !px-1.5 !py-0.5 !text-[11px] normal-case"
             >
               {t("whoTitle")}
             </button>

@@ -14,15 +14,7 @@ import { CORE_CATEGORIES, CORE_SOURCES } from "@/lib/events/sports";
 import { useLang } from "@/components/i18n/lang-provider";
 import { FOCUS_RING, SOURCE_LABEL, WINDOW_LABEL } from "./labels";
 
-const CHIP =
-  "inline-flex items-center gap-1.5 border px-1.5 py-0.5 text-[10px] uppercase tracking-wider transition-colors " +
-  FOCUS_RING;
-
-function chipState(pressed: boolean) {
-  return pressed
-    ? "border-border-strong bg-accent/10 text-foreground"
-    : "border-border bg-transparent text-muted opacity-50 hover:opacity-100";
-}
+const CHIP = "chip !text-[11px]";
 
 export function FilterBar({
   filters,
@@ -38,14 +30,14 @@ export function FilterBar({
   const sports = sportsEnabled(filters);
 
   return (
-    <div className="flex flex-col gap-2 border-b border-border bg-background/40 px-3 py-2.5">
+    <div className="flex flex-col gap-2 border-b-2 border-maroon bg-surface-2 px-3 py-2.5">
       <div role="group" aria-label="Categories" className="flex flex-wrap gap-1.5">
         <button
           type="button"
           aria-pressed={allCategories}
           aria-label="All categories (except sports)"
           onClick={() => onChange({ ...filters, categories: selectAllCategories(filters.categories) })}
-          className={`${CHIP} ${chipState(allCategories)}`}
+          className={CHIP}
         >
           All
         </button>
@@ -58,15 +50,12 @@ export function FilterBar({
               aria-pressed={pressed}
               aria-label={`${CATEGORY_META[c].label} events`}
               onClick={() => onChange({ ...filters, categories: toggleCategory(filters.categories, c) })}
-              className={`${CHIP} ${chipState(pressed)}`}
+              className={CHIP}
             >
               <span
                 aria-hidden
-                className="h-1.5 w-1.5"
-                style={{
-                  backgroundColor: CATEGORY_META[c].color,
-                  boxShadow: pressed ? `0 0 5px ${CATEGORY_META[c].color}` : undefined,
-                }}
+                className="h-2 w-2 rounded-sm border border-ink/25"
+                style={{ backgroundColor: CATEGORY_META[c].color }}
               />
               {lang === "hi" ? CATEGORY_META[c].hi : CATEGORY_META[c].label}
             </button>
@@ -79,15 +68,12 @@ export function FilterBar({
           aria-label="Sports (opt-in) events"
           title="Sports headlines are hidden by default and never count toward the threat index, stats or brief"
           onClick={() => onChange({ ...filters, categories: toggleCategory(filters.categories, "sports") })}
-          className={`${CHIP} border-dashed ${chipState(sports)}`}
+          className={`${CHIP} !border-dashed`}
         >
           <span
             aria-hidden
-            className="h-1.5 w-1.5"
-            style={{
-              backgroundColor: CATEGORY_META.sports.color,
-              boxShadow: sports ? `0 0 5px ${CATEGORY_META.sports.color}` : undefined,
-            }}
+            className="h-2 w-2 rounded-sm border border-ink/25"
+            style={{ backgroundColor: CATEGORY_META.sports.color }}
           />
           {CATEGORY_META.sports.label}
           <span className="normal-case tracking-normal opacity-70">(opt-in)</span>
@@ -95,7 +81,7 @@ export function FilterBar({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <div role="group" aria-label="Time window" className="inline-flex overflow-hidden border border-border-strong">
+        <div role="group" aria-label="Time window" className="inline-flex overflow-hidden rounded-sm border border-border-strong bg-surface">
           {TIME_WINDOWS.map((w) => {
             const pressed = filters.window === w;
             return (
@@ -105,8 +91,8 @@ export function FilterBar({
                 aria-pressed={pressed}
                 aria-label={`Last ${WINDOW_LABEL[w]}`}
                 onClick={() => onChange({ ...filters, window: w })}
-                className={`px-2 py-0.5 text-[10px] uppercase ${FOCUS_RING} ${
-                  pressed ? "bg-accent font-bold text-cream" : "text-muted hover:text-accent"
+                className={`num px-2.5 py-1 text-[11px] uppercase ${FOCUS_RING} ${
+                  pressed ? "bg-maroon font-semibold text-cream" : "text-ink-soft hover:bg-haldi/15"
                 }`}
               >
                 {WINDOW_LABEL[w]}
@@ -115,12 +101,12 @@ export function FilterBar({
           })}
         </div>
 
-        <label className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted">
-          <span>Sev</span>
+        <label className="flex items-center gap-1.5">
+          <span className="label">Sev</span>
           <select
             value={filters.minSeverity}
             onChange={(e) => onChange({ ...filters, minSeverity: Number(e.target.value) as Severity })}
-            className={`border border-border-strong bg-background px-1.5 py-0.5 text-[10px] text-accent ${FOCUS_RING}`}
+            className="input !w-auto !px-1.5 !py-0.5 !text-[12px]"
           >
             <option value={1}>Any</option>
             <option value={2}>2+</option>
@@ -132,7 +118,7 @@ export function FilterBar({
       </div>
 
       <div role="group" aria-label="Sources" className="flex flex-wrap items-center gap-1.5">
-        <span className="text-[10px] uppercase tracking-wider text-muted">Src</span>
+        <span className="label">Src</span>
         {CORE_SOURCES.map((s) => {
           const pressed = filters.sources.includes(s);
           return (
@@ -141,7 +127,7 @@ export function FilterBar({
               type="button"
               aria-pressed={pressed}
               onClick={() => onChange({ ...filters, sources: toggleValue(filters.sources, s, CORE_SOURCES) })}
-              className={`${CHIP} ${chipState(pressed)}`}
+              className={CHIP}
             >
               {SOURCE_LABEL[s]}
             </button>

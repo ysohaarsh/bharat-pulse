@@ -11,12 +11,12 @@ export interface AqiBand {
 }
 
 export const AQI_BANDS: readonly AqiBand[] = [
-  { max: 50, label: "Good", hi: "अच्छा", color: "#00b050" },
-  { max: 100, label: "Satisfactory", hi: "संतोषजनक", color: "#92d050" },
-  { max: 200, label: "Moderate", hi: "मध्यम", color: "#ffd700" },
-  { max: 300, label: "Poor", hi: "खराब", color: "#ff9900" },
-  { max: 400, label: "Very Poor", hi: "बहुत खराब", color: "#ff3355" },
-  { max: Infinity, label: "Severe", hi: "गंभीर", color: "#c00000" },
+  { max: 50, label: "Good", hi: "अच्छा", color: "#1f8f3a" },
+  { max: 100, label: "Satisfactory", hi: "संतोषजनक", color: "#7fa31a" },
+  { max: 200, label: "Moderate", hi: "मध्यम", color: "#d4a300" },
+  { max: 300, label: "Poor", hi: "खराब", color: "#e07b00" },
+  { max: 400, label: "Very Poor", hi: "बहुत खराब", color: "#d6254b" },
+  { max: Infinity, label: "Severe", hi: "गंभीर", color: "#8f0f10" },
 ];
 
 export function aqiBand(aqi: number): AqiBand {
