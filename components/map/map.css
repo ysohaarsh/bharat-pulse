@@ -24,6 +24,10 @@
 .pulse-map .maplibregl-canvas {
   z-index: 1;
 }
+/* Popups must sit above the canvas (z-index 1) or they render hidden behind it. */
+.pulse-map .maplibregl-popup {
+  z-index: 3;
+}
 .pulse-map .maplibregl-canvas:focus-visible {
   outline: 1px solid var(--accent);
   outline-offset: -1px;
