@@ -5,12 +5,15 @@ export interface Vitals {
   power: { demand: number | null; demandYesterday: number | null; price: number | null; observedAt: string | null; history: number[] };
   worstAir: { city: string; state: string | null; aqi: number; modelled: boolean }[];
   mandi: { commodity: string; price: number; observedAt: string }[];
+  /** Aircraft in the India airspace box (OpenSky snapshot), null when no counts exist yet. */
+  flights: { total: number; airborne: number; ground: number; observedAt: string } | null;
 }
 
 export const EMPTY_VITALS: Vitals = {
   power: { demand: null, demandYesterday: null, price: null, observedAt: null, history: [] },
   worstAir: [],
   mandi: [],
+  flights: null,
 };
 
 type Row = Pick<MetricRow, "key" | "region" | "label" | "value" | "state" | "observed_at"> & { meta?: unknown };
@@ -31,6 +34,10 @@ export function buildVitals(rows: readonly Row[], history: readonly { value: num
     if (!prev || r.value > prev.aqi) byCity.set(city, { city, state: r.state, aqi: Math.round(r.value), modelled: Boolean(meta.modelled) });
   }
 
+  const fTotal = national("flights.total");
+  const fAir = national("flights.airborne");
+  const fGround = national("flights.ground");
+
   return {
     power: {
       demand: fresh ? demand.value : null,
@@ -44,5 +51,9 @@ export function buildVitals(rows: readonly Row[], history: readonly { value: num
       .filter((r) => r.key.startsWith("mandi:") && r.region === "IN")
       .map((r) => ({ commodity: r.key.slice("mandi:".length), price: Math.round(r.value), observedAt: r.observed_at }))
       .sort((a, b) => a.commodity.localeCompare(b.commodity)),
+    flights:
+      fTotal && fAir && fGround
+        ? { total: fTotal.value, airborne: fAir.value, ground: fGround.value, observedAt: fTotal.observed_at }
+        : null,
   };
 }

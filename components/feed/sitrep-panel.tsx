@@ -70,8 +70,8 @@ function Sparkline({ values, label }: { values: number[]; label: string }) {
 
 function VitalsSection({ vitals }: { vitals: Vitals }) {
   const { t, lang } = useLang();
-  const { power, worstAir, mandi } = vitals;
-  const hasAny = power.demand != null || worstAir.length > 0 || mandi.length > 0;
+  const { power, worstAir, mandi, flights } = vitals;
+  const hasAny = power.demand != null || worstAir.length > 0 || mandi.length > 0 || flights != null;
   return (
     <Section title={t("vitals")} code="03">
       {!hasAny && <p className="text-xs text-muted">—</p>}
@@ -93,6 +93,15 @@ function VitalsSection({ vitals }: { vitals: Vitals }) {
             )}
           </p>
         </div>
+      )}
+      {flights && (
+        <p className="num mb-3 flex flex-wrap items-baseline justify-between gap-x-2 text-xs" title="OpenSky Network">
+          <span className="label">{t("flightVitals")}</span>
+          <span>
+            <span className="font-semibold text-accent">{flights.total}</span> · {flights.airborne} {t("flightAirborne")} · {flights.ground}{" "}
+            {t("flightOnGround")}
+          </span>
+        </p>
       )}
       {worstAir.length > 0 && (
         <table className="ledger-table mb-3 text-xs">
