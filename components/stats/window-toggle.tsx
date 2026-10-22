@@ -17,7 +17,7 @@ export function WindowToggle({ current }: { current: StatsWindow }) {
             href={`/stats?window=${o.value}`}
             aria-current={active ? "page" : undefined}
             className={`px-3 py-1 transition-colors ${
-              active ? "bg-accent font-bold text-black" : "text-muted hover:text-accent"
+              active ? "bg-accent font-bold text-cream" : "text-muted hover:text-accent"
             }`}
           >
             {o.label}

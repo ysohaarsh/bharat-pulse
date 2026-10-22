@@ -2,7 +2,7 @@ import Link from "next/link";
 import { signOut } from "@/app/auth/actions";
 import { AlertsBadge } from "@/components/auth/alerts-badge";
 import { getCurrentUser } from "@/components/auth/session";
-import { FOCUS } from "@/components/auth/styles";
+import { Chakra } from "@/components/hud/ornaments";
 import { IstClock } from "@/components/hud/ist-clock";
 import { LangToggle } from "@/components/i18n/lang-provider";
 import { NavTabs, type NavTab } from "@/components/nav-tabs";
@@ -39,52 +39,59 @@ export async function Nav() {
     tabs.push({ href: "/alerts", label: t(lang, "navAlerts"), extra: <AlertsBadge userId={user.id} initialCount={unread} /> });
   }
 
+  const NAV_FOCUS =
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-soft focus-visible:ring-offset-1 focus-visible:ring-offset-maroon";
+
   return (
-    <header className="relative flex h-11 shrink-0 items-stretch gap-3 whitespace-nowrap border-b border-border-strong bg-surface/95 pl-3 pr-3 text-xs sm:gap-5">
-      <Link href="/" className={`flex shrink-0 items-center gap-2 ${FOCUS}`}>
-        <span aria-hidden className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-50" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent shadow-[0_0_10px_var(--accent)]" />
-        </span>
-        <span className="glow text-sm font-bold tracking-[0.3em] text-accent">BHARAT PULSE</span>
-        <span className="hidden text-[10px] tracking-[0.2em] text-muted 2xl:inline">{t(lang, "brandTag")}</span>
-      </Link>
+    <header className="relative z-20 shrink-0">
+      <div className="flex h-11 items-stretch gap-3 whitespace-nowrap bg-maroon pl-3 pr-3 text-xs text-cream sm:gap-5">
+        <Link href="/" className={`flex shrink-0 items-center gap-2 ${NAV_FOCUS}`}>
+          <Chakra className="h-6 w-6 text-gold-soft" />
+          <span className="font-display text-[19px] leading-none tracking-wide text-gold-soft">Bharat Pulse</span>
+          <span className="font-display hidden text-[13px] leading-none text-cream/80 sm:inline" lang="hi">
+            भारत पल्स
+          </span>
+          <span className="hidden text-[10px] uppercase tracking-[0.18em] text-cream/60 2xl:inline">{t(lang, "brandTag")}</span>
+        </Link>
 
-      <NavTabs tabs={tabs} />
+        <NavTabs tabs={tabs} />
 
-      <div className="ml-auto flex shrink-0 items-center gap-4">
-        <span className="hidden items-center gap-1.5 text-[10px] tracking-[0.16em] text-muted xl:flex">
-          SYS <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_6px_var(--accent)]" />
-          <span className="text-accent">NOMINAL</span>
-        </span>
-        <IstClock className="hidden text-[11px] text-foreground md:inline" />
-        <LangToggle
-          className={`border border-border px-2 py-1 text-[11px] text-accent hover:border-accent disabled:opacity-50 ${FOCUS}`}
-        />
-        {user ? (
-          <div className="flex items-center gap-3">
-            <span className="hidden max-w-40 truncate text-muted sm:inline" title={user.email ?? undefined}>
-              {user.email ?? "Signed in"}
-            </span>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className={`border border-border px-2 py-1 uppercase tracking-widest text-muted hover:border-accent hover:text-accent ${FOCUS}`}
-              >
-                {t(lang, "signOut")}
-              </button>
-            </form>
-          </div>
-        ) : (
-          <Link
-            href="/login"
-            className={`border border-border-strong px-2.5 py-1 uppercase tracking-widest text-accent hover:bg-accent hover:text-black ${FOCUS}`}
-          >
-            {t(lang, "signIn")}
-          </Link>
-        )}
+        <div className="ml-auto flex shrink-0 items-center gap-4">
+          <span className="hidden items-center gap-1.5 text-[11px] text-cream/80 xl:flex">
+            <span lang="hi">बही खुली</span>
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#8fd16a]" />
+            <span className="num text-[10px] tracking-[0.14em] text-[#b6e39a]">OPEN</span>
+          </span>
+          <IstClock className="hidden text-[11px] text-cream md:inline" />
+          <LangToggle
+            className={`border border-gold/70 px-2 py-1 text-[11px] font-semibold text-gold-soft hover:bg-gold-soft hover:text-maroon-deep disabled:opacity-50 ${NAV_FOCUS}`}
+          />
+          {user ? (
+            <div className="flex items-center gap-3">
+              <span className="hidden max-w-40 truncate text-cream/70 sm:inline" title={user.email ?? undefined}>
+                {user.email ?? "Signed in"}
+              </span>
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className={`border border-gold/70 px-2 py-1 text-[11px] font-semibold uppercase tracking-widest text-gold-soft hover:bg-gold-soft hover:text-maroon-deep ${NAV_FOCUS}`}
+                >
+                  {t(lang, "signOut")}
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className={`border border-gold-soft bg-maroon-deep px-2.5 py-1 text-[11px] font-semibold uppercase tracking-widest text-gold-soft hover:bg-gold-soft hover:text-maroon-deep ${NAV_FOCUS}`}
+            >
+              {t(lang, "signIn")}
+            </Link>
+          )}
+        </div>
       </div>
-      <span aria-hidden className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-accent/60 to-transparent" />
+      <div aria-hidden className="band-print" />
+      <div aria-hidden className="toran absolute inset-x-0 top-full" />
     </header>
   );
 }

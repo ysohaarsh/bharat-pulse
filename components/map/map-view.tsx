@@ -34,7 +34,7 @@ export interface MapViewProps {
 function LayerToggles({ layers, onToggle }: { layers: Record<LayerKey, boolean>; onToggle: (k: LayerKey) => void }) {
   const { t } = useLang();
   return (
-    <fieldset className="pointer-events-auto border border-border-strong bg-background/85 px-2 py-1.5 text-[10px] backdrop-blur">
+    <fieldset className="pointer-events-auto border border-border-strong bg-surface/95 px-2 py-1.5 text-[10px]">
       <legend className="hud-label px-1 !text-accent">{t("layers")}</legend>
       <ul className="space-y-0.5">
         {LAYER_KEYS.map((k) => (
@@ -95,7 +95,7 @@ export function MapView({ events, selected, flyTarget, onSelect, className = "" 
             <button
               type="button"
               onClick={() => setWhoisOpen(true)}
-              className={`border border-border-strong px-1.5 py-0.5 text-accent hover:bg-accent hover:text-black ${FOCUS_RING}`}
+              className={`border border-border-strong px-1.5 py-0.5 text-accent hover:bg-accent hover:text-cream ${FOCUS_RING}`}
             >
               {t("whoTitle")}
             </button>

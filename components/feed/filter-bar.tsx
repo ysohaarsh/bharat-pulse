@@ -106,7 +106,7 @@ export function FilterBar({
                 aria-label={`Last ${WINDOW_LABEL[w]}`}
                 onClick={() => onChange({ ...filters, window: w })}
                 className={`px-2 py-0.5 text-[10px] uppercase ${FOCUS_RING} ${
-                  pressed ? "bg-accent font-bold text-black" : "text-muted hover:text-accent"
+                  pressed ? "bg-accent font-bold text-cream" : "text-muted hover:text-accent"
                 }`}
               >
                 {WINDOW_LABEL[w]}
