@@ -181,7 +181,16 @@ function VitalsSection({ vitals }: { vitals: Vitals }) {
             {mandi.map((m) => (
               <tr key={m.commodity}>
                 <td className="!py-1">{m.commodity}</td>
-                <td className="num !py-1">₹{m.price.toLocaleString("en-IN")}</td>
+                {/* 1 quintal = 100 kg: ₹/kg leads because it's what shoppers recognise. */}
+                <td className="num !py-1" title={`₹${m.price.toLocaleString("en-IN")} / ${t("mandiQtl")}`}>
+                  <span className="block">
+                    ₹{(m.price / 100).toLocaleString("en-IN", { maximumFractionDigits: 1 })}
+                    <span className="text-muted">/kg</span>
+                  </span>
+                  <span className="block text-[10px] text-muted">
+                    ₹{m.price.toLocaleString("en-IN")}/{t("mandiQtl")}
+                  </span>
+                </td>
                 <td className="num !py-1">
                   <MandiWow pct={m.wowPct} title={t("mandiWowTitle")} />
                 </td>
