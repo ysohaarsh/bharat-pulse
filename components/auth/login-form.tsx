@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useId, useState } from "react";
 import { sendMagicLink, signIn, signUp } from "@/app/login/actions";
 import type { AuthFormState } from "@/app/login/schema";
+import { Notice } from "./notice";
 import { BTN_PRIMARY, BTN_SECONDARY, FIELD_ERROR, FOCUS, INPUT, LABEL } from "./styles";
 
 type Mode = "signin" | "signup";
@@ -13,16 +14,8 @@ const EMPTY: AuthFormState = {};
 function Status({ state }: { state: AuthFormState }) {
   return (
     <div aria-live="polite">
-      {state.error && (
-        <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-sm">
-          {state.error}
-        </p>
-      )}
-      {state.message && (
-        <p role="status" className="rounded-md border border-accent/40 bg-accent/10 px-3 py-2 text-sm">
-          {state.message}
-        </p>
-      )}
+      {state.error && <Notice kind="error">{state.error}</Notice>}
+      {state.message && <Notice kind="ok">{state.message}</Notice>}
     </div>
   );
 }
@@ -33,7 +26,7 @@ function EmailField({ state, idPrefix }: { state: AuthFormState; idPrefix: strin
   return (
     <div>
       <label htmlFor={id} className={LABEL}>
-        Email
+        ईमेल / Email
       </label>
       <input
         id={id}
@@ -67,7 +60,7 @@ function PasswordForm({ mode, next }: { mode: Mode; next: string }) {
       <EmailField state={state} idPrefix={idPrefix} />
       <div>
         <label htmlFor={pwId} className={LABEL}>
-          Password
+          पासवर्ड / Password
         </label>
         <input
           id={pwId}
@@ -95,7 +88,7 @@ function PasswordForm({ mode, next }: { mode: Mode; next: string }) {
           <p className="mt-1.5 text-right text-xs">
             <Link
               href={next === "/" ? "/forgot-password" : `/forgot-password?next=${encodeURIComponent(next)}`}
-              className={`text-accent hover:underline ${FOCUS}`}
+              className={`font-semibold text-accent hover:underline ${FOCUS}`}
             >
               Forgot password?
             </Link>
@@ -137,15 +130,13 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
   return (
     <div className="flex flex-col gap-5">
       {initialError && (
-        <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-sm">
-          {initialError}
-        </p>
+        <Notice kind="error">{initialError}</Notice>
       )}
 
       <div
         role="tablist"
         aria-label="Account"
-        className="grid grid-cols-2 overflow-hidden rounded-md border border-border"
+        className="grid grid-cols-2 overflow-hidden rounded-sm border border-border-strong"
         onKeyDown={(e) => {
           if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
             const nextMode: Mode = mode === "signin" ? "signup" : "signin";
@@ -166,8 +157,8 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
               aria-controls={`${baseId}-panel`}
               tabIndex={selected ? 0 : -1}
               onClick={() => setMode(t.id)}
-              className={`px-3 py-2 text-sm ${FOCUS} ${
-                selected ? "bg-accent/15 text-accent" : "text-muted hover:text-foreground"
+              className={`px-3 py-2 text-sm font-semibold ${FOCUS} ${
+                selected ? "bg-maroon text-cream" : "bg-surface-2 text-ink-soft hover:text-maroon"
               }`}
             >
               {t.label}
@@ -187,7 +178,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
           aria-expanded={magicOpen}
           aria-controls={`${baseId}-magic`}
           onClick={() => setMagicOpen((o) => !o)}
-          className={`text-sm text-accent hover:underline ${FOCUS}`}
+          className={`text-sm font-semibold text-accent hover:underline ${FOCUS}`}
         >
           Email me a magic link instead
         </button>

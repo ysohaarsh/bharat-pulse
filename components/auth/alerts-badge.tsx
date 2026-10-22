@@ -40,7 +40,7 @@ export function AlertsBadge({ userId, initialCount }: { userId: string; initialC
 
   if (count <= 0) return null;
   return (
-    <span className="ml-1 inline-flex min-w-4 items-center justify-center rounded-full bg-danger px-1 font-mono text-[10px] leading-4 text-foreground">
+    <span className="ml-1 inline-flex min-w-4 items-center justify-center rounded-full bg-danger px-1 font-mono text-[10px] leading-4 text-cream">
       {count > 99 ? "99+" : count}
       <span className="sr-only"> unread</span>
     </span>
