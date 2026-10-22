@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { ASSEMBLIES, htmlText, membersSectionIndex, mlasFromWikipedia, tableGrid, type AcBoundary, type Assembly } from "./mla";
+import { ASSEMBLIES, htmlText, isVacated, membersSectionIndex, mlasFromWikipedia, tableGrid, type AcBoundary, type Assembly } from "./mla";
 
 const acs: AcBoundary[] = JSON.parse(readFileSync(join(process.cwd(), "public", "geo", "ac.geojson"), "utf8")).features.map(
   (f: { properties: AcBoundary }) => ({ code: f.properties.code, name: f.properties.name, state_code: f.properties.state_code }),
@@ -35,6 +35,104 @@ describe("mla html helpers", () => {
   it("finds the members section in a tocdata response", () => {
     expect(membersSectionIndex(wiki("mh.sections"))).toBe("2");
     expect(membersSectionIndex({ parse: {} })).toBeNull();
+    const toc = (...lines: string[]) => ({ parse: { tocdata: { sections: lines.map((line, i) => ({ line, index: String(i + 1) })) } } });
+    // The specific "Members of …" section wins over a bare "Members" parent.
+    expect(membersSectionIndex(toc("Office bearers", "Members", "Members of Legislative Assembly (MLA)"))).toBe("3");
+    expect(membersSectionIndex(toc("Composition", "List of the Members of the Legislative Assembly"))).toBe("2");
+    expect(membersSectionIndex(toc("Composition", "By constituency"))).toBe("2");
+  });
+});
+
+/** [state, fixture, sitting members, rows with no AC polygon in public/geo/ac.geojson]. */
+const MORE_STATES: [string, string, number, number][] = [
+  ["IN-BR", "br", 243, 0],
+  ["IN-WB", "wb", 294, 0],
+  ["IN-TN", "tn", 228, 0], // 6 vacant after resignations
+  ["IN-KL", "kl", 140, 0],
+  ["IN-AS", "as", 126, 0],
+  ["IN-PY", "py", 30, 0],
+  ["IN-RJ", "rj", 200, 0],
+  ["IN-MP", "mp", 230, 4], // 4 seats absent from the boundary file
+  ["IN-GJ", "gj", 182, 20], // 20 seats absent from the boundary file
+  ["IN-AP", "ap", 175, 0], // polygon numbers are offset by 119
+  ["IN-TS", "ts", 118, 1], // Khairatabad vacant; 1 polygon missing
+  ["IN-OD", "od", 147, 0],
+  ["IN-PB", "pb", 117, 0],
+  ["IN-HR", "hr", 90, 0],
+  ["IN-DL", "dl", 70, 0],
+  ["IN-JH", "jh", 81, 0],
+  ["IN-CG", "cg", 90, 0],
+  ["IN-UK", "uk", 70, 0],
+  ["IN-HP", "hp", 68, 0], // no seat numbers on the page: taken from the polygon names
+  ["IN-GA", "ga", 40, 0],
+  ["IN-JK", "jk", 90, 0],
+  ["IN-MN", "mn", 58, 0], // 2 vacant after deaths
+  ["IN-ML", "ml", 60, 0],
+  ["IN-NL", "nl", 60, 0],
+  ["IN-TR", "tr", 60, 0],
+  ["IN-MZ", "mz", 40, 0],
+  ["IN-AR", "ar", 60, 0],
+  ["IN-SK", "sk", 32, 1],
+];
+
+describe("mla: more states", () => {
+  const seat = (state: string, file: string, n: number) => load(state, file).find((r) => r.external_id === `${state}:${n}`);
+
+  it.each(MORE_STATES)("%s: one sitting member per seat, joined to its AC polygon by number", (state, file, count, unjoined) => {
+    const rows = load(state, file);
+    const offset = assembly(state).codeOffset ?? 0;
+    expect(rows).toHaveLength(count);
+    expect(new Set(rows.map((r) => r.external_id)).size).toBe(count);
+    expect(rows.filter((r) => r.boundary_code !== `AC:${state}:${Number(r.external_id.split(":")[1]) + offset}`).map((r) => [r.external_id, r.constituency, r.boundary_code])).toHaveLength(unjoined);
+    for (const r of rows) {
+      if (r.boundary_code) {
+        expect(acCodes.has(r.boundary_code)).toBe(true);
+        expect(r.boundary_code).toBe(`AC:${state}:${Number(r.external_id.split(":")[1]) + offset}`);
+      }
+      expect(r).toMatchObject({ house: "vs", state_code: state, source: "wikipedia" });
+      expect(r.profile_url).toMatch(/^https:\/\/en\.wikipedia\.org\/wiki\//);
+      expect(r.name.length).toBeGreaterThan(1);
+    }
+    // At most a handful of by-election rows list no party at all.
+    expect(rows.filter((r) => !r.party).length).toBeLessThanOrEqual(5);
+    expect(assembly(state).seats).toBeGreaterThanOrEqual(count);
+  });
+
+  it("reads members across the different table layouts", () => {
+    expect(seat("IN-TN", "tn", 1)).toMatchObject({ constituency: "Gummidipoondi", name: "S. Vijayakumar", party_short: "TVK" });
+    expect(seat("IN-WB", "wb", 148)).toMatchObject({ constituency: "Bhangar", name: "Naushad Siddiqui", party_short: "AISF" });
+    expect(seat("IN-DL", "dl", 36)).toMatchObject({ name: "Kailash Gahlot", party: "Bharatiya Janata Party" });
+    // Two-row headers (District | Constituency{No.,Name} | Member{Name,Party}).
+    expect(seat("IN-RJ", "rj", 101)).toMatchObject({ constituency: "Ajmer South (SC)", name: "Anita Bhadel", party_short: "BJP" });
+    expect(seat("IN-CG", "cg", 1)).toMatchObject({ constituency: "Bharatpur-Sonhat (ST)", name: "Renuka Singh" });
+    expect(seat("IN-MP", "mp", 230)).toMatchObject({ constituency: "Jawad", name: "Om Prakash Sakhlecha" });
+    // Andhra: page numbers 1..175, polygons 120..294.
+    expect(seat("IN-AP", "ap", 175)).toMatchObject({ constituency: "Kuppam", name: "N. Chandrababu Naidu", boundary_code: "AC:IN-AP:294" });
+    // Himachal: no number column; numbers come from polygon names (incl. the "Sri Renukaji (SC" typo in the boundary file).
+    expect(seat("IN-HP", "hp", 57)).toMatchObject({ boundary_code: "AC:IN-HP:57" });
+    expect(seat("IN-HP", "hp", 68)).toMatchObject({ name: "Jagat Singh Negi" });
+  });
+
+  it("handles vacancies and mid-term changes", () => {
+    for (const n of [101, 103, 135, 141, 179, 225]) expect(seat("IN-TN", "tn", n)).toBeUndefined(); // resigned
+    expect(seat("IN-TS", "ts", 60)).toBeUndefined(); // disqualified
+    // "Resigned from BJP" is a party change, not a vacancy.
+    expect(seat("IN-TS", "ts", 65)).toMatchObject({ name: "T. Raja Singh", party: "Independent" });
+    // "Resigned ... as Chief Minister" keeps the seat; deaths do not.
+    expect(seat("IN-MN", "mn", 2)).toMatchObject({ name: "N. Biren Singh" });
+    expect(seat("IN-MN", "mn", 49)).toBeUndefined();
+    // By-election winner whose remark mentions the predecessor's death.
+    expect(seat("IN-GJ", "gj", 145)).toMatchObject({ name: "Satish Patel" });
+  });
+
+  it("classifies vacating remarks", () => {
+    expect(isVacated("Died on 4 Nov 2022")).toBe(true);
+    expect(isVacated("Resigned on 22 March 2024")).toBe(true);
+    expect(isVacated("On 25 May 2026, resigned from office and officially joined TVK")).toBe(true);
+    expect(isVacated("Resigned from BJP in 2025")).toBe(false);
+    expect(isVacated("Resigned as Minister")).toBe(false);
+    expect(isVacated("Elected in by election necessitated after death of Yogesh Patel.")).toBe(false);
+    expect(isVacated("")).toBe(false);
   });
 });
 

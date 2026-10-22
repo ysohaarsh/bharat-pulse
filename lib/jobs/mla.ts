@@ -18,6 +18,8 @@ export interface Assembly {
   state: string; // ISO 3166-2:IN
   page: string; // en.wikipedia page title (redirects are followed)
   seats: number;
+  /** Polygon code = page seat no. + offset, where DataMeet keeps pre-bifurcation numbering (AP: 119). */
+  codeOffset?: number;
 }
 
 /** Current assemblies. Bump the page when a new assembly is constituted after an election. */
@@ -25,6 +27,34 @@ export const ASSEMBLIES: readonly Assembly[] = [
   { state: "IN-KA", page: "16th Karnataka Assembly", seats: 224 },
   { state: "IN-UP", page: "18th Uttar Pradesh Assembly", seats: 403 },
   { state: "IN-MH", page: "15th Maharashtra Legislative Assembly", seats: 288 },
+  { state: "IN-BR", page: "18th Bihar Assembly", seats: 243 }, // Nov 2025
+  { state: "IN-WB", page: "18th West Bengal Assembly", seats: 294 }, // 2026
+  { state: "IN-TN", page: "17th Tamil Nadu Assembly", seats: 234 }, // 2026
+  { state: "IN-KL", page: "16th Kerala Assembly", seats: 140 }, // 2026
+  { state: "IN-AS", page: "16th Assam Assembly", seats: 126 }, // 2026
+  { state: "IN-PY", page: "16th Puducherry Assembly", seats: 30 }, // 2026
+  { state: "IN-RJ", page: "16th Rajasthan Assembly", seats: 200 },
+  { state: "IN-MP", page: "16th Madhya Pradesh Assembly", seats: 230 },
+  { state: "IN-GJ", page: "15th Gujarat Assembly", seats: 182 },
+  { state: "IN-AP", page: "16th Andhra Pradesh Assembly", seats: 175, codeOffset: 119 },
+  { state: "IN-TS", page: "3rd Telangana Assembly", seats: 119 },
+  { state: "IN-OD", page: "17th Odisha Assembly", seats: 147 },
+  { state: "IN-PB", page: "16th Punjab Assembly", seats: 117 },
+  { state: "IN-HR", page: "15th Haryana Assembly", seats: 90 },
+  { state: "IN-DL", page: "8th Delhi Assembly", seats: 70 },
+  { state: "IN-JH", page: "6th Jharkhand Assembly", seats: 81 },
+  { state: "IN-CG", page: "6th Chhattisgarh Assembly", seats: 90 },
+  { state: "IN-UK", page: "5th Uttarakhand Assembly", seats: 70 },
+  { state: "IN-HP", page: "14th Himachal Pradesh Assembly", seats: 68 },
+  { state: "IN-GA", page: "8th Goa Assembly", seats: 40 },
+  { state: "IN-JK", page: "Jammu and Kashmir Legislative Assembly", seats: 90 },
+  { state: "IN-MN", page: "12th Manipur Assembly", seats: 60 },
+  { state: "IN-ML", page: "11th Meghalaya Assembly", seats: 60 },
+  { state: "IN-NL", page: "14th Nagaland Assembly", seats: 60 },
+  { state: "IN-TR", page: "13th Tripura Assembly", seats: 60 },
+  { state: "IN-MZ", page: "9th Mizoram Assembly", seats: 40 },
+  { state: "IN-AR", page: "11th Arunachal Pradesh Assembly", seats: 60 },
+  { state: "IN-SK", page: "11th Sikkim Assembly", seats: 32 },
 ];
 
 export interface AcBoundary {
@@ -69,7 +99,22 @@ const MemberSchema = z.object({
 });
 
 /** The seat was vacated by its last listed member and no successor row follows. */
-const VACATED = /\b(?:has died|died|death|passed away|resigned(?! as)|disqualified|expelled from the (?:assembly|house)|elected (?:as (?:an? )?mp|to (?:the )?(?:lok|rajya) sabha))\b/i;
+const VACATED = /\b(?:has died|died|death|passed away|resigned|disqualified|expelled from the (?:assembly|house)|elected (?:as (?:an? )?mp|to (?:the )?(?:lok|rajya) sabha))\b/i;
+
+/**
+ * Remarks that mention a departure without the member leaving the seat: resigning a ministry or
+ * party, or a by-election the member *won* ("Elected in by-election necessitated after death of X").
+ */
+const NOT_VACATING = [
+  /\bresigned\b[^.;]*?\bas (?:the )?(?:chief minister|deputy chief minister|minister|speaker|deputy speaker|president|cm)\b[^.;]*/gi,
+  /\bresigned\s+from\s+(?!(?:the\s+)?(?:mla|assembly|house|legislative|membership|his seat|post|office)\b)[^.;]*/gi,
+  /\b(?:elected|won|returned)\b[^.;]*\bby[\s-]?elections?\b[^.;]*/gi,
+  /\bby[\s-]?elections?\s+necessitated\b[^.;]*/gi,
+];
+
+export function isVacated(remarks: string): boolean {
+  return VACATED.test(NOT_VACATING.reduce((r, re) => r.replace(re, ""), remarks));
+}
 
 // ---------- tiny HTML table reader (no DOM in the job runtime) ----------
 
@@ -153,6 +198,8 @@ const tidyParty = (s: string | null | undefined) =>
         .trim() || null
     : null;
 
+const digits = (s: string) => s.replace(/\D+/g, "");
+
 export function pageUrl(title: string): string {
   return `https://en.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, "_"))}`;
 }
@@ -161,7 +208,13 @@ export function pageUrl(title: string): string {
 export function membersSectionIndex(raw: unknown): string | null {
   const p = TocSchema.safeParse(raw);
   if (!p.success) return null;
-  return p.data.parse.tocdata.sections.find((s) => /^members\b/i.test(htmlText(s.line)))?.index ?? null;
+  const lines = p.data.parse.tocdata.sections.map((s) => ({ index: s.index, line: htmlText(s.line) }));
+  // Most specific title first ("Members of Legislative Assembly" beats a bare "Members" parent section).
+  for (const re of [/^(?:list of (?:the )?)?members of\b/i, /^members\b/i, /^by constituency$/i]) {
+    const hit = lines.find((s) => re.test(s.line));
+    if (hit) return hit.index;
+  }
+  return null;
 }
 
 /**
@@ -177,21 +230,38 @@ export function mlasFromWikipedia(raw: unknown, assembly: Assembly, acs: readonl
   const byName = new Map<string, AcBoundary[]>();
   for (const a of stateAcs) byName.set(seatKey(a.name), [...(byName.get(seatKey(a.name)) ?? []), a]);
 
+  const offset = assembly.codeOffset ?? 0;
+  const seatNo = (name: string) => {
+    const hit = byName.get(seatKey(name));
+    return hit?.length === 1 ? Number(hit[0].code.split(":")[2]) - offset : NaN;
+  };
+
   // Latest member per seat number (successors are listed below their predecessors).
   const latest = new Map<number, z.infer<typeof MemberSchema>>();
   for (const table of parsed.data.parse.text.match(/<table\b[\s\S]*?<\/table>/gi) ?? []) {
     const grid = tableGrid(table);
-    const header = grid[0]?.map((c) => c.text.toLowerCase()) ?? [];
+    // Some pages (CG, MP, RJ) use a two-row header: group cells ("Constituency", "Member of
+    // Legislative Assembly") over sub-cells ("No.", "Name", "Party"). Join them per column.
+    const twoRow = !!grid[1] && grid[1].some((c, i) => c !== grid[0]?.[i] && /^(?:no\.?|#|name|member)$/i.test(c.text));
+    const header = (grid[0] ?? []).map((c, i) => {
+      const top = c.text.toLowerCase();
+      const sub = twoRow ? (grid[1][i]?.text.toLowerCase() ?? "") : "";
+      return sub && sub !== top && grid[1][i] !== c ? `${top} ${sub}` : top;
+    });
     const col = (re: RegExp) => header.findIndex((h) => re.test(h));
-    const iNo = col(/^(?:no\.?|#|s\.?\s?no\.?|ac no\.?|sl\.? no\.?)$/);
-    const iSeat = col(/^constituency/);
-    const iName = col(/^(?:name|member|mla|elected member|winner)/);
-    const iParty = col(/^party/);
+    const iNo = col(/(?:^|\s)(?:no\.?|#|s\.?\s?no\.?|ac\.?\s?no\.?|sl\.?\s?no\.?)$/);
+    const nameCol = (re: RegExp) => header.findIndex((h) => !h.startsWith("constituency") && re.test(h));
+    const iName = nameCol(/(?:^|\s)(?:candidate|member|mla|winner|elected member)$/) >= 0 ? nameCol(/(?:^|\s)(?:candidate|member|mla|winner|elected member)$/) : nameCol(/(?:^|\s)name$/);
+    // Telangana-style pages label the seat column "Name" and the person "Candidate".
+    const iSeat = col(/^constituency(?: name)?$/) >= 0 ? col(/^constituency(?: name)?$/) : header.findIndex((h, i) => i !== iName && h === "name");
+    const iParty = col(/(?:^|\s)party(?: affiliation)?$/);
+    const nameNo = iNo < 0 && iSeat >= 0 && stateAcs.length > 0;
     const iRemarks = col(/^remarks?/);
-    if (iNo < 0 || iSeat < 0 || iName < 0) continue;
+    // HP's table has no seat numbers: take them from the unique polygon with the same name.
+    if ((iNo < 0 && !nameNo) || iSeat < 0 || iName < 0) continue;
     const partyCols = iParty < 0 ? [] : header.flatMap((h, i) => (i >= iParty && h === header[iParty] ? [i] : []));
 
-    for (const row of grid.slice(1)) {
+    for (const row of grid.slice(twoRow ? 2 : 1)) {
       if (row.every((c) => c.text === "")) continue;
       // Party is a colour swatch (data-sort-value = full name) + a cell with the short name or link.
       const cells = partyCols.map((i) => row[i]).filter((c): c is Cell => !!c);
@@ -203,7 +273,7 @@ export function mlasFromWikipedia(raw: unknown, assembly: Assembly, acs: readonl
       // Small parties without a Wikipedia article sometimes sort (and link) by their leader's name.
       if (full && name.toLowerCase().startsWith(full.toLowerCase())) full = shown;
       const member = MemberSchema.safeParse({
-        number: Number(row[iNo]?.text.replace(/\D+$/, "")),
+        number: iNo >= 0 ? Number(row[iNo]?.text.replace(/\D+$/, "")) : seatNo(row[iSeat]?.text ?? ""),
         constituency: row[iSeat]?.text ?? "",
         name,
         party: full ?? shown,
@@ -223,10 +293,11 @@ export function mlasFromWikipedia(raw: unknown, assembly: Assembly, acs: readonl
 
   const out: MlaRow[] = [];
   for (const m of latest.values()) {
-    if (VACATED.test(m.remarks)) continue;
-    const code = `AC:${assembly.state}:${m.number}`;
+    if (isVacated(m.remarks)) continue;
+    const code = `AC:${assembly.state}:${m.number + offset}`;
     const named = byName.get(seatKey(m.constituency));
-    const ac = byCode.get(code) ?? (named?.length === 1 ? named[0] : undefined);
+    // Name fallback only for a unique polygon with the same numerals ("Indore-2" must not land on "Indore-1").
+    const ac = byCode.get(code) ?? (named?.length === 1 && digits(named[0].name) === digits(m.constituency) ? named[0] : undefined);
     out.push({
       house: "vs",
       boundary_code: ac?.code ?? null,
