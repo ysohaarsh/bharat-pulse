@@ -56,7 +56,7 @@ const SEAT_ALIASES: Record<string, string> = {
 
 /** Seat key: letters only, no reservation suffix, no "(ex …)". */
 export function seatKey(name: string): string {
-  const base = normalizeName(name.replace(/\((?:sc|st)\)/gi, "").replace(/\(ex [^)]*\)/gi, ""));
+  const base = normalizeName(name.replace(/\((?:sc|st)\)?/gi, "").replace(/\(ex [^)]*\)/gi, ""));
   return SEAT_ALIASES[base] ?? base;
 }
 
