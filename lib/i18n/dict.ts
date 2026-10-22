@@ -43,6 +43,7 @@ const en = {
   layerProjects: "Construction",
   layerReports: "Citizen reports",
   layerAqi: "Air quality",
+  layerWards: "Bengaluru wards",
 
   whoTitle: "Who represents this place?",
   whoHint: "Click anywhere on the map, use your location or enter a pincode.",
@@ -53,6 +54,8 @@ const en = {
   whoNothing: "This point is outside India's mapped constituencies.",
   whoMp: "Member of Parliament (Lok Sabha)",
   whoMla: "Assembly constituency (Vidhan Sabha)",
+  whoWard: "Ward (city corporation)",
+  whoWardPending: "Corporator elections are pending; polls are due by 31 Dec 2026.",
   whoVacant: "Seat currently vacant",
   whoDistrict: "District",
   whoState: "State / UT",
@@ -125,6 +128,7 @@ const hi: Record<DictKey, string> = {
   layerProjects: "निर्माण कार्य",
   layerReports: "नागरिक शिकायतें",
   layerAqi: "वायु गुणवत्ता",
+  layerWards: "बेंगलुरु वार्ड",
 
   whoTitle: "इस जगह का प्रतिनिधि कौन है?",
   whoHint: "मानचित्र पर कहीं भी क्लिक करें, अपना स्थान इस्तेमाल करें या पिनकोड डालें।",
@@ -135,6 +139,8 @@ const hi: Record<DictKey, string> = {
   whoNothing: "यह स्थान भारत के मानचित्रित निर्वाचन क्षेत्रों से बाहर है।",
   whoMp: "सांसद (लोकसभा)",
   whoMla: "विधानसभा क्षेत्र",
+  whoWard: "वार्ड (नगर निगम)",
+  whoWardPending: "पार्षद चुनाव लंबित हैं; मतदान 31 दिसंबर 2026 तक होना है।",
   whoVacant: "सीट अभी रिक्त है",
   whoDistrict: "ज़िला",
   whoState: "राज्य / केंद्र शासित प्रदेश",

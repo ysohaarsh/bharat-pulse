@@ -73,9 +73,14 @@ const LAYER_IDS: Record<LayerKey, string[]> = {
   projects: ["projects"],
   reports: ["reports"],
   aqi: ["aqi"],
+  wards: ["wards-fill", "wards-line", "wards-label"],
 };
 /** Overlay layers that open a popup when clicked. */
 const POPUP_LAYERS = ["projects", "reports", "aqi"] as const;
+/** Bengaluru ward outlines: fetched lazily the first time the viewport is zoomed into the city. */
+const WARDS_URL = "/geo/wards-blr.geojson";
+const WARDS_MINZOOM = 10;
+const BLR_BBOX = { w: 77.3, s: 12.7, e: 77.9, n: 13.25 };
 
 function toFeatures(events: GeoEvent[], lang: UiLang): GeoJSON.FeatureCollection<GeoJSON.Point> {
   return {
@@ -109,6 +114,7 @@ function addOverlayLayers(map: MapLibreMap) {
   map.addSource("projects", { type: "geojson", data: EMPTY });
   map.addSource("reports", { type: "geojson", data: EMPTY });
   map.addSource("aqi", { type: "geojson", data: EMPTY });
+  map.addSource("wards", { type: "geojson", data: EMPTY, promoteId: "code" });
   map.addSource("picked", { type: "geojson", data: EMPTY });
 
   map.addLayer({
@@ -124,6 +130,30 @@ function addOverlayLayers(map: MapLibreMap) {
     source: "pc",
     layout: { visibility: "none" },
     paint: { "line-color": "#2fe0ff", "line-opacity": 0.55, "line-width": ["interpolate", ["linear"], ["zoom"], 4, 0.4, 9, 1.4] },
+  });
+  map.addLayer({
+    id: "wards-fill",
+    type: "fill",
+    source: "wards",
+    minzoom: WARDS_MINZOOM,
+    layout: { visibility: "none" },
+    paint: { "fill-color": "#ffd23f", "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.18, 0.02] },
+  });
+  map.addLayer({
+    id: "wards-line",
+    type: "line",
+    source: "wards",
+    minzoom: WARDS_MINZOOM,
+    layout: { visibility: "none" },
+    paint: { "line-color": "#ffd23f", "line-opacity": 0.6, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.5, 14, 1.5] },
+  });
+  map.addLayer({
+    id: "wards-label",
+    type: "symbol",
+    source: "wards",
+    minzoom: 12.5,
+    layout: { visibility: "none", "text-field": ["to-string", ["get", "number"]], "text-font": ["Noto Sans Regular"], "text-size": 11 },
+    paint: { "text-color": "#ffd23f", "text-halo-color": "#000000", "text-halo-width": 1.2 },
   });
   map.addLayer({
     id: "ac-line",
@@ -304,6 +334,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
   const [failed, setFailed] = useState(false);
   const [cursor, setCursor] = useState<LngLat | null>(null);
   const [zoom, setZoom] = useState(BASE_ZOOM);
+  const [viewTick, setViewTick] = useState(0);
 
   useEffect(() => {
     latest.current = { events, selected, onSelect, onPick, layers, overlays, picked, lang };
@@ -336,6 +367,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
 
     const hover = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 10 });
     const info = new Popup({ closeButton: true, closeOnClick: true, className: "pulse-tip pulse-info", offset: 10, maxWidth: "280px" });
+    const wardTip = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 8 });
     const motionOk = !reducedMotion();
     let raf = 0;
     let lastFrame = 0;
@@ -395,14 +427,37 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
       hover.setLngLat([lng, lat]).setText(String(f.properties?.title ?? "")).addTo(map);
     });
     map.on("mouseleave", "events-points", () => hover.remove());
+    let hoveredWard: string | null = null;
+    const clearWard = () => {
+      if (hoveredWard != null) map.setFeatureState({ source: "wards", id: hoveredWard }, { hover: false });
+      hoveredWard = null;
+      wardTip.remove();
+    };
+    map.on("mousemove", "wards-fill", (e: MapLayerMouseEvent) => {
+      // Markers sit on top of the wards; don't show a ward tip while hovering one.
+      const markers = ["events-points", "clusters", ...POPUP_LAYERS].filter((id) => map.getLayer(id));
+      if (markers.length && map.queryRenderedFeatures(e.point, { layers: markers }).length) return clearWard();
+      const f = e.features?.[0];
+      if (!f) return;
+      const code = String(f.properties?.code ?? "");
+      if (code !== hoveredWard) {
+        clearWard();
+        hoveredWard = code;
+        map.setFeatureState({ source: "wards", id: code }, { hover: true });
+      }
+      wardTip.setLngLat(e.lngLat).setDOMContent(wardContent(f.properties ?? {})).addTo(map);
+    });
+    map.on("mouseleave", "wards-fill", clearWard);
     map.on("mousemove", (e) => setCursor(e.lngLat.wrap()));
     map.on("mouseout", () => setCursor(null));
     map.on("zoomend", () => setZoom(map.getZoom()));
+    map.on("moveend", () => setViewTick((n) => n + 1));
 
     return () => {
       cancelAnimationFrame(raf);
       hover.remove();
       info.remove();
+      wardTip.remove();
       readyRef.current = false;
       mapRef.current = null;
       map.remove();
@@ -455,6 +510,17 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
     }
   }, [layers, ready]);
 
+  // Ward outlines: fetched once, only when the toggle is on and the view is zoomed into Bengaluru.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map || !layers.wards || loadedBoundaries.current.has("wards")) return;
+    const b = map.getBounds();
+    const inBlr = b.getWest() < BLR_BBOX.e && b.getEast() > BLR_BBOX.w && b.getSouth() < BLR_BBOX.n && b.getNorth() > BLR_BBOX.s;
+    if (map.getZoom() < WARDS_MINZOOM || !inBlr) return;
+    loadedBoundaries.current.add("wards");
+    (map.getSource("wards") as GeoJSONSource | undefined)?.setData(WARDS_URL);
+  }, [viewTick, layers.wards, ready]);
+
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !flyTarget) return;
@@ -487,6 +553,21 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
       </div>
     </div>
   );
+}
+
+/** Tooltip body for a ward polygon (names are untrusted data, so DOM text nodes). */
+function wardContent(p: Record<string, unknown>): HTMLElement {
+  const root = document.createElement("div");
+  const title = document.createElement("div");
+  title.className = "font-bold";
+  title.textContent = `Ward ${String(p.number ?? "")} · ${String(p.name ?? "")}`;
+  root.appendChild(title);
+  if (p.corporation) {
+    const corp = document.createElement("div");
+    corp.textContent = String(p.corporation);
+    root.appendChild(corp);
+  }
+  return root;
 }
 
 /** Popup body for an overlay feature, built as DOM nodes (feature text is untrusted). */

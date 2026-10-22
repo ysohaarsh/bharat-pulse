@@ -5,7 +5,7 @@ import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { useLang } from "@/components/i18n/lang-provider";
 import { FOCUS_RING } from "@/components/feed/labels";
 import { ESAKSHI_DASHBOARD, mynetaSearch, prsMpTrack } from "@/lib/neta/links";
-import { parseWhois, type Whois, type WhoisRepresentative } from "@/lib/neta/whois";
+import { parseWhois, type Whois, type WhoisBoundary, type WhoisRepresentative } from "@/lib/neta/whois";
 import { stateLabel } from "@/lib/stats/format";
 import { createClient } from "@/lib/supabase/client";
 
@@ -23,6 +23,16 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
       <dd className="mt-0.5 text-xs text-foreground">{children}</dd>
     </div>
   );
+}
+
+/** "Ward 25 · Vinayaka Layout (Bengaluru West)", with the Kannada name appended when the data has it. */
+function wardLine(ward: WhoisBoundary, lang: string): string {
+  const meta = ward.meta ?? {};
+  const num = meta.number ?? ward.code.split(":").pop();
+  const corp = typeof meta.corporation === "string" ? meta.corporation : null;
+  const kn = typeof meta.name_kn === "string" && meta.name_kn ? ` / ${meta.name_kn}` : "";
+  const label = lang === "hi" ? "वार्ड" : "Ward";
+  return `${label} ${String(num)} · ${ward.name}${kn}${corp ? ` (${corp})` : ""}`;
 }
 
 function ExtLink({ href, children }: { href: string; children: ReactNode }) {
@@ -215,6 +225,12 @@ export function WhoisPanel({
                     <ExtLink href={mynetaSearch(w.ac.name)}>{t("whoAffidavit")}</ExtLink>
                   </p>
                 )}
+              </Row>
+            )}
+            {w.ward && (
+              <Row label={t("whoWard")}>
+                {wardLine(w.ward, lang)}
+                {w.councillor ? <RepCard rep={w.councillor} /> : <p className="mt-1 text-[11px] text-warn">{t("whoWardPending")}</p>}
               </Row>
             )}
             <div className="px-3 py-2">
