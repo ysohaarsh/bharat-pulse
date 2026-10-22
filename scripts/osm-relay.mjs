@@ -197,7 +197,12 @@ async function main() {
   if (failed.length || skipped.length) {
     console.log(`::warning::OSM relay incomplete. failed: ${failed.join(" ") || "-"}; skipped: ${skipped.join(" ") || "-"}`);
   }
-  if (!Object.keys(results).length) throw new Error("no state could be fetched from any Overpass mirror");
+  // Overpass has public outages lasting hours (all mirrors 502/504); failing the hourly job would
+  // email the repo owner every hour. Warn instead — the rotation retries these states later.
+  if (!Object.keys(results).length) {
+    console.log("::warning::no state could be fetched from any Overpass mirror (Overpass outage?) — nothing posted");
+    if (process.env.OSM_RELAY_STRICT === "1") throw new Error("no state could be fetched from any Overpass mirror");
+  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
