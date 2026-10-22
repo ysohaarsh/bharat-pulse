@@ -97,8 +97,40 @@ export function flightMetrics(raw: unknown, fallbackObservedAt: string): FlightM
   return { counts, positions };
 }
 
+const OPENSKY_TOKEN_URL = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token";
+
+/**
+ * OAuth2 client-credentials token for an OpenSky API client (OPENSKY_CLIENT_ID/SECRET).
+ * Authenticated calls get 4000 credits/day instead of 400 and aren't refused from cloud IPs
+ * the way anonymous ones are. Returns null when no client is configured (anonymous fallback).
+ */
+async function openskyToken(): Promise<string | null> {
+  const id = process.env.OPENSKY_CLIENT_ID;
+  const secret = process.env.OPENSKY_CLIENT_SECRET;
+  if (!id || !secret) return null;
+  const res = await fetch(OPENSKY_TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ grant_type: "client_credentials", client_id: id, client_secret: secret }),
+    signal: AbortSignal.timeout(15_000),
+    cache: "no-store",
+  });
+  if (!res.ok) throw new Error(`OpenSky token request failed: ${res.status}`);
+  const token = ((await res.json()) as { access_token?: unknown }).access_token;
+  if (typeof token !== "string") throw new Error("OpenSky token response had no access_token");
+  return token;
+}
+
 export async function fetchFlights(): Promise<unknown> {
-  const res = await fetch(FLIGHTS_URL, { signal: AbortSignal.timeout(25_000), cache: "no-store" });
-  if (!res.ok) throw new Error(`OpenSky fetch failed: ${res.status}${res.status === 429 ? " (anonymous daily credits exhausted)" : ""}`);
+  const token = await openskyToken();
+  const res = await fetch(FLIGHTS_URL, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    signal: AbortSignal.timeout(25_000),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    const quota = res.status === 429 ? ` (${token ? "" : "anonymous "}daily credits exhausted)` : "";
+    throw new Error(`OpenSky fetch failed: ${res.status}${quota}`);
+  }
   return res.json();
 }
