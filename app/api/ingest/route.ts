@@ -18,10 +18,10 @@ export async function POST(request: NextRequest) {
   if (param && !isRunnable(param)) {
     return NextResponse.json({ error: `unknown source: ${param}` }, { status: 400 });
   }
-  // The flights relay (GitHub Actions) POSTs the OpenSky /states/all JSON it fetched;
-  // flightMetrics validates it like a fetched payload.
+  // The flights and OSM relays (GitHub Actions) POST the JSON they fetched, since OpenSky and Overpass
+  // refuse/stall on Vercel's IPs; the job validates it like a fetched payload.
   let payload: unknown;
-  if (param === "flights" && request.headers.get("content-type")?.includes("application/json")) {
+  if ((param === "flights" || param === "osm") && request.headers.get("content-type")?.includes("application/json")) {
     payload = await request.json().catch(() => undefined);
   }
   const sources: Runnable[] = param ? [param as Runnable] : [...SOURCES];

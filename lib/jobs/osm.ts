@@ -121,6 +121,26 @@ export function projectsFromOverpass(stateCode: string, raw: unknown): ProjectRo
   }));
 }
 
+/**
+ * Payload the GitHub "OSM relay" workflow POSTs to /api/ingest?source=osm: Overpass results the
+ * runner fetched (Overpass times out from Vercel/AWS), keyed by state code. Each value is the
+ * `{ elements }` object `projectsFromOverpass` expects.
+ */
+const OsmPayloadSchema = z.object({
+  states: z
+    .record(z.string(), z.object({ elements: z.array(z.unknown()) }))
+    .refine((r) => Object.keys(r).length > 0 && Object.keys(r).length <= STATES.length, "1..36 states"),
+});
+
+/** Validated per-state Overpass results from a relay POST, or null if `payload` isn't one. Unknown state codes are dropped. */
+export function parseOsmPayload(payload: unknown): Record<string, { elements: unknown[] }> | null {
+  const p = OsmPayloadSchema.safeParse(payload);
+  if (!p.success) return null;
+  const known = new Set(STATES.map((s) => s.code));
+  const entries = Object.entries(p.data.states).filter(([code]) => known.has(code));
+  return entries.length ? Object.fromEntries(entries) : null;
+}
+
 let rotation = 0;
 
 async function overpassRequest(query: string, deadline: number): Promise<{ elements: unknown[] }> {
