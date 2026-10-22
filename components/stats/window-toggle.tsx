@@ -8,7 +8,7 @@ const OPTIONS: { value: StatsWindow; label: string }[] = [
 
 export function WindowToggle({ current }: { current: StatsWindow }) {
   return (
-    <nav aria-label="Time window" className="inline-flex border border-border-strong text-[11px] uppercase tracking-widest">
+    <nav aria-label="Time window" className="inline-flex gap-1.5">
       {OPTIONS.map((o) => {
         const active = o.value === current;
         return (
@@ -16,9 +16,7 @@ export function WindowToggle({ current }: { current: StatsWindow }) {
             key={o.value}
             href={`/stats?window=${o.value}`}
             aria-current={active ? "page" : undefined}
-            className={`px-3 py-1 transition-colors ${
-              active ? "bg-accent font-bold text-cream" : "text-muted hover:text-accent"
-            }`}
+            className={`chip min-h-8 px-3 ${active ? "is-on" : ""}`}
           >
             {o.label}
           </Link>

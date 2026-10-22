@@ -3,30 +3,47 @@ import { HIGH_SEVERITY, type Kpis } from "@/lib/stats/aggregate";
 
 const nf = new Intl.NumberFormat("en");
 
+/** Totals row of the register: four ruled cells, figures in tabular numerals. */
 export function KpiRow({ kpis }: { kpis: Kpis }) {
   const top = kpis.topCategory ? CATEGORY_META[kpis.topCategory] : null;
   const items = [
-    { label: "Total events", value: nf.format(kpis.total), danger: false },
-    { label: `High severity (≥${HIGH_SEVERITY})`, value: nf.format(kpis.highSeverity), danger: kpis.highSeverity > 0 },
-    { label: "States affected", value: nf.format(kpis.states), danger: false },
+    {
+      label: "कुल घटनाएँ / Total events",
+      value: nf.format(kpis.total),
+      danger: false,
+    },
+    {
+      label: `गंभीर / High severity (≥${HIGH_SEVERITY})`,
+      value: nf.format(kpis.highSeverity),
+      danger: kpis.highSeverity > 0,
+    },
+    {
+      label: "प्रभावित राज्य / States affected",
+      value: nf.format(kpis.states),
+      danger: false,
+    },
   ];
   return (
-    <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-      {items.map((k) => (
-        <div key={k.label} className="hud-panel p-4">
-          <dt className="hud-label">{k.label}</dt>
-          <dd className={`glow mt-1 text-3xl font-bold tabular-nums ${k.danger ? "text-danger" : "text-accent"}`}>
+    <dl className="ledger-panel m-0 grid grid-cols-2 lg:grid-cols-4">
+      {items.map((k, n) => (
+        <div key={k.label} className="border-b border-r border-rule p-4 lg:border-b-0">
+          <dt className="label flex items-baseline justify-between gap-2">
+            {k.label}
+            <span className="record-id">#{String(n + 1).padStart(2, "0")}</span>
+          </dt>
+          <dd className={`m-0 mt-1 font-display text-3xl tabular-nums ${k.danger ? "text-danger" : "text-accent"}`}>
             {k.value}
+            {k.danger && <span className="stamp stamp-danger ml-2 align-middle">Alert</span>}
           </dd>
         </div>
       ))}
-      <div className="hud-panel p-4">
-        <dt className="hud-label">Most active category</dt>
-        <dd className="mt-1 flex min-w-0 items-center gap-2 text-2xl font-semibold">
+      <div className="border-b border-rule p-4 lg:border-b-0">
+        <dt className="label">सर्वाधिक सक्रिय / Most active</dt>
+        <dd className="m-0 mt-1 flex min-w-0 items-center gap-2 font-display text-xl text-ink">
           {top ? (
             <>
               <span aria-hidden className="h-3 w-3 shrink-0 rounded-full" style={{ background: top.color }} />
-              <span className="truncate">{top.label}</span>
+              <span>{top.label}</span>
             </>
           ) : (
             <span className="text-muted">None yet</span>
