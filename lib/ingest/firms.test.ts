@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { fixture } from "@/lib/test/fixtures";
-import { firmsIngester, firmsUrl, parseFirmsCsv, severityForCell } from "./firms";
+import { assertFirmsCsv, firmsIngester, firmsUrl, parseFirmsCsv, severityForCell } from "./firms";
 
-// Hand-made fixture in the documented VIIRS NRT CSV layout (a real one needs a MAP_KEY).
+// Fixture uses the exact header documented at firms.modaps.eosdis.nasa.gov/api/area/ for VIIRS NRT
+// (latitude,longitude,bright_ti4,scan,track,acq_date,acq_time,satellite,instrument,confidence,version,bright_ti5,frp,daynight).
+// The rows are hand-written (a real sample needs a MAP_KEY), the layout is not.
 const csv = fixture("firms.csv");
 
 describe("FIRMS", () => {
@@ -34,8 +36,21 @@ describe("FIRMS", () => {
 
   it("scales severity with count and fire power", () => {
     expect(severityForCell(1, 5)).toBe(1);
-    expect(severityForCell(5, 5)).toBe(2);
-    expect(severityForCell(20, 5)).toBe(3);
+    expect(severityForCell(5, 5)).toBe(1);
+    expect(severityForCell(8, 5)).toBe(2);
+    expect(severityForCell(20, 5)).toBe(2);
+    expect(severityForCell(30, 5)).toBe(3);
     expect(severityForCell(2, 400)).toBe(4);
+  });
+
+  it("accepts the documented header and an empty body", () => {
+    expect(() => assertFirmsCsv(csv)).not.toThrow();
+    expect(() => assertFirmsCsv("")).not.toThrow();
+  });
+
+  it("surfaces FIRMS error text and header drift", () => {
+    expect(() => assertFirmsCsv("Invalid MAP_KEY.")).toThrow(/error instead of CSV: Invalid MAP_KEY/);
+    expect(() => assertFirmsCsv("Exceeding allowed transaction limit")).toThrow(/transaction limit/);
+    expect(() => assertFirmsCsv("lat,lon,date\n1,2,3")).toThrow(/header changed \(missing latitude/);
   });
 });

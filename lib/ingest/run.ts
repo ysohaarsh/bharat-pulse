@@ -4,7 +4,7 @@ import { translatePendingEvents } from "@/lib/i18n/translate";
 import { fetchFlights, flightMetrics } from "@/lib/jobs/flights";
 import { fetchMandi, mandiMetrics } from "@/lib/jobs/mandi";
 import { ASSEMBLIES, fetchAssembly, mlasFromWikipedia } from "@/lib/jobs/mla";
-import { fetchOverpass, OVERPASS_TIMEOUT_MS, projectsFromOverpass, RUN_BUDGET_MS, statesForRun } from "@/lib/jobs/osm";
+import { fetchOverpass, MIN_ATTEMPT_MS, projectsFromOverpass, RUN_BUDGET_MS, statesForRun } from "@/lib/jobs/osm";
 import { fetchPower, powerMetrics } from "@/lib/jobs/power";
 import { fetchSansad, representativesFromSansad } from "@/lib/jobs/sansad";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -28,9 +28,8 @@ export interface IngestResult {
 
 type Admin = ReturnType<typeof createAdminClient>;
 
-async function upsertMetrics(db: Admin, rows: MetricRow[], { history = false } = {}) {
+async function upsertMetrics(db: Admin, rows: MetricRow[], { history = false, now = new Date().toISOString() } = {}) {
   if (rows.length === 0) return;
-  const now = new Date().toISOString();
   const { error } = await db.from("metrics").upsert(
     rows.map((m) => ({ ...m, meta: (m.meta ?? {}) as Json, updated_at: now })),
     { onConflict: "key,region" },
@@ -48,6 +47,24 @@ async function upsertMetrics(db: Admin, rows: MetricRow[], { history = false } =
   }
 }
 
+/** A CPCB run must see at least this many stations before missing ones are treated as gone. */
+export const AQI_PRUNE_MIN_STATIONS = 100;
+
+/**
+ * Drop 'aqi' panel rows this run didn't touch (stations CPCB no longer reports, or modelled city
+ * rows after CPCB came back). CPCB runs prune only when they saw >= 100 stations, so a partial
+ * outage doesn't wipe the panel; the Open-Meteo fallback replaces all rows (never mixed).
+ */
+export async function pruneStaleAqi(db: Admin, raw: unknown, count: number, runStart: string): Promise<number> {
+  const kind = (raw as { kind?: string } | null)?.kind;
+  if (count === 0) return 0;
+  if (kind === "cpcb" && count < AQI_PRUNE_MIN_STATIONS) return 0;
+  if (kind !== "cpcb" && kind !== "openmeteo") return 0;
+  const { data, error } = await db.from("metrics").delete().eq("key", "aqi").lt("updated_at", runStart).select("region");
+  if (error) throw new Error(`metrics prune: ${error.message}`);
+  return data?.length ?? 0;
+}
+
 /** Fetch + normalize + upsert one event source. Idempotent thanks to unique (source, external_id). */
 async function runIngester(source: Source, db: Admin): Promise<IngestResult> {
   const ingester = INGESTERS[source];
@@ -63,8 +80,10 @@ async function runIngester(source: Source, db: Admin): Promise<IngestResult> {
     if (error) throw new Error(error.message);
   }
   const metrics = ingester.metrics?.(raw) ?? [];
-  await upsertMetrics(db, metrics);
-  return { source, fetched: events.length, metrics: metrics.length };
+  const runStart = new Date().toISOString();
+  await upsertMetrics(db, metrics, { now: runStart });
+  const pruned = source === "aqi" ? await pruneStaleAqi(db, raw, metrics.length, runStart) : undefined;
+  return { source, fetched: events.length, metrics: metrics.length, ...(pruned !== undefined ? { detail: { pruned } } : {}) };
 }
 
 async function runJob(job: Job | "translate", db: Admin, payload?: unknown): Promise<IngestResult> {
@@ -160,15 +179,20 @@ async function runJob(job: Job | "translate", db: Admin, payload?: unknown): Pro
     case "osm": {
       const states = statesForRun(new Date());
       const started = Date.now();
-      // Two at a time (Overpass gives each IP two concurrent slots), within the run budget;
-      // states left over are retried when the rotation comes round again.
-      const results: PromiseSettledResult<ReturnType<typeof projectsFromOverpass>>[] = [];
-      for (let i = 0; i < states.length && Date.now() - started < RUN_BUDGET_MS - OVERPASS_TIMEOUT_MS; i += 2) {
-        results.push(
-          ...(await Promise.allSettled(states.slice(i, i + 2).map(async (s) => projectsFromOverpass(s, await fetchOverpass(s))))),
-        );
-      }
-      const rows = results.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
+      // Two workers (Overpass gives each IP two concurrent slots) pull states until the run budget
+      // is spent; states left over are retried when the rotation comes round again.
+      const deadline = started + RUN_BUDGET_MS;
+      const queue = [...states];
+      const results: { state: string; result: PromiseSettledResult<ReturnType<typeof projectsFromOverpass>> }[] = [];
+      const worker = async () => {
+        while (queue.length && deadline - Date.now() > MIN_ATTEMPT_MS) {
+          const s = queue.shift()!;
+          const [result] = await Promise.allSettled([fetchOverpass(s, deadline).then((raw) => projectsFromOverpass(s, raw))]);
+          results.push({ state: s, result });
+        }
+      };
+      await Promise.all([worker(), worker()]);
+      const rows = results.flatMap(({ result: r }) => (r.status === "fulfilled" ? r.value : []));
       if (rows.length) {
         const now = new Date().toISOString();
         const { error } = await db
@@ -176,8 +200,10 @@ async function runJob(job: Job | "translate", db: Admin, payload?: unknown): Pro
           .upsert(rows.map((p) => ({ ...p, meta: p.meta as Json, last_seen: now })), { onConflict: "source,external_id" });
         if (error) throw new Error(error.message);
       }
-      const failed = results.flatMap((r, i) => (r.status === "rejected" ? [`${states[i]}: ${String(r.reason)}`] : []));
-      return { source: job, fetched: rows.length, detail: { states: states.slice(0, results.length), failed } };
+      const failed = results.flatMap(({ state, result: r }) => (r.status === "rejected" ? [`${state}: ${r.reason instanceof Error ? r.reason.message : String(r.reason)}`] : []));
+      const skipped = queue;
+      if (rows.length === 0 && failed.length > 0) throw new Error(`osm: every state failed (${failed.join("; ")})`);
+      return { source: job, fetched: rows.length, detail: { states: results.map((r) => r.state), failed, skipped } };
     }
     case "translate": {
       const detail = await translatePendingEvents(db);

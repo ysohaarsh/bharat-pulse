@@ -26,6 +26,25 @@ interface Hotspot {
   confidence: string;
 }
 
+/** Columns of the documented area CSV that we depend on (the rest, e.g. bright_ti4, is ignored). */
+export const FIRMS_REQUIRED_COLUMNS = ["latitude", "longitude", "acq_date", "acq_time", "frp", "confidence"] as const;
+
+/**
+ * FIRMS answers errors (invalid/expired MAP_KEY, transaction quota exceeded, bad source) with a
+ * plain-text body and often HTTP 200. Throw with that text, or when the header isn't the documented
+ * one, so a prod run shows the real reason instead of a silent 0. An empty body (no detections) is fine.
+ */
+export function assertFirmsCsv(body: string): void {
+  const text = body.trim();
+  if (!text) return;
+  const first = text.split(/\r?\n/)[0];
+  const header = first.split(",").map((h) => h.trim());
+  const missing = FIRMS_REQUIRED_COLUMNS.filter((c) => !header.includes(c));
+  if (missing.length === 0) return;
+  if (!first.includes(",")) throw new Error(`FIRMS returned an error instead of CSV: ${text.slice(0, 200)}`);
+  throw new Error(`FIRMS CSV header changed (missing ${missing.join(", ")}): ${first.slice(0, 200)}`);
+}
+
 /** Parse the FIRMS area CSV (header row + one line per hotspot). Low-confidence ("l") rows are dropped. */
 export function parseFirmsCsv(csv: string): Hotspot[] {
   const lines = csv.trim().split(/\r?\n/);
@@ -61,9 +80,11 @@ export function parseFirmsCsv(csv: string): Hotspot[] {
 }
 
 export function severityForCell(count: number, maxFrp: number): Severity {
-  if (count >= 50 || maxFrp >= 300) return 4;
-  if (count >= 15 || maxFrp >= 100) return 3;
-  if (count >= 4) return 2;
+  // Oct-Nov stubble burning puts 10-30 detections in a Punjab/Haryana cell on an ordinary day, so
+  // the upper bands are set high enough that they only light up on genuinely large clusters.
+  if (count >= 60 || maxFrp >= 300) return 4;
+  if (count >= 25 || maxFrp >= 120) return 3;
+  if (count >= 6) return 2;
   return 1;
 }
 
@@ -75,7 +96,9 @@ export const firmsIngester: Ingester<string> = {
     if (!key) throw new Error("FIRMS_MAP_KEY is not set (free key: https://firms.modaps.eosdis.nasa.gov/api/map_key/)");
     const res = await fetch(firmsUrl(key), { signal: AbortSignal.timeout(30_000), cache: "no-store" });
     if (!res.ok) throw new Error(`FIRMS fetch failed: ${res.status} ${res.statusText}`);
-    return res.text();
+    const body = await res.text();
+    assertFirmsCsv(body);
+    return body;
   },
 
   normalize(raw) {
