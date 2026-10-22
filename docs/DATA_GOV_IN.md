@@ -115,3 +115,15 @@ live. Everything else on the catalog for these categories is annual, monthly-at-
 - `updated_date` is portal metadata, not observation date; verify by the newest row (`filters[Year]`, etc).
 - JSON field ids differ from CSV/web labels (`avg_value` vs `pollutant_avg`).
 - Resource ids for datasets (uuid in search) sometimes return a bodyless error: always `limit=1` smoke-call before wiring.
+
+## 7. NFHS-5 snapshot (F5, built)
+
+`data/raw/nfhs5-districts.json` (gitignored, `{meta, records}`, 707 rows, ~2.7 MB) was fetched once with a local helper
+that pages `https://api.data.gov.in/resource/cf80173e-fece-439d-a0b1-6e9cb510593d?format=json&limit=1000&offset=N` using the
+personal key from `.env.local` (helper kept outside the repo, e.g. `coord-ogd-fetch.py <resource> <out>`; any script that
+pages `records` and keeps `title/field/total` as `meta` works). Then `npm run nfhs:build` (needs `npm run geo:build` first for
+`data/processed/districts.geojson`) writes `public/geo/nfhs5-districts.json` and `public/geo/districts.geojson`. The dataset is
+static (2019-21), so no refresh is needed unless the portal republishes (meta `updated_date` 2025-04-11).
+Columns used: `Anaemic_All_Women_15-49`, `Stunted_Children_Under_Five`, `Wasted_Children_Under_Five`,
+`Hygienic_Menstrual_Protection_Use`, `Institutional_Birth`, `Household_Using_Improved_Sanitation`, `Literate_Women`,
+`Sex_Ratio_At_Birth` (+ `Women_Age_Interviewed` as the averaging weight).

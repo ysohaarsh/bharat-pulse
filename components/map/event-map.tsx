@@ -27,6 +27,8 @@ import { LAYER_KEYS, type LayerKey, type OverlayData } from "./layers";
 import { mToFt, msToKmh, snapshotAgeMin } from "@/lib/flights/positions";
 import { useBuses, type BusStatus } from "./use-buses";
 import { useFlights, type FlightStatus } from "./use-flights";
+import { useNfhsLayer, type NfhsStatus } from "./use-nfhs";
+import type { NfhsKey } from "@/lib/india/nfhs";
 
 // Served from public/ by scripts/copy-maplibre-worker.mjs (MapLibre's documented Next.js setup).
 setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
@@ -56,6 +58,9 @@ export interface EventMapProps {
   onBusStatus?: (s: BusUiStatus) => void;
   /** Flights layer state and snapshot time, for the note in the layers box. */
   onFlightStatus?: (s: FlightUiState) => void;
+  /** NFHS-5 health choropleth: which indicator to paint, and load state for the layers box. */
+  nfhsIndicator?: NfhsKey;
+  onNfhsStatus?: (s: NfhsStatus) => void;
 }
 
 export interface FlightUiState {
@@ -92,6 +97,7 @@ const LAYER_IDS: Record<LayerKey, string[]> = {
   wards: ["wards-fill", "wards-line", "wards-label"],
   buses: ["buses", "buses-label"],
   flights: ["flights", "flights-label"],
+  nfhs: [], // layers are created lazily and toggled by useNfhsLayer
 };
 /** Overlay layers that open a popup when clicked. */
 const POPUP_LAYERS = ["projects", "reports", "aqi"] as const;
@@ -464,7 +470,7 @@ function addEventLayers(map: MapLibreMap) {
 /** Lazily fetch the heavy constituency outlines the first time their layer is switched on. */
 const BOUNDARY_URLS: Partial<Record<LayerKey, string>> = { pc: "/geo/pc.geojson", ac: "/geo/ac.geojson" };
 
-export default function EventMap({ events, selected, flyTarget, onSelect, onPick, picked, layers, overlays, lang, onBusStatus, onFlightStatus }: EventMapProps) {
+export default function EventMap({ events, selected, flyTarget, onSelect, onPick, picked, layers, overlays, lang, onBusStatus, onFlightStatus, nfhsIndicator = "an", onNfhsStatus }: EventMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const readyRef = useRef(false);
@@ -479,6 +485,10 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
   const [busNames, setBusNames] = useState<RouteNames>({});
   const { snapshot: busSnap, status: busStatus } = useBuses(busActive);
   const { snapshot: flightSnap, status: flightStatus } = useFlights(layers.flights);
+  const nfhsStatus = useNfhsLayer(mapRef, ready, layers.nfhs, nfhsIndicator, lang);
+  useEffect(() => {
+    onNfhsStatus?.(nfhsStatus);
+  }, [nfhsStatus, onNfhsStatus]);
 
   useEffect(() => {
     latest.current = { events, selected, onSelect, onPick, layers, overlays, picked, lang, flightObservedAt: flightSnap?.observedAt ?? null };

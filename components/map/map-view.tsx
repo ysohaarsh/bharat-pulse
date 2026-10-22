@@ -13,6 +13,9 @@ import { isStale, snapshotAgeMin } from "@/lib/flights/positions";
 import { DEFAULT_LAYERS, LAYER_KEYS, LAYER_LABEL, type LayerKey } from "./layers";
 import { MapLegend } from "./legend";
 import { useOverlays } from "./use-overlays";
+import { NfhsPanel } from "./nfhs-panel";
+import type { NfhsStatus } from "./use-nfhs";
+import type { NfhsKey } from "@/lib/india/nfhs";
 
 // MapLibre touches `window` at import time, so it must never be server-rendered.
 const EventMap = dynamic(() => import("./event-map"), {
@@ -37,11 +40,17 @@ function LayerToggles({
   onToggle,
   busStatus,
   flight,
+  nfhsIndicator,
+  onNfhsIndicator,
+  nfhsStatus,
 }: {
   layers: Record<LayerKey, boolean>;
   onToggle: (k: LayerKey) => void;
   busStatus: BusUiStatus;
   flight: FlightUiState;
+  nfhsIndicator: NfhsKey;
+  onNfhsIndicator: (k: NfhsKey) => void;
+  nfhsStatus: NfhsStatus;
 }) {
   const { t } = useLang();
   return (
@@ -64,6 +73,7 @@ function LayerToggles({
       )}
       {layers.buses && busStatus === "ok" && <p className="mt-1 border-t border-rule pt-1 text-[10.5px] leading-snug text-muted">{t("busSource")}</p>}
       {layers.flights && <FlightNote flight={flight} />}
+      {layers.nfhs && <NfhsPanel indicator={nfhsIndicator} onIndicator={onNfhsIndicator} status={nfhsStatus} />}
     </fieldset>
   );
 }
@@ -103,6 +113,8 @@ export function MapView({ events, selected, flyTarget, onSelect, className = "" 
   const [localFly, setLocalFly] = useState<FlyTarget | null>(null);
   const [busStatus, setBusStatus] = useState<BusUiStatus>("idle");
   const [flight, setFlight] = useState<FlightUiState>({ status: "idle", observedAt: null });
+  const [nfhsIndicator, setNfhsIndicator] = useState<NfhsKey>("an");
+  const [nfhsStatus, setNfhsStatus] = useState<NfhsStatus>("idle");
   const overlays = useOverlays(layers, lang);
 
   const geo = useMemo(() => events.filter(hasCoords) as GeoEvent[], [events]);
@@ -162,9 +174,18 @@ export function MapView({ events, selected, flyTarget, onSelect, className = "" 
         lang={lang}
         onBusStatus={setBusStatus}
         onFlightStatus={setFlight}
+        nfhsIndicator={nfhsIndicator}
+        onNfhsStatus={setNfhsStatus}
       />
       <div className="pointer-events-none absolute left-12 top-2 z-[1000]">
-        <LayerToggles layers={layers} busStatus={busStatus} flight={flight} onToggle={(k) => setLayers((l) => ({ ...l, [k]: !l[k] }))} />
+        <LayerToggles
+          layers={layers}
+          busStatus={busStatus}
+          flight={flight}
+          nfhsIndicator={nfhsIndicator}
+          onNfhsIndicator={setNfhsIndicator}
+          nfhsStatus={nfhsStatus}
+          onToggle={(k) => setLayers((l) => ({ ...l, [k]: !l[k] }))} />
       </div>
       {whoisOpen && (
         <div className="pointer-events-none absolute bottom-2 right-2 top-10 z-[1000] flex items-end sm:items-start">
