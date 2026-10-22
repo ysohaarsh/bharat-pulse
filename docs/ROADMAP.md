@@ -23,7 +23,7 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
   sports, osm (see README loop) → regenerate `lib/database.types.ts` from the real project.
 - **Done when:** `select kind, count(*) from boundaries group by kind` = 36/641/543/4098; the map
   shows SACHET + NCS pins; clicking Bengaluru shows P C Mohan; `representatives` ≈ 540 rows.
-- **Status:** todo
+- **Status:** done 2026-10-22 — Supabase project `bharat-pulse` (`jdmzuxlrshybwohwybei`, ap-south-1, free) via MCP; all migrations applied; `geo:load` 36/641/543/4098 + 369 wards; first ingest: 537 MPs, MLAs (6 states first run → job now batched), ~380 events, 50 AQI stations. Secrets set by a user-run script (keys never in the session). Leftovers: `power` and `flights` return "fetch failed" from Vercel (source blocks/needs headers from cloud IPs? check), `osm` Overpass timeouts on first states, `firms` 0 rows with key set (check), `lib/database.types.ts` not regenerated yet.
 
 ### T2 · Deploy to Vercel + pg_cron
 - **Needs:** T1; Vercel account (MCP available).
@@ -31,7 +31,7 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
   `bharat_cron_secret` (see `supabase/migrations/20261005130000_cron_jobs.sql`); set Supabase Auth
   site URL / redirect URLs to the Vercel domain.
 - **Done when:** `cron.job_run_details` shows successful runs; events keep arriving without manual curls.
-- **Status:** in progress — 2026-10-22: Vercel project `bharat-pulse-india` (team yadavharsh715-7698s-projects) created via `npx vercel link` and deployed with NO env vars → https://bharat-pulse-india.vercel.app (pages load, no data). `bharat-pulse.vercel.app` belongs to someone else. `.vercelignore` keeps `.env*`, `data/`, `.claude/` out of uploads. Still todo: env vars (after T1), Vault secrets, Supabase Auth URLs, cron check.
+- **Status:** done 2026-10-22 — https://bharat-pulse-india.vercel.app (GitHub ysohaarsh/bharat-pulse, pushes to main auto-deploy). Vercel env synced from `.env.local` (NEXT_PUBLIC_* that look like keys need `vercel env add … --type config`). Vault `bharat_app_url` + `bharat_cron_secret` set; 16 pg_cron jobs. Auth Site URL/redirects set by the user in the dashboard. Check `cron.job_run_details` after a few hours.
 
 ### T3 · Verify data.gov.in (AQI + mandi) with a real key
 - **Needs:** `DATA_GOV_IN_API_KEY`.
@@ -96,4 +96,5 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
 - MLAs, more states (F1, 2026-10-22): Wikipedia's ordinal ≠ sitting house (`17th West Bengal` = 2021; sitting is 18th; same for 10th Arunachal, 2nd Telangana) — check a first-row member's election year. Prefer the "Members of …" heading over a bare "Members" parent/summary section. Two-row headers (CG, MP, RJ, JK) are joined per column. DataMeet ACs: GJ has only 162/182, MP lacks Indore 2–5, AP polygons are numbered +119 (`Assembly.codeOffset`), HP page has no AC-number column (match by unique name), HP file has the typo "Sri Renukaji (SC". "Resigned from <party>" / "Resigned as CM" is not a vacancy. Wikipedia API returns an HTML "too many requests" page after ~20 fast calls → ~1.2 s between calls.
 - Flights (F6): OpenSky bbox > 400 sq deg costs 4 credits; anonymous = 400/day and Vercel egress IPs are shared, so prod budget may be lower (429 surfaces in job result). India bbox includes Gulf/Pakistan/Bangladesh airspace (~half foreign-registered) → `flights.total` = "in the India box". State vectors are positional with lng before lat; callsigns space-padded; `baro_altitude` null on ground.
 - Worktree dev/QA: Turbopack refuses a symlinked `node_modules` → `npx next dev --webpack`. Playwright has no bundled Chromium here → `chromium.launch({ channel: "chrome" })`. ESLint lints `.smoke/*.ts` → keep probes as `.mjs`.
+- MLA job on Vercel (2026-10-22): 31 assemblies back-to-back → Wikipedia throttled after 6 and the run nears the 60 s limit. Now stalest-first, 1.5 s apart, within `RUN_BUDGET_MS`; cron daily (`20261022120000_mla_cron_daily.sql`). `cron.schedule` with an existing name replaces the job (db:check's stub has no `unschedule`).
 - Parallel agents in git worktrees: worktrees have no `node_modules`/`data/` → symlink from the main checkout; launching several worktree agents at the same instant can race (`commondir` error) — retry. F2 and F7 both edit `scripts/build-geo.mjs` (source list) → expect an additive conflict.

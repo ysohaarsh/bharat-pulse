@@ -104,9 +104,31 @@ async function runJob(job: Job | "translate", db: Admin): Promise<IngestResult> 
     }
     case "mla": {
       // One state at a time (polite to Wikipedia); a state whose page looks wrong keeps its old rows.
+      // Wikipedia throttles bursts and the function has RUN_BUDGET_MS, so states go stalest-first
+      // with a pause between them; whatever doesn't fit is first in line on the next run.
+      const lastRefresh = await Promise.all(
+        ASSEMBLIES.map(async (a) => {
+          const { data } = await db
+            .from("representatives")
+            .select("refreshed_at")
+            .eq("house", "vs")
+            .eq("state_code", a.state)
+            .order("refreshed_at", { ascending: false })
+            .limit(1);
+          return data?.[0]?.refreshed_at ?? "";
+        }),
+      );
+      const queue = ASSEMBLIES.map((a, i) => ({ a, at: lastRefresh[i] })).sort((x, y) => x.at.localeCompare(y.at));
+      const started = Date.now();
       const loaded: Record<string, number> = {};
       const failed: string[] = [];
-      for (const assembly of ASSEMBLIES) {
+      const skipped: string[] = [];
+      for (const [i, { a: assembly }] of queue.entries()) {
+        if (Date.now() - started > RUN_BUDGET_MS - 8_000) {
+          skipped.push(...queue.slice(i).map((q) => q.a.state));
+          break;
+        }
+        if (i > 0) await new Promise((r) => setTimeout(r, 1_500));
         try {
           const { data: acs, error } = await db.from("boundaries").select("code, name, state_code").eq("kind", "ac").eq("state_code", assembly.state);
           if (error) throw new Error(error.message);
@@ -132,7 +154,7 @@ async function runJob(job: Job | "translate", db: Admin): Promise<IngestResult> 
       }
       const fetched = Object.values(loaded).reduce((a, b) => a + b, 0);
       if (fetched === 0) throw new Error(`mla: no state loaded (${failed.join("; ")})`);
-      return { source: job, fetched, detail: { loaded, failed } };
+      return { source: job, fetched, detail: { loaded, failed, skipped } };
     }
     case "osm": {
       const states = statesForRun(new Date());
