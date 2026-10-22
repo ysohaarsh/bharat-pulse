@@ -1,6 +1,6 @@
 import type { DictKey } from "@/lib/i18n/dict";
 
-export const LAYER_KEYS = ["events", "pc", "ac", "projects", "reports", "aqi", "wards"] as const;
+export const LAYER_KEYS = ["events", "pc", "ac", "projects", "reports", "aqi", "wards", "buses"] as const;
 export type LayerKey = (typeof LAYER_KEYS)[number];
 
 export const LAYER_LABEL: Record<LayerKey, DictKey> = {
@@ -11,6 +11,7 @@ export const LAYER_LABEL: Record<LayerKey, DictKey> = {
   reports: "layerReports",
   aqi: "layerAqi",
   wards: "layerWards",
+  buses: "layerBuses",
 };
 
 export const DEFAULT_LAYERS: Record<LayerKey, boolean> = {
@@ -21,6 +22,7 @@ export const DEFAULT_LAYERS: Record<LayerKey, boolean> = {
   reports: true,
   aqi: false,
   wards: true,
+  buses: false,
 };
 
 export interface OverlayData {

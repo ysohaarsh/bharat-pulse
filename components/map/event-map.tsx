@@ -17,11 +17,14 @@ import {
   type MapLayerMouseEvent,
 } from "maplibre-gl";
 import { CATEGORY_META } from "@/lib/categories";
+import { t as tr } from "@/lib/i18n/dict";
 import { displayTitle } from "@/lib/i18n/display";
 import type { UiLang } from "@/lib/i18n/languages";
 import type { EventRow } from "@/lib/types";
+import { DELHI_BBOX, type BusSnapshot } from "@/lib/transit/types";
 import { INDIA_BOUNDS, INDIA_CENTER, indiaStyle } from "./india-style";
 import { LAYER_KEYS, type LayerKey, type OverlayData } from "./layers";
+import { useBuses, type BusStatus } from "./use-buses";
 
 // Served from public/ by scripts/copy-maplibre-worker.mjs (MapLibre's documented Next.js setup).
 setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
@@ -47,7 +50,11 @@ export interface EventMapProps {
   layers: Record<LayerKey, boolean>;
   overlays: OverlayData;
   lang: UiLang;
+  /** Delhi buses layer state, for the notice in the layers box. */
+  onBusStatus?: (s: BusUiStatus) => void;
 }
+
+export type BusUiStatus = BusStatus | "zoom";
 
 const ACCENT = "#0f6e6e";
 const WARN = "#c77d00";
@@ -74,12 +81,18 @@ const LAYER_IDS: Record<LayerKey, string[]> = {
   reports: ["reports"],
   aqi: ["aqi"],
   wards: ["wards-fill", "wards-line", "wards-label"],
+  buses: ["buses", "buses-label"],
 };
 /** Overlay layers that open a popup when clicked. */
 const POPUP_LAYERS = ["projects", "reports", "aqi"] as const;
 /** Bengaluru ward outlines: fetched lazily the first time the viewport is zoomed into the city. */
 const WARDS_URL = "/geo/wards-blr.geojson";
 const WARDS_MINZOOM = 10;
+/** Delhi buses: polled only while the toggle is on and the viewport is over Delhi NCR at this zoom. */
+const BUS_MINZOOM = 9;
+const BUS_LABEL_MINZOOM = 13;
+const BUS_STALE_S = 120;
+const BUS_ROUTES_URL = "/geo/delhi-routes.json";
 const BLR_BBOX = { w: 77.3, s: 12.7, e: 77.9, n: 13.25 };
 
 function toFeatures(events: GeoEvent[], lang: UiLang): GeoJSON.FeatureCollection<GeoJSON.Point> {
@@ -94,6 +107,28 @@ function toFeatures(events: GeoEvent[], lang: UiLang): GeoJSON.FeatureCollection
         title: displayTitle(e, lang),
         severity: e.severity,
         color: CATEGORY_META[e.category].color,
+      },
+    })),
+  };
+}
+
+type RouteNames = Record<string, [string, string]>;
+
+function busFeatures(snap: BusSnapshot | null, names: RouteNames): GeoJSON.FeatureCollection<GeoJSON.Point> {
+  const now = Date.now() / 1000;
+  return {
+    type: "FeatureCollection",
+    features: (snap?.vehicles ?? []).map(([id, route, lat, lng, speed, bearing, ts]) => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [lng, lat] },
+      properties: {
+        id,
+        route: names[route]?.[0] ?? route,
+        speed,
+        bearing,
+        ts,
+        // Colour state: stale fix > stopped > moving.
+        st: now - ts > BUS_STALE_S ? "stale" : speed < 2 ? "stopped" : "moving",
       },
     })),
   };
@@ -188,6 +223,37 @@ function addOverlayLayers(map: MapLibreMap) {
       "circle-stroke-color": "#fbf6ea",
       "circle-stroke-width": 0.6,
     },
+  });
+  map.addSource("buses", { type: "geojson", data: EMPTY });
+  map.addLayer({
+    id: "buses",
+    type: "circle",
+    source: "buses",
+    layout: { visibility: "none" },
+    paint: {
+      // moving = teal, stopped = muted ink, stale fix = brass (DESIGN.md tokens)
+      "circle-color": ["match", ["get", "st"], "moving", "#0f6e6e", "stopped", "#565b78", "#a8915a"],
+      "circle-opacity": 0.9,
+      "circle-radius": ["interpolate", ["linear"], ["zoom"], 9, 2.5, 13, 5, 16, 7],
+      "circle-stroke-color": "#fbf6ea",
+      "circle-stroke-width": 0.8,
+    },
+  });
+  map.addLayer({
+    id: "buses-label",
+    type: "symbol",
+    source: "buses",
+    minzoom: BUS_LABEL_MINZOOM,
+    layout: {
+      visibility: "none",
+      "text-field": ["get", "route"],
+      "text-font": ["Noto Sans Regular"],
+      "text-size": 10.5,
+      "text-offset": [0, 1.1],
+      "text-anchor": "top",
+      "text-optional": true,
+    },
+    paint: { "text-color": "#1d2550", "text-halo-color": "#f6efe0", "text-halo-width": 1.2 },
   });
   map.addLayer({
     id: "reports",
@@ -324,7 +390,7 @@ function addEventLayers(map: MapLibreMap) {
 /** Lazily fetch the heavy constituency outlines the first time their layer is switched on. */
 const BOUNDARY_URLS: Partial<Record<LayerKey, string>> = { pc: "/geo/pc.geojson", ac: "/geo/ac.geojson" };
 
-export default function EventMap({ events, selected, flyTarget, onSelect, onPick, picked, layers, overlays, lang }: EventMapProps) {
+export default function EventMap({ events, selected, flyTarget, onSelect, onPick, picked, layers, overlays, lang, onBusStatus }: EventMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const readyRef = useRef(false);
@@ -335,6 +401,9 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
   const [cursor, setCursor] = useState<LngLat | null>(null);
   const [zoom, setZoom] = useState(BASE_ZOOM);
   const [viewTick, setViewTick] = useState(0);
+  const [busActive, setBusActive] = useState(false);
+  const [busNames, setBusNames] = useState<RouteNames>({});
+  const { snapshot: busSnap, status: busStatus } = useBuses(busActive);
 
   useEffect(() => {
     latest.current = { events, selected, onSelect, onPick, layers, overlays, picked, lang };
@@ -367,6 +436,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
 
     const hover = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 10 });
     const info = new Popup({ closeButton: true, closeOnClick: true, className: "pulse-tip pulse-info", offset: 10, maxWidth: "280px" });
+    const busTip = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 8 });
     const wardTip = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 8 });
     const motionOk = !reducedMotion();
     let raf = 0;
@@ -448,6 +518,15 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
       wardTip.setLngLat(e.lngLat).setDOMContent(wardContent(f.properties ?? {})).addTo(map);
     });
     map.on("mouseleave", "wards-fill", clearWard);
+    map.on("mousemove", "buses", (e: MapLayerMouseEvent) => {
+      const f = e.features?.[0];
+      if (!f) return;
+      busTip
+        .setLngLat((f.geometry as GeoJSON.Point).coordinates as [number, number])
+        .setDOMContent(busTipContent(f.properties ?? {}, latest.current.lang))
+        .addTo(map);
+    });
+    map.on("mouseleave", "buses", () => busTip.remove());
     map.on("mousemove", (e) => setCursor(e.lngLat.wrap()));
     map.on("mouseout", () => setCursor(null));
     map.on("zoomend", () => setZoom(map.getZoom()));
@@ -458,6 +537,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
       hover.remove();
       info.remove();
       wardTip.remove();
+      busTip.remove();
       readyRef.current = false;
       mapRef.current = null;
       map.remove();
@@ -521,6 +601,37 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
     (map.getSource("wards") as GeoJSONSource | undefined)?.setData(WARDS_URL);
   }, [viewTick, layers.wards, ready]);
 
+  // Delhi buses: active only with the toggle on and the viewport over Delhi NCR (zoom >= 9).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!ready || !map) return;
+    const b = map.getBounds();
+    const over = b.getWest() < DELHI_BBOX.e && b.getEast() > DELHI_BBOX.w && b.getSouth() < DELHI_BBOX.n && b.getNorth() > DELHI_BBOX.s;
+    const next = layers.buses && over && map.getZoom() >= BUS_MINZOOM;
+    queueMicrotask(() => setBusActive(next));
+  }, [viewTick, layers.buses, ready]);
+
+  // Route short names (optional static file), fetched once the first time buses are shown.
+  useEffect(() => {
+    if (!busActive || Object.keys(busNames).length) return;
+    let cancelled = false;
+    fetch(BUS_ROUTES_URL)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j: { routes?: RouteNames } | null) => !cancelled && j?.routes && setBusNames(j.routes))
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [busActive, busNames]);
+
+  useEffect(() => {
+    if (ready) (mapRef.current?.getSource("buses") as GeoJSONSource | undefined)?.setData(busFeatures(busSnap, busNames));
+  }, [busSnap, busNames, ready]);
+
+  useEffect(() => {
+    onBusStatus?.(!layers.buses ? "idle" : busActive ? busStatus : "zoom");
+  }, [layers.buses, busActive, busStatus, onBusStatus]);
+
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !flyTarget) return;
@@ -553,6 +664,23 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
       </div>
     </div>
   );
+}
+
+/** Tooltip body for a bus (ids come from the feed, so DOM text nodes). */
+function busTipContent(p: Record<string, unknown>, lang: UiLang): HTMLElement {
+  const root = document.createElement("div");
+  const line = (text: string, cls = "") => {
+    const el = document.createElement("div");
+    el.textContent = text;
+    if (cls) el.className = cls;
+    root.appendChild(el);
+  };
+  const age = Math.max(0, Math.round(Date.now() / 1000 - Number(p.ts ?? 0)));
+  line(`${tr(lang, "busTipRoute")} ${String(p.route ?? "")}`, "font-bold");
+  line(`${tr(lang, "busTipBus")} ${String(p.id ?? "")}`, "font-mono");
+  line(`${tr(lang, "busTipSpeed")} ${String(p.speed ?? 0)} km/h`);
+  line(`${tr(lang, "busTipAge")} ${age}${tr(lang, "busTipAgo") === "s ago" ? " s ago" : " " + tr(lang, "busTipAgo")}`);
+  return root;
 }
 
 /** Tooltip body for a ward polygon (names are untrusted data, so DOM text nodes). */

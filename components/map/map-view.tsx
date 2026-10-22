@@ -8,7 +8,7 @@ import { HudPanel } from "@/components/hud/hud-panel";
 import { useLang } from "@/components/i18n/lang-provider";
 import { WhoisPanel, type PickedPoint } from "@/components/neta/whois-panel";
 import { FOCUS_RING } from "@/components/feed/labels";
-import type { FlyTarget, GeoEvent } from "./event-map";
+import type { BusUiStatus, FlyTarget, GeoEvent } from "./event-map";
 import { DEFAULT_LAYERS, LAYER_KEYS, LAYER_LABEL, type LayerKey } from "./layers";
 import { MapLegend } from "./legend";
 import { useOverlays } from "./use-overlays";
@@ -31,7 +31,15 @@ export interface MapViewProps {
   className?: string;
 }
 
-function LayerToggles({ layers, onToggle }: { layers: Record<LayerKey, boolean>; onToggle: (k: LayerKey) => void }) {
+function LayerToggles({
+  layers,
+  onToggle,
+  busStatus,
+}: {
+  layers: Record<LayerKey, boolean>;
+  onToggle: (k: LayerKey) => void;
+  busStatus: BusUiStatus;
+}) {
   const { t } = useLang();
   return (
     <fieldset className="pointer-events-auto border border-border-strong border-l-[3px] border-l-maroon bg-surface/95 px-2 py-1.5 text-[11px] shadow-[2px_2px_0_rgb(122_30_30/0.12)]">
@@ -46,6 +54,12 @@ function LayerToggles({ layers, onToggle }: { layers: Record<LayerKey, boolean>;
           </li>
         ))}
       </ul>
+      {layers.buses && (busStatus === "pending" || busStatus === "zoom" || busStatus === "error") && (
+        <p role="status" className="mt-1 border-t border-rule pt-1 text-[10.5px] leading-snug text-warn">
+          {t(busStatus === "pending" ? "busKeyPending" : busStatus === "zoom" ? "busZoomHint" : "busError")}
+        </p>
+      )}
+      {layers.buses && busStatus === "ok" && <p className="mt-1 border-t border-rule pt-1 text-[10.5px] leading-snug text-muted">{t("busSource")}</p>}
     </fieldset>
   );
 }
@@ -56,6 +70,7 @@ export function MapView({ events, selected, flyTarget, onSelect, className = "" 
   const [picked, setPicked] = useState<PickedPoint | null>(null);
   const [whoisOpen, setWhoisOpen] = useState(false);
   const [localFly, setLocalFly] = useState<FlyTarget | null>(null);
+  const [busStatus, setBusStatus] = useState<BusUiStatus>("idle");
   const overlays = useOverlays(layers, lang);
 
   const geo = useMemo(() => events.filter(hasCoords) as GeoEvent[], [events]);
@@ -113,9 +128,10 @@ export function MapView({ events, selected, flyTarget, onSelect, className = "" 
         layers={layers}
         overlays={overlays}
         lang={lang}
+        onBusStatus={setBusStatus}
       />
       <div className="pointer-events-none absolute left-12 top-2 z-[1000]">
-        <LayerToggles layers={layers} onToggle={(k) => setLayers((l) => ({ ...l, [k]: !l[k] }))} />
+        <LayerToggles layers={layers} busStatus={busStatus} onToggle={(k) => setLayers((l) => ({ ...l, [k]: !l[k] }))} />
       </div>
       {whoisOpen && (
         <div className="pointer-events-none absolute bottom-2 right-2 top-10 z-[1000] flex items-end sm:items-start">
