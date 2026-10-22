@@ -1,14 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { hasCoords } from "@/lib/events/row";
 import type { EventRow } from "@/lib/types";
 import { HudPanel } from "@/components/hud/hud-panel";
 import { useLang } from "@/components/i18n/lang-provider";
 import { WhoisPanel, type PickedPoint } from "@/components/neta/whois-panel";
 import { FOCUS_RING } from "@/components/feed/labels";
-import type { BusUiStatus, FlyTarget, GeoEvent } from "./event-map";
+import type { BusUiStatus, FlightUiState, FlyTarget, GeoEvent } from "./event-map";
+import { isStale, snapshotAgeMin } from "@/lib/flights/positions";
 import { DEFAULT_LAYERS, LAYER_KEYS, LAYER_LABEL, type LayerKey } from "./layers";
 import { MapLegend } from "./legend";
 import { useOverlays } from "./use-overlays";
@@ -35,10 +36,12 @@ function LayerToggles({
   layers,
   onToggle,
   busStatus,
+  flight,
 }: {
   layers: Record<LayerKey, boolean>;
   onToggle: (k: LayerKey) => void;
   busStatus: BusUiStatus;
+  flight: FlightUiState;
 }) {
   const { t } = useLang();
   return (
@@ -60,7 +63,35 @@ function LayerToggles({
         </p>
       )}
       {layers.buses && busStatus === "ok" && <p className="mt-1 border-t border-rule pt-1 text-[10.5px] leading-snug text-muted">{t("busSource")}</p>}
+      {layers.flights && <FlightNote flight={flight} />}
     </fieldset>
+  );
+}
+
+/** Layers-box note for the flights layer: source credit, snapshot age, stale warning. */
+function FlightNote({ flight }: { flight: FlightUiState }) {
+  const { t } = useLang();
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  if (flight.status === "error" || flight.status === "empty") {
+    return (
+      <p role="status" className="mt-1 border-t border-rule pt-1 text-[10.5px] leading-snug text-warn">
+        {t(flight.status === "error" ? "flightError" : "flightEmpty")}
+      </p>
+    );
+  }
+  if (!flight.observedAt) return null;
+  const age = snapshotAgeMin(flight.observedAt, now);
+  const stale = isStale(age);
+  return (
+    <p role={stale ? "status" : undefined} className={`mt-1 border-t border-rule pt-1 text-[10.5px] leading-snug ${stale ? "text-warn" : "text-muted"}`}>
+      {t(stale ? "flightStale" : "flightSnapshot").replace("{n}", String(age))}
+      <br />
+      {t("flightSource")}
+    </p>
   );
 }
 
@@ -71,6 +102,7 @@ export function MapView({ events, selected, flyTarget, onSelect, className = "" 
   const [whoisOpen, setWhoisOpen] = useState(false);
   const [localFly, setLocalFly] = useState<FlyTarget | null>(null);
   const [busStatus, setBusStatus] = useState<BusUiStatus>("idle");
+  const [flight, setFlight] = useState<FlightUiState>({ status: "idle", observedAt: null });
   const overlays = useOverlays(layers, lang);
 
   const geo = useMemo(() => events.filter(hasCoords) as GeoEvent[], [events]);
@@ -129,9 +161,10 @@ export function MapView({ events, selected, flyTarget, onSelect, className = "" 
         overlays={overlays}
         lang={lang}
         onBusStatus={setBusStatus}
+        onFlightStatus={setFlight}
       />
       <div className="pointer-events-none absolute left-12 top-2 z-[1000]">
-        <LayerToggles layers={layers} busStatus={busStatus} onToggle={(k) => setLayers((l) => ({ ...l, [k]: !l[k] }))} />
+        <LayerToggles layers={layers} busStatus={busStatus} flight={flight} onToggle={(k) => setLayers((l) => ({ ...l, [k]: !l[k] }))} />
       </div>
       {whoisOpen && (
         <div className="pointer-events-none absolute bottom-2 right-2 top-10 z-[1000] flex items-end sm:items-start">

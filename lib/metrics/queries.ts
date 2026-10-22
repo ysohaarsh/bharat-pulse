@@ -11,7 +11,8 @@ export async function loadVitals(): Promise<Vitals> {
       supabase
         .from("metrics")
         .select("key, region, label, value, state, observed_at, meta")
-        .or("key.like.power.*,key.eq.aqi,key.like.mandi:*")
+        // Flight counts only: the ~30 KB flights.positions row is read by the map layer on its own.
+        .or("key.like.power.*,key.eq.aqi,key.like.mandi:*,key.in.(flights.total,flights.airborne,flights.ground)")
         .limit(2000),
       supabase
         .from("metric_history")

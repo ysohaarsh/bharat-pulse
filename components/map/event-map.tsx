@@ -24,7 +24,9 @@ import type { EventRow } from "@/lib/types";
 import { DELHI_BBOX, type BusSnapshot } from "@/lib/transit/types";
 import { INDIA_BOUNDS, INDIA_CENTER, indiaStyle } from "./india-style";
 import { LAYER_KEYS, type LayerKey, type OverlayData } from "./layers";
+import { mToFt, msToKmh, snapshotAgeMin } from "@/lib/flights/positions";
 import { useBuses, type BusStatus } from "./use-buses";
+import { useFlights, type FlightStatus } from "./use-flights";
 
 // Served from public/ by scripts/copy-maplibre-worker.mjs (MapLibre's documented Next.js setup).
 setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
@@ -52,6 +54,13 @@ export interface EventMapProps {
   lang: UiLang;
   /** Delhi buses layer state, for the notice in the layers box. */
   onBusStatus?: (s: BusUiStatus) => void;
+  /** Flights layer state and snapshot time, for the note in the layers box. */
+  onFlightStatus?: (s: FlightUiState) => void;
+}
+
+export interface FlightUiState {
+  status: FlightStatus;
+  observedAt: string | null;
 }
 
 export type BusUiStatus = BusStatus | "zoom";
@@ -82,6 +91,7 @@ const LAYER_IDS: Record<LayerKey, string[]> = {
   aqi: ["aqi"],
   wards: ["wards-fill", "wards-line", "wards-label"],
   buses: ["buses", "buses-label"],
+  flights: ["flights", "flights-label"],
 };
 /** Overlay layers that open a popup when clicked. */
 const POPUP_LAYERS = ["projects", "reports", "aqi"] as const;
@@ -93,6 +103,35 @@ const BUS_MINZOOM = 9;
 const BUS_LABEL_MINZOOM = 13;
 const BUS_STALE_S = 120;
 const BUS_ROUTES_URL = "/geo/delhi-routes.json";
+/** Flights: aircraft icons are drawn at runtime, one per (airborne|ground) x (india|foreign). */
+const FLIGHT_LABEL_MINZOOM = 7;
+const PLANE_PATH =
+  "M12 1.5 L13.7 8.5 L22 13.5 L22 15.5 L13.6 13 L13.2 19 L15.8 21 L15.8 22.5 L12 21.5 L8.2 22.5 L8.2 21 L10.8 19 L10.4 13 L2 15.5 L2 13.5 L10.3 8.5 Z";
+const FLIGHT_FILL = { air: "#0f6e6e", gnd: "#8a8fa8" } as const;
+const FLIGHT_OUTLINE = { in: "#d99a1e", fx: "#fbf6ea" } as const;
+
+function addPlaneIcons(map: MapLibreMap) {
+  const px = 48; // 24 css px at pixelRatio 2
+  for (const st of ["air", "gnd"] as const) {
+    for (const origin of ["in", "fx"] as const) {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = px;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) continue;
+      ctx.scale(px / 24, px / 24);
+      const path = new Path2D(PLANE_PATH);
+      ctx.lineJoin = "round";
+      ctx.lineWidth = origin === "in" ? 2.6 : 1.6;
+      ctx.strokeStyle = FLIGHT_OUTLINE[origin];
+      ctx.stroke(path);
+      ctx.fillStyle = FLIGHT_FILL[st];
+      ctx.fill(path);
+      const img = ctx.getImageData(0, 0, px, px);
+      if (!map.hasImage(`plane-${st}-${origin}`)) map.addImage(`plane-${st}-${origin}`, img, { pixelRatio: 2 });
+    }
+  }
+}
+
 const BLR_BBOX = { w: 77.3, s: 12.7, e: 77.9, n: 13.25 };
 
 function toFeatures(events: GeoEvent[], lang: UiLang): GeoJSON.FeatureCollection<GeoJSON.Point> {
@@ -255,6 +294,41 @@ function addOverlayLayers(map: MapLibreMap) {
     },
     paint: { "text-color": "#1d2550", "text-halo-color": "#f6efe0", "text-halo-width": 1.2 },
   });
+  addPlaneIcons(map);
+  map.addSource("flights", { type: "geojson", data: EMPTY });
+  map.addLayer({
+    id: "flights",
+    type: "symbol",
+    source: "flights",
+    layout: {
+      visibility: "none",
+      "icon-image": ["concat", "plane-", ["case", ["get", "ground"], "gnd", "air"], "-", ["case", ["get", "india"], "in", "fx"]],
+      "icon-rotate": ["get", "heading"],
+      "icon-rotation-alignment": "map",
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+      "icon-size": ["interpolate", ["linear"], ["zoom"], 3, 0.5, 7, 0.75, 11, 1.1],
+      "symbol-sort-key": ["case", ["get", "ground"], 0, 1],
+    },
+    paint: { "icon-opacity": ["case", ["get", "ground"], 0.65, 1] },
+  });
+  map.addLayer({
+    id: "flights-label",
+    type: "symbol",
+    source: "flights",
+    minzoom: FLIGHT_LABEL_MINZOOM,
+    filter: ["!=", ["get", "callsign"], ""],
+    layout: {
+      visibility: "none",
+      "text-field": ["get", "callsign"],
+      "text-font": ["Noto Sans Regular"],
+      "text-size": 10.5,
+      "text-offset": [0, 1.2],
+      "text-anchor": "top",
+      "text-optional": true,
+    },
+    paint: { "text-color": "#1d2550", "text-halo-color": "#f6efe0", "text-halo-width": 1.2 },
+  });
   map.addLayer({
     id: "reports",
     type: "circle",
@@ -390,11 +464,11 @@ function addEventLayers(map: MapLibreMap) {
 /** Lazily fetch the heavy constituency outlines the first time their layer is switched on. */
 const BOUNDARY_URLS: Partial<Record<LayerKey, string>> = { pc: "/geo/pc.geojson", ac: "/geo/ac.geojson" };
 
-export default function EventMap({ events, selected, flyTarget, onSelect, onPick, picked, layers, overlays, lang, onBusStatus }: EventMapProps) {
+export default function EventMap({ events, selected, flyTarget, onSelect, onPick, picked, layers, overlays, lang, onBusStatus, onFlightStatus }: EventMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const readyRef = useRef(false);
-  const latest = useRef({ events, selected, onSelect, onPick, layers, overlays, picked, lang });
+  const latest = useRef({ events, selected, onSelect, onPick, layers, overlays, picked, lang, flightObservedAt: null as string | null });
   const loadedBoundaries = useRef(new Set<LayerKey>());
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -404,9 +478,10 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
   const [busActive, setBusActive] = useState(false);
   const [busNames, setBusNames] = useState<RouteNames>({});
   const { snapshot: busSnap, status: busStatus } = useBuses(busActive);
+  const { snapshot: flightSnap, status: flightStatus } = useFlights(layers.flights);
 
   useEffect(() => {
-    latest.current = { events, selected, onSelect, onPick, layers, overlays, picked, lang };
+    latest.current = { events, selected, onSelect, onPick, layers, overlays, picked, lang, flightObservedAt: flightSnap?.observedAt ?? null };
   });
 
   // Create the map once.
@@ -437,6 +512,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
     const hover = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 10 });
     const info = new Popup({ closeButton: true, closeOnClick: true, className: "pulse-tip pulse-info", offset: 10, maxWidth: "280px" });
     const busTip = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 8 });
+    const flightTip = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 10 });
     const wardTip = new Popup({ closeButton: false, closeOnClick: false, className: "pulse-tip", offset: 8 });
     const motionOk = !reducedMotion();
     let raf = 0;
@@ -527,6 +603,16 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
         .addTo(map);
     });
     map.on("mouseleave", "buses", () => busTip.remove());
+    map.on("mousemove", "flights", (e: MapLayerMouseEvent) => {
+      const f = e.features?.[0];
+      if (!f) return;
+      map.getCanvas().style.cursor = "default";
+      flightTip
+        .setLngLat((f.geometry as GeoJSON.Point).coordinates as [number, number])
+        .setDOMContent(flightTipContent(f.properties ?? {}, latest.current.lang, latest.current.flightObservedAt))
+        .addTo(map);
+    });
+    map.on("mouseleave", "flights", () => flightTip.remove());
     map.on("mousemove", (e) => setCursor(e.lngLat.wrap()));
     map.on("mouseout", () => setCursor(null));
     map.on("zoomend", () => setZoom(map.getZoom()));
@@ -538,6 +624,7 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
       info.remove();
       wardTip.remove();
       busTip.remove();
+      flightTip.remove();
       readyRef.current = false;
       mapRef.current = null;
       map.remove();
@@ -629,6 +716,14 @@ export default function EventMap({ events, selected, flyTarget, onSelect, onPick
   }, [busSnap, busNames, ready]);
 
   useEffect(() => {
+    if (ready) (mapRef.current?.getSource("flights") as GeoJSONSource | undefined)?.setData({ type: "FeatureCollection", features: flightSnap?.features ?? [] });
+  }, [flightSnap, ready]);
+
+  useEffect(() => {
+    onFlightStatus?.({ status: flightStatus, observedAt: flightSnap?.observedAt ?? null });
+  }, [flightStatus, flightSnap, onFlightStatus]);
+
+  useEffect(() => {
     onBusStatus?.(!layers.buses ? "idle" : busActive ? busStatus : "zoom");
   }, [layers.buses, busActive, busStatus, onBusStatus]);
 
@@ -680,6 +775,26 @@ function busTipContent(p: Record<string, unknown>, lang: UiLang): HTMLElement {
   line(`${tr(lang, "busTipBus")} ${String(p.id ?? "")}`, "font-mono");
   line(`${tr(lang, "busTipSpeed")} ${String(p.speed ?? 0)} km/h`);
   line(`${tr(lang, "busTipAge")} ${age}${tr(lang, "busTipAgo") === "s ago" ? " s ago" : " " + tr(lang, "busTipAgo")}`);
+  return root;
+}
+
+/** Tooltip body for an aircraft (callsign/country come from the feed, so DOM text nodes). */
+function flightTipContent(p: Record<string, unknown>, lang: UiLang, observedAt: string | null): HTMLElement {
+  const root = document.createElement("div");
+  const line = (text: string, cls = "") => {
+    const el = document.createElement("div");
+    el.textContent = text;
+    if (cls) el.className = cls;
+    root.appendChild(el);
+  };
+  const callsign = String(p.callsign ?? "");
+  line(callsign || tr(lang, "flightTipNoCall"), "font-bold font-mono");
+  line(`${String(p.country ?? "")}${p.icao24 ? " · " + String(p.icao24) : ""}`);
+  if (p.ground === true || p.ground === "true") line(tr(lang, "flightTipGround"));
+  else if (typeof p.alt === "number") line(`${tr(lang, "flightTipAlt")} ${Math.round(p.alt).toLocaleString("en-IN")} m · ${mToFt(p.alt).toLocaleString("en-IN")} ft`);
+  if (typeof p.speed === "number") line(`${tr(lang, "flightTipSpeed")} ${Math.round(p.speed)} m/s · ${msToKmh(p.speed)} km/h`);
+  line(`${tr(lang, "flightTipHeading")} ${Math.round(Number(p.heading ?? 0))}°`);
+  if (observedAt) line(tr(lang, "flightSnapshot").replace("{n}", String(snapshotAgeMin(observedAt))), "text-muted");
   return root;
 }
 
