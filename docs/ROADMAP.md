@@ -40,7 +40,7 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
   `lib/ingest/aqi.ts` / `lib/jobs/mandi.ts` field names if they differ; confirm whether
   `pollutant_avg` is a sub-index or a concentration (aqi.ts assumes sub-index).
 - **Done when:** tests pass on real fixtures; the vitals panel shows CPCB cities and mandi prices.
-- **Status:** todo
+- **Status:** in progress 2026-10-22 — key set (Vercel + .env.local). Functions moved to Mumbai (`vercel.json` regions bom1): from US `iad1`, api.data.gov.in / Grid-India returned "fetch failed". Now aqi → 527 station rows, mandi → 78. **Bug found (see docs/DATA_GOV_IN.md):** CPCB `avg_value` is a concentration, not a sub-index → compute NAQI sub-indices per pollutant (exclude CO); JSON fields are `min_value/max_value/avg_value`; replace hand-made fixtures; page with `offset`.
 
 ### T4 · Verify NASA FIRMS with a real key
 - **Needs:** `FIRMS_MAP_KEY`. **Do:** replace synthetic `firms.csv` fixture with a trimmed real
@@ -97,4 +97,6 @@ Status: `todo` · `in progress` · `blocked (needs …)` · `done (commit sha)`
 - Flights (F6): OpenSky bbox > 400 sq deg costs 4 credits; anonymous = 400/day and Vercel egress IPs are shared, so prod budget may be lower (429 surfaces in job result). India bbox includes Gulf/Pakistan/Bangladesh airspace (~half foreign-registered) → `flights.total` = "in the India box". State vectors are positional with lng before lat; callsigns space-padded; `baro_altitude` null on ground.
 - Worktree dev/QA: Turbopack refuses a symlinked `node_modules` → `npx next dev --webpack`. Playwright has no bundled Chromium here → `chromium.launch({ channel: "chrome" })`. ESLint lints `.smoke/*.ts` → keep probes as `.mjs`.
 - MLA job on Vercel (2026-10-22): 31 assemblies back-to-back → Wikipedia throttled after 6 and the run nears the 60 s limit. Now stalest-first, 1.5 s apart, within `RUN_BUDGET_MS`; cron daily (`20261022120000_mla_cron_daily.sql`). `cron.schedule` with an existing name replaces the job (db:check's stub has no `unschedule`).
+- Vercel region: Indian gov sources (api.data.gov.in, Grid-India) refuse/hang from US IPs → functions pinned to `bom1`. OpenSky still "fetch failed" from Vercel (cloud IP block) → flights needs another host or source. Wikipedia 429s Vercel IPs even at 1.5 s pacing → MLA fills over several daily runs.
+- data.gov.in: one personal key for all resources; metadata "updated" ≠ data date (CWC reservoirs, NWIC rainfall stale). Full survey: `docs/DATA_GOV_IN.md`.
 - Parallel agents in git worktrees: worktrees have no `node_modules`/`data/` → symlink from the main checkout; launching several worktree agents at the same instant can race (`commondir` error) — retry. F2 and F7 both edit `scripts/build-geo.mjs` (source list) → expect an additive conflict.
