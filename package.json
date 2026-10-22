@@ -19,32 +19,32 @@
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
-    "@supabase/supabase-js": "^2.117.2",
+    "@supabase/supabase-js": "^2.118.0",
     "date-fns": "^4.4.0",
     "gtfs-realtime-bindings": "^2.2.0",
-    "maplibre-gl": "^6.12.0",
-    "next": "16.3.8",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
+    "maplibre-gl": "^6.15.0",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "recharts": "^3.10.1",
     "server-only": "^0.0.1",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "^0.5.8",
-    "@electric-sql/pglite-postgis": "^0.2.8",
-    "@playwright/test": "^1.63.0",
+    "@electric-sql/pglite": "^0.5.10",
+    "@electric-sql/pglite-postgis": "^0.2.10",
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.8",
-    "mapshaper": "^0.7.72",
-    "supabase": "^2.119.0",
+    "eslint-config-next": "16.4.2",
+    "mapshaper": "^0.7.90",
+    "supabase": "^2.121.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   }
 }
